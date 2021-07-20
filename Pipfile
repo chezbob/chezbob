@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 django = "~=3.2"  # >=3.2, ==3.*
 psycopg2 = "*"
+channels = "*"
+uuid = "*"
 
 [dev-packages]
 
