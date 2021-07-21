@@ -8,7 +8,7 @@ class Appliance(models.Model):
     uuid = models.UUIDField(_('appliance uuid'), primary_key=True, default=uuid.uuid4)
     name = models.CharField(_('appliance name'), max_length=256, unique=True)
 
-    consumer_path = models.CharField(_('consumer class'), max_length=256)
+    consumer_path = models.CharField(_('consumer class path'), max_length=256)
 
     STATUS_UP = 'UP'
     STATUS_DOWN = 'DOWN'

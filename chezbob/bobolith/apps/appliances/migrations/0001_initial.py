@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('uuid', models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False, verbose_name='appliance uuid')),
                 ('name', models.CharField(max_length=256, unique=True, verbose_name='appliance name')),
-                ('consumer_path', models.CharField(max_length=256, verbose_name='consumer class')),
+                ('consumer_path', models.CharField(max_length=256, verbose_name='consumer class path')),
                 ('status', models.CharField(choices=[('UP', 'Up'), ('DOWN', 'Down'), ('UNRESPONSIVE', 'Unresponsive'), ('NOT_APPLICABLE', 'N/A')], default='DOWN', max_length=15)),
                 ('last_connected_at', models.DateTimeField(blank=True, null=True, verbose_name='last connected at')),
                 ('last_heartbeat_at', models.DateTimeField(blank=True, null=True, verbose_name='last heartbeat at')),
