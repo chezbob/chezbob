@@ -8,7 +8,7 @@ class ApplianceAdmin(admin.ModelAdmin):
     fields = (
         'uuid',
         'name',
-        'consumer',
+        'consumer_path',
         'status',
         'last_connected_at',
         'last_heartbeat_at'
@@ -17,7 +17,7 @@ class ApplianceAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'uuid',
-        'consumer',
+        'consumer_path',
         'status_icon',
         'last_connected_at',
         'last_heartbeat_at')
