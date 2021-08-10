@@ -27,6 +27,8 @@ class Appliance(models.Model):
     last_connected_at = models.DateTimeField(_('last connected at'), blank=True, null=True)
     last_heartbeat_at = models.DateTimeField(_('last heartbeat at'), blank=True, null=True)
 
+    config = models.JSONField(_('configuration'), default=dict)
+
     @property
     def status_icon(self):
         if self.status == Appliance.STATUS_UP:
@@ -49,3 +51,17 @@ class Appliance(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.uuid})"
+
+
+class ApplianceLink(models.Model):
+    key = models.CharField(_('link key'), max_length=255)
+
+    src = models.ForeignKey(to=Appliance,
+                            verbose_name=_('source appliance'),
+                            on_delete=models.PROTECT,
+                            related_name='src_links', )
+
+    dst = models.ForeignKey(to=Appliance,
+                            verbose_name=_('destination appliance'),
+                            on_delete=models.PROTECT,
+                            related_name='dst_links')
