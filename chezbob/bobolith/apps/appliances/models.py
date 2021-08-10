@@ -27,7 +27,7 @@ class Appliance(models.Model):
     last_connected_at = models.DateTimeField(_('last connected at'), blank=True, null=True)
     last_heartbeat_at = models.DateTimeField(_('last heartbeat at'), blank=True, null=True)
 
-    config = models.JSONField(_('configuration'), default=dict)
+    config = models.JSONField(_('configuration'), default=dict, blank=True)
 
     @property
     def status_icon(self):

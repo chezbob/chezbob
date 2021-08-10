@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'channels',
+
     'chezbob.bobolith.apps.accounts',
     'chezbob.bobolith.apps.appliances',
 ]
@@ -70,6 +72,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'chezbob.bobolith.asgi.application'
 WSGI_APPLICATION = 'chezbob.bobolith.wsgi.application'
 
 

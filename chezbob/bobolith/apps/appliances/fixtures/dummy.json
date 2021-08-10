@@ -1,0 +1,35 @@
+[
+  {"model": "appliances.appliance", "pk": "53ac89d1-0272-4a57-bb21-d20d121a5ee1", "fields": {
+    "name": "DummyScanner2", "consumer_path": "chezbob.bobolith.appliances.consumers.DefaultConsumer", "status": "DOWN",
+    "last_connected_at": null, "last_heartbeat_at": null, "config": {}
+  }
+  },
+  {
+    "model": "appliances.appliance", "pk": "b03b4a62-57a8-4cb2-bf5d-ff4a42e7ab0d", "fields": {
+    "name": "DummyScanner1", "consumer_path": "chezbob.bobolith.appliances.consumers.DefaultConsumer", "status": "DOWN",
+    "last_connected_at": null, "last_heartbeat_at": null, "config": {}
+  }
+  },
+  {
+    "model": "appliances.appliance", "pk": "cc87231e-e56b-4267-a8ab-cb19ad4d79af", "fields": {
+    "name": "DummyPOS2", "consumer_path": "chezbob.bobolith.appliances.consumers.DefaultConsumer", "status": "DOWN",
+    "last_connected_at": null, "last_heartbeat_at": null, "config": {}
+  }
+  },
+  {
+    "model": "appliances.appliance", "pk": "d11ee641-f1f2-4044-9f80-d4679ee7977f", "fields": {
+    "name": "DummyPOS1", "consumer_path": "chezbob.bobolith.appliances.consumers.DefaultConsumer", "status": "DOWN",
+    "last_connected_at": null, "last_heartbeat_at": null, "config": {}
+  }
+  },
+  {
+    "model": "appliances.appliancelink", "pk": 1, "fields": {
+    "key": "pos", "src": "b03b4a62-57a8-4cb2-bf5d-ff4a42e7ab0d", "dst": "d11ee641-f1f2-4044-9f80-d4679ee7977f"
+  }
+  },
+  {
+    "model": "appliances.appliancelink", "pk": 2, "fields": {
+    "key": "pos", "src": "53ac89d1-0272-4a57-bb21-d20d121a5ee1", "dst": "cc87231e-e56b-4267-a8ab-cb19ad4d79af"
+  }
+  }
+]
