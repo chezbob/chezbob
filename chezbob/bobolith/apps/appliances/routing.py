@@ -22,8 +22,6 @@ class ApplianceUUIDRouter:
         return consumer_path
 
     async def __call__(self, scope, receive, send):
-        # close_old_connections()
-
         kwargs = scope['url_route']['kwargs']
         uuid = kwargs['appliance_uuid']
 
