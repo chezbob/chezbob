@@ -10,6 +10,7 @@ from .models import Appliance
 
 logger = logging.getLogger(__name__)
 
+
 class ApplianceUUIDRouter:
     """
     Routes to different appliance consumers based on UUIDs.
@@ -45,7 +46,8 @@ class ApplianceUUIDRouter:
         if klass is None:
             raise ValueError(f"Consumer class not found in module {module} for appliance with UUID ${uuid}.")
 
-        return klass(scope)
+        consumer = klass(scope)
+        return await consumer(scope, receive, send)
 
 
 websocket_router = URLRouter([
