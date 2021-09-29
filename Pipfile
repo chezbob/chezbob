@@ -7,7 +7,9 @@ name = "pypi"
 django = "~=3.2"  # >=3.2, ==3.*
 psycopg2 = "*"
 channels = "*"
+websockets = "*"
 uuid = "*"
+bidict = "*"
 
 [dev-packages]
 
