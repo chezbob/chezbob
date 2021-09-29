@@ -23,8 +23,7 @@ DUMMY_SCANNER2_UUID = '53ac89d1-0272-4a57-bb21-d20d121a5ee1'
 
 
 async def connect_and_ping():
-    # uri = URI_TEMPLATE.format(uuid=DUMMY_POS1_UUID)
-    uri = 'ws://127.0.0.1:8000/ws/echo/'
+    uri = URI_TEMPLATE.format(uuid=DUMMY_POS1_UUID)
     print(f"Connecting to: {uri}")
 
     async with websockets.connect(uri) as ws:
