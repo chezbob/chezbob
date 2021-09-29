@@ -46,7 +46,7 @@ class ApplianceUUIDRouter:
         if klass is None:
             raise ValueError(f"Consumer class not found in module {module} for appliance with UUID ${uuid}.")
 
-        consumer = klass(scope)
+        consumer = klass(uuid)
         return await consumer(scope, receive, send)
 
 

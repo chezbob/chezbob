@@ -21,10 +21,9 @@ class ApplianceConsumer(JsonWebsocketConsumer):
     def decode_json(cls, text_data):
         return MessageDecoder.decode(text_data)
 
-    def __init__(self, scope):
-        super().__init__(scope)
-        kwargs = scope['url_route']['kwargs']
-        self.appliance_uuid = kwargs['appliance_uuid']
+    def __init__(self, uuid):
+        super().__init__()
+        self.appliance_uuid = uuid
 
     def connect(self):
         logger.info(f"[{self.appliance_uuid}] Connecting...")
@@ -60,7 +59,7 @@ class ApplianceConsumer(JsonWebsocketConsumer):
 
     def status_unresponsive(self):
         appliance = Appliance.objects.get(pk=self.appliance_uuid)
-        appliance.status_up()
+        appliance.status_unresponsive()
         appliance.save()
         logger.info(f"Appliance UNRESPONSIVE {self.appliance_uuid}")
 
