@@ -5,13 +5,13 @@ name = "pypi"
 
 [packages]
 django = "~=3.2"  # >=3.2, ==3.*
+django-money = "*"
 psycopg2 = "*"
 channels = "*"
+channels-redis = "*"
 websockets = "*"
 uuid = "*"
 bidict = "*"
-channels-redis = "*"
-django-money = "*"
 
 [dev-packages]
 
