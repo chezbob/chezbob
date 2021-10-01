@@ -30,7 +30,7 @@ async def connect_and_ping():
         await ws.send(json.dumps({
             "header": {
                 "version": 0,
-                "msg_type": "ping",
+                "message_type": "ping",
             },
             "ping": "Gautam"
         }))
