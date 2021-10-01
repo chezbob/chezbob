@@ -25,6 +25,9 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         super().__init__()
         self.appliance_uuid = uuid
 
+    # Websocket Lifecycle
+    # -------------------
+
     def connect(self):
         logger.info(f"[{self.appliance_uuid}] Connecting...")
         super().connect()
@@ -35,6 +38,9 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         logger.info(f"[{self.appliance_uuid}] Disconnected!")
         super().disconnect(code)
         self.status_down()
+
+    # Message Handling
+    # ----------------
 
     def receive_json(self, msg, **kwargs):
         if isinstance(msg, PingMessage):

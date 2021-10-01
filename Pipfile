@@ -10,6 +10,7 @@ channels = "*"
 websockets = "*"
 uuid = "*"
 bidict = "*"
+channels-redis = "*"
 
 [dev-packages]
 

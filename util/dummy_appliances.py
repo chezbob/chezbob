@@ -27,7 +27,13 @@ async def connect_and_ping():
     print(f"Connecting to: {uri}")
 
     async with websockets.connect(uri) as ws:
-        await ws.send(json.dumps({"version": 0, "msg_type": "ping", "ping": "Gautam"}))
+        await ws.send(json.dumps({
+            "header": {
+                "version": 0,
+                "msg_type": "ping",
+            },
+            "ping": "Gautam"
+        }))
         greeting = await ws.recv()
         print(greeting)
 
