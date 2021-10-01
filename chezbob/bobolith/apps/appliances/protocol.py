@@ -1,98 +1,96 @@
 import json
-from typing import Protocol, Type
+import uuid
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, asdict, field
+from typing import Protocol, Type, Optional, Union, ClassVar
 
 from bidict import bidict
 from django.conf import settings
 
+MessageID = Union[int, str]
 
-class MessageHeader:
-    __slots__ = ['msg_type', 'version']
 
+@dataclass(frozen=True)
+class Header:
     msg_type: str
-    version: int
-
-    def __init__(self, msg_type, version=None):
-        self.msg_type = msg_type
-        if version is None:
-            self.version = settings.BOBOLITH_PROTOCOL_VERSION
-
-    def to_json(self):
-        return {'msg_type': self.msg_type, 'version': self.version}
+    msg_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
+    version: int = settings.BOBOLITH_PROTOCOL_VERSION
+    in_reply_to: Optional[MessageID] = None
 
 
-class Message(Protocol):
-    header: MessageHeader
+@dataclass(frozen=True)
+class Message:
+    msg_type: ClassVar[str]
+    header: Header
 
-    def __init__(self, header=None, **kwargs):
-        ...
+    def __init_subclass__(cls, msg_type=None, **kwargs):
+        cls.msg_type = msg_type
+        if cls not in MESSAGE_TYPES.inverse:
+            MESSAGE_TYPES[msg_type] = cls
 
+    @classmethod
+    def make(cls, *args, **kwargs):
+        header = Header(cls.msg_type)
+        return cls(header, *args, **kwargs)
 
-MESSAGE_TYPES: bidict[str, Type[Message]] = bidict({
-    # 'header': MessageHeader
-})
-
-
-def message_mixin(msg_type: str) -> Type[Message]:
-    class MessageMixin(Message):
-        __slots__ = ['header']
-
-        header: MessageHeader
-
-        def __init__(self, header=None, **kwargs):
-            super().__init__(header, **kwargs)
-
-            if header is None:
-                self.header = MessageHeader(msg_type=msg_type)
-
-            for key, value in kwargs.items():
-                setattr(self, key, value)
-
-        def __init_subclass__(cls, **kwargs):
-            if cls not in MESSAGE_TYPES.inverse:
-                MESSAGE_TYPES[msg_type] = cls
-
-        def to_json(self):
-            return {slot: getattr(self, slot)
-                    for slot in self.__slots__
-                    if hasattr(self, slot)}
-
-    return MessageMixin
+    def reply(self, *args, **kwargs):
+        header = Header(self.__class__.msg_type, in_reply_to=self.header.msg_id)
+        return self.__class__(header, *args, **kwargs)
 
 
-class PingMessage(message_mixin('ping')):
-    __slots__ = ['ping']
+@dataclass(frozen=True)
+class Error:
+    header: Header
+    code: int
+    message: str
 
-    ping: str
+
+MESSAGE_TYPES: bidict[str, Type[Message]] = bidict({})  # todo: ERROR_TYPES?
 
 
-class PongMessage(message_mixin('pong')):
-    __slots__ = ['pong']
+@dataclass(frozen=True)
+class PingMessage(Message, msg_type='ping'):
+    message: str
 
-    pong: str
+
+@dataclass(frozen=True)
+class PongMessage(Message, msg_type='pong'):
+    message: str
 
 
 def _encode(o):
     if o.__class__ in MESSAGE_TYPES.inverse:
-        return o.to_json()
+        msg_dict = asdict(o)
+        header = msg_dict.pop('header')
+        return {
+            'header': header,
+            'body': msg_dict
+        }
     else:
         raise TypeError(f'Object of type {o.__class__.__name__} '
                         f'is not JSON serializable')
 
 
 def _decode(json_dict):
-    if 'header' not in json_dict:
+    if 'header' not in json_dict \
+            or not isinstance(json_dict['header'], dict) \
+            or 'msg_type' not in json_dict['header']:
         return json_dict
-    content = dict(json_dict)
-    header_content = content.pop('header')
-    if type(header_content) is not dict or \
-            'msg_type' not in header_content or \
-            header_content['msg_type'] not in MESSAGE_TYPES:
-        # This is a non-message dict, just return it.
-        return json_dict
-    header = MessageHeader(**header_content)
 
-    klass = MESSAGE_TYPES[header.msg_type]
-    msg = klass(header=header, **content)
+    # Copy, to avoid mutating parameters...
+    header = header = Header(**json_dict['header'])
+
+    has_body = 'body' in json_dict
+    has_error = 'error' in json_dict
+
+    # Is this an error message?
+    if 'error' in json_dict:
+        # todo: handle this more elegantly?
+        assert 'body' not in json_dict
+        return Error(header=header, **json_dict['error'])
+
+    cls = MESSAGE_TYPES[header.msg_type]
+    msg = cls(header=header, **json_dict['body'])
 
     return msg
 

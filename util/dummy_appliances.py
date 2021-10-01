@@ -10,6 +10,7 @@ The appliances are linked POS1 -> Scanner1, POS2 -> Scanner2.
 
 import asyncio
 import json
+import uuid
 
 import websockets
 from string import Template
@@ -31,8 +32,24 @@ async def connect_and_ping():
             "header": {
                 "version": 0,
                 "msg_type": "ping",
+                "msg_id": str(uuid.uuid4())[:8],
             },
-            "ping": "Gautam"
+            "body": {
+                "message": "Hello, world!"
+            }
+        }))
+        greeting = await ws.recv()
+        print(greeting)
+
+        await ws.send(json.dumps({
+            "header": {
+                "version": 0,
+                "msg_type": "ping",
+                "msg_id": str(uuid.uuid4())[:8],
+            },
+            "body": {
+                "message": "Hello, world!"
+            }
         }))
         greeting = await ws.recv()
         print(greeting)
