@@ -11,6 +11,7 @@ websockets = "*"
 uuid = "*"
 bidict = "*"
 channels-redis = "*"
+django-money = "*"
 
 [dev-packages]
 
