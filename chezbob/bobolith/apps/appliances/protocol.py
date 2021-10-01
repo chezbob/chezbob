@@ -37,6 +37,7 @@ class Message:
         header = Header(self.__class__.msg_type, in_reply_to=self.header.msg_id)
         return self.__class__(header, *args, **kwargs)
 
+
 @dataclass(frozen=True)
 class Error:
     header: Header
@@ -59,7 +60,12 @@ class PongMessage(Message, msg_type='pong'):
 
 def _encode(o):
     if o.__class__ in MESSAGE_TYPES.inverse:
-        return asdict(o)
+        msg_dict = asdict(o)
+        header = msg_dict.pop('header')
+        return {
+            'header': header,
+            'body': msg_dict
+        }
     else:
         raise TypeError(f'Object of type {o.__class__.__name__} '
                         f'is not JSON serializable')
