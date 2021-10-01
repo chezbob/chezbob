@@ -1,6 +1,7 @@
 import json
+import uuid
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from typing import Protocol, Type, Optional, Union, ClassVar
 
 from bidict import bidict
@@ -12,6 +13,7 @@ MessageID = Union[int, str]
 @dataclass(frozen=True)
 class Header:
     msg_type: str
+    msg_id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
     version: int = settings.BOBOLITH_PROTOCOL_VERSION
     in_reply_to: Optional[MessageID] = None
 
@@ -29,8 +31,11 @@ class Message:
     @classmethod
     def make(cls, *args, **kwargs):
         header = Header(cls.msg_type)
-        return cls(header, *args, **kwargs)  # todo: make typechecker happy
+        return cls(header, *args, **kwargs)
 
+    def reply(self, *args, **kwargs):
+        header = Header(self.__class__.msg_type, in_reply_to=self.header.msg_id)
+        return self.__class__(header, *args, **kwargs)
 
 @dataclass(frozen=True)
 class Error:
