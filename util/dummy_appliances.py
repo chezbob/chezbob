@@ -30,9 +30,22 @@ async def connect_and_ping():
     async with websockets.connect(uri) as ws:
         await ws.send(json.dumps({
             "header": {
+                "version": 0,
                 "msg_type": "ping",
                 "msg_id": str(uuid.uuid4())[:8],
+            },
+            "body": {
+                "message": "Hello, world!"
+            }
+        }))
+        greeting = await ws.recv()
+        print(greeting)
+
+        await ws.send(json.dumps({
+            "header": {
                 "version": 0,
+                "msg_type": "ping",
+                "msg_id": str(uuid.uuid4())[:8],
             },
             "body": {
                 "message": "Hello, world!"
