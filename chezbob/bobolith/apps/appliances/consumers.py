@@ -47,10 +47,7 @@ class ApplianceConsumer(JsonWebsocketConsumer):
             self.receive_ping(msg)
 
     def receive_ping(self, ping_msg: PingMessage):
-        self.send_pong(ping_msg.ping)
-
-    def send_pong(self, content: str):
-        pong_msg = PongMessage(pong=content)
+        pong_msg = ping_msg.reply(message=ping_msg.message)
         self.send_json(pong_msg)
 
     # Database Actions
