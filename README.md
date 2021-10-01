@@ -1,6 +1,8 @@
 # chezbob-bobolith
 
+Instructions to set up bobolith on fresh server:
 
+```
 1. Install initial dependencies
 sudo apt-get update
 sudo apt install git curl git-core gcc make zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libssl-dev postgresql libpq-dev python3-dev
@@ -63,7 +65,7 @@ pipenv sync
 pipenv shell
 # and migrate
 python manage.py migrate
-# 
-
-
+# and start it! 
+python manage.py runserver
+```
 
