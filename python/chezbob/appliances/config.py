@@ -1,0 +1,4 @@
+CONFIG = {
+	'NFC_DEVICE_PATH' : None,
+	'HID_DEVICE_PATH' : None,
+}
