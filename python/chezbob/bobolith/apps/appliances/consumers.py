@@ -4,8 +4,10 @@ from abc import ABCMeta
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.utils import timezone
 
-from chezbob.bobolith.apps.appliances.models import Appliance
-from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDecoder, PingMessage, PongMessage
+from chezbob.bobolith.apps.appliances.models import Appliance, ApplianceLink
+from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDecoder, PingMessage, PongMessage, RelayMessage
+
+import websockets
 
 from chezbob.bobolith.apps.inventory.models import Product, Inventory
 from chezbob.bobolith.apps.inventory.protocol import GetNameMessage, GetPriceMessage, GetQuantityMessage, NameResponse, PriceResponse, QuantityResponse
@@ -64,9 +66,16 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         self.send_json(pong_msg)
 
     def recieve_relay(self, relay_msg: RelayMessage):
+        payload = relay_msg.payload
         dst = relay_msg.dst
-        link = ApplianceLink.objects.get(src = self.appliance_uuid, key = dst) 
-        dst_uuid = link.dst
+        src_appliance =  Appliance.objects.get(pk = self.appliance_uuid)
+        link = ApplianceLink.objects.get(key = dst, src = src_appliance ) 
+        #src_uuid = link.src
+        dst_uuid = link.dst.uuid
+        uri = link.dst.uri
+        uri = f'ws://0.0.0.0:8000/ws/appliances/{dst_uuid}/'
+        with websockets.connect(uri) as ws:
+            ws.send(json.dumps(payload))
         # 
         #self.send_json(to_relay)
 

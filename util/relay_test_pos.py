@@ -15,7 +15,7 @@ import uuid
 import websockets
 from string import Template
 
-URI_TEMPLATE = 'ws://192.168.1.2:8000/ws/appliances/{uuid}/'
+URI_TEMPLATE = 'ws://192.168.1.5:8000/ws/appliances/{uuid}/'
 
 #DUMMY_POS1_UUID = 'd11ee641-f1f2-4044-9f80-d4679ee7977f'
 #DUMMY_POS2_UUID = 'cc87231e-e56b-4267-a8ab-cb19ad4d79af'

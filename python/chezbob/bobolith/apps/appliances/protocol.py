@@ -66,7 +66,7 @@ class PongMessage(Message, msg_type='pong'):
 
 
 @dataclass(frozen=True)
-class RelayMessage(Message, msg_type='relay')
+class RelayMessage(Message, msg_type='relay'):
    dst: str
    payload: dict
 
