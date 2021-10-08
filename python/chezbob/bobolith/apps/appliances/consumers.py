@@ -8,6 +8,7 @@ from chezbob.bobolith.apps.appliances.models import Appliance, ApplianceLink
 from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDecoder, PingMessage, PongMessage, RelayMessage
 
 import websockets
+import json
 
 from chezbob.bobolith.apps.inventory.models import Product, Inventory
 from chezbob.bobolith.apps.inventory.protocol import GetNameMessage, GetPriceMessage, GetQuantityMessage, NameResponse, PriceResponse, QuantityResponse
@@ -37,6 +38,9 @@ class ApplianceConsumer(JsonWebsocketConsumer):
 
     def connect(self):
         logger.info(f"[{self.appliance_uuid}] Connecting...")
+        # Adding a custom group lets you address channels by a custom name
+        # https://stackoverflow.com/questions/59789894/django-channels-setting-custom-channel-name
+        self.groups.append(f"{self.appliance_uuid}") 
         super().connect()
         logger.info(f"[{self.appliance_uuid}] Connected!")
         self.status_up()
@@ -59,26 +63,25 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         if isinstance(msg, GetQuantityMessage):
             self.receive_get_quantity(msg)
         if isinstance(msg, RelayMessage):
-            self.recieve_relay(msg)
+            self.receive_relay(msg)
 
     def receive_ping(self, ping_msg: PingMessage):
         pong_msg = ping_msg.reply(message=ping_msg.message)
         self.send_json(pong_msg)
 
-    def recieve_relay(self, relay_msg: RelayMessage):
+    def receive_relay(self, relay_msg: RelayMessage):
         payload = relay_msg.payload
         dst = relay_msg.dst
+        # Get source application
         src_appliance =  Appliance.objects.get(pk = self.appliance_uuid)
+        # Get the specific application link so that we can get the destination's UUID
         link = ApplianceLink.objects.get(key = dst, src = src_appliance ) 
-        #src_uuid = link.src
         dst_uuid = link.dst.uuid
-        uri = link.dst.uri
-        uri = f'ws://0.0.0.0:8000/ws/appliances/{dst_uuid}/'
-        with websockets.connect(uri) as ws:
-            ws.send(json.dumps(payload))
-        # 
-        #self.send_json(to_relay)
-
+        # Relay message to that UUID
+        self.channel_layer.group_send(
+            f"{dst_uuid}",
+            json.dumps(payload),
+        )
 
     # Database Actions
     # ----------------
