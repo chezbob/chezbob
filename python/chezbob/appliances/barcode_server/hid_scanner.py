@@ -26,7 +26,7 @@ class NotAvailableException(Exception):
     """Thrown by trying to do something that HID scanners don't support."""
     pass
 
-# 'usb:054c:06c3' 
+# hid_scanner.HIDBarcodeScanner('/dev/input/event4')
 class HIDBarcodeScanner(object):
     """A simple non-threaded HID barcode scanner interface."""
     def __init__(self, device, *args, **kwargs):

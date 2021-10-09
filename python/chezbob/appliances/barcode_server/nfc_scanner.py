@@ -17,7 +17,7 @@ class NotAvailableException(Exception):
     """Thrown by trying to do something that NFC scanners don't support."""
     pass
 
-# hid_scanner.HIDBarcodeScanner('/dev/input/event4')
+# 'usb:054c:06c3' 
 class NFCScanner(object):
     """A simple non-threaded HID barcode scanner interface."""
     def __init__(self, device, *args, **kwargs):
