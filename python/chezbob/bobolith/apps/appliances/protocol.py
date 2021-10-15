@@ -33,6 +33,13 @@ class Message:
         header = Header(cls.msg_type)
         return cls(header, *args, **kwargs)
 
+    # Create a message in-reply-to Message reply_to
+    # Necessary because reply can only respond with the same type of message
+    @classmethod
+    def make_reply(cls, reply_to, *args, **kwargs):
+        header = Header(cls.msg_type, in_reply_to=reply_to.header.msg_id)
+        return cls(header, *args, **kwargs)
+
     def reply(self, *args, **kwargs):
         header = Header(self.__class__.msg_type, in_reply_to=self.header.msg_id)
         return self.__class__(header, *args, **kwargs)
@@ -56,6 +63,7 @@ class PingMessage(Message, msg_type='ping'):
 @dataclass(frozen=True)
 class PongMessage(Message, msg_type='pong'):
     message: str
+
 
 
 def _encode(o):
