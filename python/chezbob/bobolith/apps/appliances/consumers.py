@@ -7,6 +7,11 @@ from django.utils import timezone
 from chezbob.bobolith.apps.appliances.models import Appliance
 from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDecoder, PingMessage, PongMessage
 
+from chezbob.bobolith.apps.inventory.models import Product, Inventory
+from chezbob.bobolith.apps.inventory.protocol import GetNameMessage, GetPriceMessage, GetQuantityMessage, NameResponse, PriceResponse, QuantityResponse
+
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -45,6 +50,12 @@ class ApplianceConsumer(JsonWebsocketConsumer):
     def receive_json(self, msg, **kwargs):
         if isinstance(msg, PingMessage):
             self.receive_ping(msg)
+        if isinstance(msg, GetNameMessage):
+            self.receive_get_name(msg)
+        if isinstance(msg, GetPriceMessage):
+            self.receive_get_price(msg)
+        if isinstance(msg, GetQuantityMessage):
+            self.receive_get_quantity(msg)
 
     def receive_ping(self, ping_msg: PingMessage):
         pong_msg = ping_msg.reply(message=ping_msg.message)
@@ -71,6 +82,32 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         appliance.status_down()
         appliance.save()
         logger.info(f"Appliance DOWN {self.appliance_uuid}")
+
+    # Inventory Querying Messages
+    # ----------------------------
+    def receive_get_price(self, get_price_msg: GetPriceMessage):
+        sku = get_price_msg.sku
+        product = Product.objects.get(pk = sku)
+        # Serialize Money
+        price = {'amount': str(product.price.amount), 'currency':product.price.currency.name}
+        response = PriceResponse.make_reply(reply_to=get_price_msg, price=price)
+        self.send_json(response)
+
+    def receive_get_name(self, get_name_msg: GetNameMessage):
+        sku = get_name_msg.sku
+        product = Product.objects.get(pk = sku)
+        name = product.name
+        response = NameResponse.make_reply(reply_to=get_name_msg, name=name)
+        self.send_json(response)
+
+    def receive_get_quantity(self, get_quantity_msg: GetQuantityMessage):
+        sku = get_quantity_msg.sku
+        product = Product.objects.get(pk = sku)
+        inventory = Inventory.objects.get(product = product)
+        quantity = inventory.quantity
+        response = QuantityResponse.make_reply(reply_to=get_quantity_msg, quantity=quantity)
+        self.send_json(response)
+
 
 
 class DefaultConsumer(ApplianceConsumer):
