@@ -5,6 +5,9 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from moneyed import Money
 
+'''
+NOTE: sku stands for Stock Keeping Unit - this is what the scanner reads from a barcode
+'''
 
 class Product(models.Model):
     sku = models.CharField(_('SKU'), max_length=64, primary_key=True)
