@@ -32,8 +32,10 @@ async def connect_and_ping():
                 "msg_id": str(uuid.uuid4())[:8],
             },
             "body": {
-                "dst" : "pos",
-                "payload": {"msg": "Hello POS!"},
+                "link_key": "pos",
+                "payload": {
+                    "msg": "Hello POS!"
+                },
             }
         }))
         #greeting = await ws.recv()
@@ -46,8 +48,10 @@ async def connect_and_ping():
                 "msg_id": str(uuid.uuid4())[:8],
             },
             "body": {
-                "dst": "pos",
-                "payload": {"msg": "Hello again!"}
+                "link_key": "pos",
+                "payload": {
+                    "msg": "Hello again!"
+                }
             }
         }))
         print("Sent a second message!")

@@ -1,5 +1,6 @@
 import uuid as uuid
 from django.db import models
+from django.db.models import UniqueConstraint
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -65,3 +66,8 @@ class ApplianceLink(models.Model):
                             verbose_name=_('destination appliance'),
                             on_delete=models.PROTECT,
                             related_name='dst_links')
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['key', 'src'], name='unique_key_by_src')
+        ]
