@@ -1,11 +1,14 @@
 import logging
 from abc import ABCMeta
 
+from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.utils import timezone
+from uuid import UUID
 
 from chezbob.bobolith.apps.appliances.models import Appliance, ApplianceLink
-from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDecoder, PingMessage, PongMessage, RelayMessage
+from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDecoder, PingMessage, PongMessage, \
+    RelayMessage, DeliverMessage
 
 import websockets
 import json
@@ -19,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class ApplianceConsumer(JsonWebsocketConsumer):
-    appliance_uuid: str
+    appliance_uuid: UUID
 
     @classmethod
     def encode_json(cls, content):
@@ -32,26 +35,23 @@ class ApplianceConsumer(JsonWebsocketConsumer):
     def __init__(self, uuid):
         super().__init__()
         self.appliance_uuid = uuid
+        self.groups.append(f"appliance.{str(uuid)}")
 
     # Websocket Lifecycle
     # -------------------
 
     def connect(self):
         logger.info(f"[{self.appliance_uuid}] Connecting...")
-        # Adding a custom group lets you address channels by a custom name
-        # https://stackoverflow.com/questions/59789894/django-channels-setting-custom-channel-name
-        self.groups.append(f"{self.appliance_uuid}") 
-        super().connect()
+        self.accept()
         logger.info(f"[{self.appliance_uuid}] Connected!")
         self.status_up()
 
     def disconnect(self, code):
         logger.info(f"[{self.appliance_uuid}] Disconnected!")
-        super().disconnect(code)
         self.status_down()
 
-    # Message Handling
-    # ----------------
+    # Protocol Message Handlers
+    # -------------------------
 
     def receive_json(self, msg, **kwargs):
         if isinstance(msg, PingMessage):
@@ -70,18 +70,24 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         self.send_json(pong_msg)
 
     def receive_relay(self, relay_msg: RelayMessage):
-        payload = relay_msg.payload
-        dst = relay_msg.dst
-        # Get source application
-        src_appliance =  Appliance.objects.get(pk = self.appliance_uuid)
-        # Get the specific application link so that we can get the destination's UUID
-        link = ApplianceLink.objects.get(key = dst, src = src_appliance ) 
-        dst_uuid = link.dst.uuid
-        # Relay message to that UUID
-        self.channel_layer.group_send(
-            f"{dst_uuid}",
-            json.dumps(payload),
-        )
+        link_key, payload = relay_msg.link_key, relay_msg.payload
+
+        dst_id = ApplianceLink.objects \
+            .values_list('dst_id', flat=True) \
+            .get(key=link_key, src_id=self.appliance_uuid)
+
+        dst_group = f"appliance.{dst_id}"
+        async_to_sync(self.channel_layer.group_send)(dst_group, {
+            "type": "appliance.deliver",
+            "payload": self.encode_json(payload)
+        })
+
+    # Channel Layer Handlers
+    # ----------------------
+
+    def appliance_deliver(self, event):
+        """Handler for the `appliance.deliver` channel layer message."""
+        self.send(text_data=event['payload'])
 
     # Database Actions
     # ----------------

@@ -67,8 +67,14 @@ class PongMessage(Message, msg_type='pong'):
 
 @dataclass(frozen=True)
 class RelayMessage(Message, msg_type='relay'):
-   dst: str
-   payload: dict
+    link_key: str
+    payload: dict
+
+
+@dataclass(frozen=True)
+class DeliverMessage(Message, msg_type='deliver'):
+    payload: dict
+
 
 def _encode(o):
     if o.__class__ in MESSAGE_TYPES.inverse:

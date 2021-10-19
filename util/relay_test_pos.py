@@ -17,6 +17,7 @@ from string import Template
 URI_TEMPLATE = 'ws://0.0.0.0:8000/ws/appliances/{uuid}/'
 DUMMY_POS1_UUID = 'd11ee641-f1f2-4044-9f80-d4679ee7977f'
 
+
 async def echo():
     uri = URI_TEMPLATE.format(uuid=DUMMY_POS1_UUID)
     print(f"Connecting to: {uri}")
