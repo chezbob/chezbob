@@ -14,12 +14,12 @@ import json
 import websockets
 from string import Template
 
-URI = 'ws://127.0.0.1:8000/ws/echo/'
+URI = 'ws://192.168.1.2:8000/ws/echo/'
 
 
 async def echo():
     # uri = URI_TEMPLATE.format(uuid=DUMMY_POS1_UUID)
-    uri = 'ws://127.0.0.1:8000/ws/echo/'
+    uri = 'ws://192.168.1.2:8000/ws/echo/'
     print(f"Connecting to: {uri}")
 
     async with websockets.connect(uri) as ws:

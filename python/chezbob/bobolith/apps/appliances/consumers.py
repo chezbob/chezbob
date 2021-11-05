@@ -56,10 +56,20 @@ class ApplianceConsumer(JsonWebsocketConsumer):
             self.receive_get_price(msg)
         if isinstance(msg, GetQuantityMessage):
             self.receive_get_quantity(msg)
+        if isinstance(msg, RelayMessage):
+            self.recieve_relay(msg)
 
     def receive_ping(self, ping_msg: PingMessage):
         pong_msg = ping_msg.reply(message=ping_msg.message)
         self.send_json(pong_msg)
+
+    def recieve_relay(self, relay_msg: RelayMessage):
+        dst = relay_msg.dst
+        link = ApplianceLink.objects.get(src = self.appliance_uuid, key = dst) 
+        dst_uuid = link.dst
+        # 
+        #self.send_json(to_relay)
+
 
     # Database Actions
     # ----------------
