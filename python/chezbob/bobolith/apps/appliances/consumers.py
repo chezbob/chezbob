@@ -111,8 +111,10 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         appliance.save()
         logger.info(f"Appliance DOWN {self.appliance_uuid}")
 
-    # Inventory Querying Messages
+    # Inventory Messages
     # ----------------------------
+    
+    # Get the price for an sku
     def receive_get_price(self, get_price_msg: GetPriceMessage):
         sku = get_price_msg.sku
         product = Product.objects.get(pk = sku)
@@ -120,7 +122,8 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         price = {'amount': str(product.price.amount), 'currency':product.price.currency.name}
         response = PriceResponse.make_reply(reply_to=get_price_msg, price=price)
         self.send_json(response)
-
+    
+    # Get the name for an sku
     def receive_get_name(self, get_name_msg: GetNameMessage):
         sku = get_name_msg.sku
         product = Product.objects.get(pk = sku)
@@ -128,6 +131,7 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         response = NameResponse.make_reply(reply_to=get_name_msg, name=name)
         self.send_json(response)
 
+    # Get the quantity for an sku
     def receive_get_quantity(self, get_quantity_msg: GetQuantityMessage):
         sku = get_quantity_msg.sku
         product = Product.objects.get(pk = sku)
@@ -136,7 +140,13 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         response = QuantityResponse.make_reply(reply_to=get_quantity_msg, quantity=quantity)
         self.send_json(response)
 
+    # 
+    def receive_set_price(self, set_price_msg: SetPriceMessage):
+        pass
 
+    #
+    def receive_add_quantity(self, add_quantity_msg: AddQuantityMessage):
+        pass
 
 class DefaultConsumer(ApplianceConsumer):
     pass
