@@ -136,10 +136,21 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         response = QuantityResponse.make_reply(reply_to=get_quantity_msg, quantity=quantity)
         self.send_json(response)
 
-    # 
+    # Update to a new price. This will only be done manually by admins,
+    # so I'm not concerned with race conditions
     def receive_set_price(self, set_price_msg: SetPriceMessage):
-        pass
+        sku = set_price_msg.sku
+        new_price = set_price_msg.new_price
 
+        product = Product.objects.get(pk = sku)
+        new_Money(Decimal(new_price['amount']), new_price['currency'])
+        product.price = new_price
+        
+        response = SetPriceResponse.make_reply(reply_to=set_price_msg, success=true)
+        self.send_json(response)
+
+
+    # TODO: should this prevent people from making item quantity go negative?
     def receive_add_quantity(self, add_quantity_msg: AddQuantityMessage):
         sku = add_quantity_msg.sku
         quantity_to_add = add_quantity_msg.quantity_to_add
