@@ -1,15 +1,14 @@
 import uuid as uuid
 from django.db import models
-from django.db.models import UniqueConstraint
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 
 class Appliance(models.Model):
     uuid = models.UUIDField(_('appliance uuid'), primary_key=True, default=uuid.uuid4)
-    name = models.CharField(_('appliance name'), max_length=256, unique=True)
+    name = models.CharField(_('appliance name'), max_length=255, unique=True)
 
-    consumer_path = models.CharField(_('consumer class path'), max_length=256)
+    consumer_path = models.CharField(_('consumer class path'), max_length=255)
 
     STATUS_UP = 'UP'
     STATUS_DOWN = 'DOWN'
@@ -23,7 +22,7 @@ class Appliance(models.Model):
         (STATUS_NA, "N/A")
     )
 
-    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_DOWN)
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_DOWN)
 
     last_connected_at = models.DateTimeField(_('last connected at'), blank=True, null=True)
     last_heartbeat_at = models.DateTimeField(_('last heartbeat at'), blank=True, null=True)
@@ -69,5 +68,5 @@ class ApplianceLink(models.Model):
 
     class Meta:
         constraints = [
-            UniqueConstraint(fields=['key', 'src'], name='unique_key_by_src')
+            models.UniqueConstraint(fields=['key', 'src'], name='unique_key_by_src')
         ]
