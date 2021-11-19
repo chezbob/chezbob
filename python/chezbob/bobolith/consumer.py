@@ -1,6 +1,7 @@
+import json
 import logging
+import websockets
 from abc import ABCMeta
-
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.utils import timezone
@@ -9,14 +10,9 @@ from uuid import UUID
 from chezbob.bobolith.apps.appliances.models import Appliance, ApplianceLink
 from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDecoder, PingMessage, PongMessage, \
     RelayMessage, DeliverMessage
-
-import websockets
-import json
-
 from chezbob.bobolith.apps.inventory.models import Product, Inventory
-from chezbob.bobolith.apps.inventory.protocol import GetNameMessage, GetPriceMessage, GetQuantityMessage, NameResponse, PriceResponse, QuantityResponse
-
-
+from chezbob.bobolith.apps.inventory.protocol import GetNameMessage, GetPriceMessage, GetQuantityMessage, NameResponse, \
+    PriceResponse, QuantityResponse
 
 logger = logging.getLogger(__name__)
 
