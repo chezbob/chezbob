@@ -140,9 +140,18 @@ class ApplianceConsumer(JsonWebsocketConsumer):
     def receive_set_price(self, set_price_msg: SetPriceMessage):
         pass
 
-    #
     def receive_add_quantity(self, add_quantity_msg: AddQuantityMessage):
-        pass
+        sku = add_quantity_msg.sku
+        quantity_to_add = add_quantity_msg.quantity_to_add
+        # Get the product to update
+        product = Product.objects.get(pk = sku)
+        inventory = Inventory.objects.get(product = product)
+        # Update it
+        inventory.quantity += quantity_to_add
+        inventory.save()
+        response = AddQuantityResponse(reply_to=add_quantity_msg, success=True)
+        self.send_json(response)
+        
 
 class DefaultConsumer(ApplianceConsumer):
     pass
