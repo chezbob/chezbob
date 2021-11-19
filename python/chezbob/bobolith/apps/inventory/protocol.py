@@ -38,3 +38,9 @@ class GetQuantityMessage(Message, msg_type='get_quantity'):
 @dataclass(frozen=True)
 class QuantityResponse(Message, msg_type='quantity_response'):
     quantity: int
+
+
+
+@dataclass(frozen=True)
+class ScanEvent(Message, msg_type='scan_event'):
+    barcode: str
