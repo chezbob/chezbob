@@ -2,8 +2,10 @@ from barcode_server.config import CONFIG
 from barcode_server.device_auto_discover import discover_hid_device, discover_nfc_device
 from barcode_server.hid_scanner import HIDBarcodeScanner
 from barcode_server.nfc_scanner import NFCScanner
+from barcode_server.async_comm import keep_scanning
+import asyncio
 
-def main():
+async def main():
 	nfc_scanner = None
 	hid_scanner = None
 	try:
@@ -54,12 +56,12 @@ def main():
 	if nfc_scanner == None and hid_scanner == None:
 		print("Initializing NFC and HID scanner both failed, Exit")
 		return
-
+	
 	# start_scanner_non_blocking(hid_scanner)
-
-
+	if hid_scanner != None:
+		await keep_scanning(hid_scanner)
 
 
 
 if __name__ == "__main__":
-	main()
+	asyncio.run(main())
