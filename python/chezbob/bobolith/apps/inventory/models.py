@@ -9,9 +9,10 @@ from moneyed import Money
 NOTE: sku stands for Stock Keeping Unit - this is what the scanner reads from a barcode
 '''
 
+
 class Product(models.Model):
     sku = models.CharField(_('SKU'), max_length=64, primary_key=True)
-    name = models.CharField(_('name'), max_length=256)
+    name = models.CharField(_('name'), max_length=255)
 
     price_base = MoneyField(_('price base'), max_digits=14, decimal_places=2, default_currency='USD')
     margin_adj = models.DecimalField(_('margin adjustment'), max_digits=3, decimal_places=2, default=1.15)

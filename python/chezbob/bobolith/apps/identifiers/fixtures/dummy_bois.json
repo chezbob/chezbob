@@ -1,0 +1,10 @@
+[
+  {
+    "model": "identifiers.boi", "pk": 1,
+    "fields": {"identifier": "0413317064", "kind": "BARCODE", "content_type": 7, "object_id": "1"}
+  },
+  {
+    "model": "identifiers.boi", "pk": 2,
+    "fields": {"identifier": "073360703416", "kind": "BARCODE", "content_type": 10, "object_id": "LACROIX_WATER"}
+  }
+]
