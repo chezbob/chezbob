@@ -53,7 +53,7 @@ class HIDBarcodeScanner(object):
 
         return False
 
-    def _read_barcode(self):
+    async def _read_barcode(self):
         shifted = False
         buf = []
         for event in self.dev.read_loop():
@@ -97,10 +97,10 @@ class HIDBarcodeScanner(object):
 
         return 0, barcode
 
-    def get_barcode(self):
+    async def get_barcode(self):
         """Retrieve a barcode."""
         try:
-            return self._read_barcode()
+            return await self._read_barcode()
         except OSError:
             LOGGER.error("Caught OSError... trying to reconnect.")
             if self._try_reconnect():
