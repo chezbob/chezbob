@@ -3,9 +3,11 @@ import evdev
 def discover_hid_device():
     devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
     for device in devices:
+        print(device)
         if "Innovations Inc" in device.name:
             return device
-    
+        elif "Hand Held Products" in device.name:
+            return device
     return None
 
 
