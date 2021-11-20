@@ -12,7 +12,7 @@ from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDec
     RelayMessage, DeliverMessage
 from chezbob.bobolith.apps.inventory.models import Product, Inventory
 from chezbob.bobolith.apps.inventory.protocol import GetNameMessage, GetPriceMessage, GetQuantityMessage, NameResponse, \
-    PriceResponse, QuantityResponse, AddQuantityMessage, AddQuantityResponse
+    PriceResponse, QuantityResponse, AddQuantityMessage, AddQuantityResponse, GetProductInfoMessage, ProductInfoResponse
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +62,8 @@ class ApplianceConsumer(JsonWebsocketConsumer):
             self.receive_relay(msg)
         if isinstance(msg, AddQuantityMessage):
             self.receive_add_quantity(msg)
+        if isinstance(msg, GetProductInfoMessage):
+            self.receive_get_product_info(msg)
 
     def receive_ping(self, ping_msg: PingMessage):
         pong_msg = ping_msg.reply(message=ping_msg.message)
@@ -151,6 +153,18 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         response = AddQuantityResponse.make_reply(reply_to=add_quantity_msg, success=True)
         self.send_json(response)
         
+    # Get all product info for an sku
+    def receive_get_product_info(self, get_product_info_msg: GetProductInfoMessage):
+        sku = get_product_info_msg.sku
+        product = Product.objects.get(pk = sku)
+        name = product.name
+        
+        inventory = Inventory.objects.get(product = product)
+        quantity = inventory.quantity
+
+        price = {'amount': str(product.price.amount), 'currency':product.price.currency.name}
+        response = ProductInfoResponse.make_reply(reply_to=get_product_info_msg, name=name, quantity=quantity, price=price)
+        self.send_json(response)
 
 class DefaultConsumer(ApplianceConsumer):
     pass
