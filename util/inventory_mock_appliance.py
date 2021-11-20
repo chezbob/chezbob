@@ -97,6 +97,19 @@ async def connect_and_ping():
         quantity_response = await ws.recv()
         print(quantity_response)
 
+        await ws.send(json.dumps({
+            "header": {
+                "version": 0,
+                "msg_type": "get_product_info",
+                "msg_id": str(uuid.uuid4())[:8],
+            },
+            "body": {
+                "sku": "BARREL_FUNYUN"
+            }
+        }))
+        product_info_response = await ws.recv()
+        print(product_info_response)
+
 
 
 asyncio.get_event_loop().run_until_complete(connect_and_ping())

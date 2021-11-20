@@ -45,6 +45,20 @@ class GetQuantityMessage(Message, msg_type='get_quantity'):
 class QuantityResponse(Message, msg_type='quantity_response'):
     quantity: int
 
+
+# Appliance sends GetProductInfoMessage to server
+# Server responds with ProductInfoResponse
+@dataclass(frozen=True)
+class GetProductInfoMessage(Message, msg_type='get_product_info'):
+    sku: str
+
+@dataclass(frozen=True)
+class ProductInfoResponse(Message, msg_type='product_info_response'):
+    name: str
+    quantity: int
+    price: dict
+
+
 # Appliance sends AddQuantityMessage
 # server responds with AddQuantityResponse
 @dataclass(frozen=True)
