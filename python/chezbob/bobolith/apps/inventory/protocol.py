@@ -71,5 +71,9 @@ class AddQuantityResponse(Message, msg_type='add_quantity_response'):
     success: bool
 
 @dataclass(frozen=True)
-class ScanEvent(Message, msg_type='scan_event'):
+class BarcodeScanEvent(Message, msg_type='barcode_scan_event'):
     barcode: str
+
+@dataclass(frozen=True)
+class NfcScanEvent(Message, msg_type='nfc_scan_event'):
+    nfc: str
