@@ -5,6 +5,7 @@ from chezbob.bobolith.apps.appliances.protocol import Message
 NOTE: these messages are used in chezbob.bobolith.apps.appliances.consumers
 '''
 
+
 # Inventory Querying Messages
 # -----------------------------
 
@@ -14,10 +15,12 @@ NOTE: these messages are used in chezbob.bobolith.apps.appliances.consumers
 class GetPriceMessage(Message, msg_type='get_price'):
     sku: str
 
+
 @dataclass(frozen=True)
 class PriceResponse(Message, msg_type='price_response'):
     # price is a dict because Money can't otherwise be serialized
     price: dict
+
 
 # Appliance sends GetNameMessage to server
 # Server responds with NameResponse
@@ -25,15 +28,18 @@ class PriceResponse(Message, msg_type='price_response'):
 class GetNameMessage(Message, msg_type='get_name'):
     sku: str
 
+
 @dataclass(frozen=True)
 class NameResponse(Message, msg_type='name_response'):
     name: str
+
 
 # Appliance sends GetQuantityMessage to server
 # Server responds with QuantityResponse
 @dataclass(frozen=True)
 class GetQuantityMessage(Message, msg_type='get_quantity'):
     sku: str
+
 
 @dataclass(frozen=True)
 class QuantityResponse(Message, msg_type='quantity_response'):
@@ -64,3 +70,6 @@ class AddQuantityMessage(Message, msg_type='add_quantity'):
 class AddQuantityResponse(Message, msg_type='add_quantity_response'):
     success: bool
 
+@dataclass(frozen=True)
+class ScanEvent(Message, msg_type='scan_event'):
+    barcode: str

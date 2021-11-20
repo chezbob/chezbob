@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'chezbob.bobolith.apps.accounts',
     'chezbob.bobolith.apps.appliances',
     'chezbob.bobolith.apps.inventory',
+    'chezbob.bobolith.apps.identifiers',
 ]
 
 MIDDLEWARE = [
