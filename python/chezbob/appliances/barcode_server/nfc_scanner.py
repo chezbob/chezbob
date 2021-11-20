@@ -26,20 +26,25 @@ class NFCScanner(object):
         self.last_s = None
         self.last_t = time.time()
 
-    def get_barcode(self, verify=True):
+    async def get_barcode(self, verify=True):
         """Retrieve a barcode."""
 
         barcode = None
         while not barcode:
             tag = self.clf.connect(rdwr={'on-connect': lambda tag: False})
-
-            barcode = "NFC:" + binascii.hexlify(tag.identifier)
-            if not barcode:
+            #print(tag)
+            #print(binascii.hexlify(tag.identifier))
+            try:
+                barcode = "NFC:" + binascii.hexlify(tag.identifier).decode('ascii')
+            except Exception as e:
+                print("Error get tag",e )
                 barcode = None
+            #if not barcode:
+                #barcode = None
 
-            if tag.product == 'Type4Tag':
-                print("Ignoring type4tag")
-                barcode = None
+            #if tag.product == 'Type4Tag':
+                #print("Ignoring type4tag")
+                #barcode = None
 
             now = time.time()
             cutoff = now - DEBOUNCE_TIME
