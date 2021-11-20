@@ -67,5 +67,11 @@ pipenv shell
 python manage.py migrate
 # and start it! 
 python manage.py runserver
+
+7. Setup for Development
+python manage.py createsuperuser
+python manage.py loaddata chezbob/bobolith/apps/appliances/fixtures/dummy_appliances.json
+python manage.py loaddata chezbob/bobolith/apps/inventory/fixtures/dumb_products.json
+
 ```
 
