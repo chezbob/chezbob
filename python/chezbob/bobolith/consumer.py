@@ -12,7 +12,7 @@ from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDec
     RelayMessage, DeliverMessage
 from chezbob.bobolith.apps.inventory.models import Product, Inventory
 from chezbob.bobolith.apps.inventory.protocol import GetNameMessage, GetPriceMessage, GetQuantityMessage, NameResponse, \
-    PriceResponse, QuantityResponse
+    PriceResponse, QuantityResponse, SetPriceMessage, AddQuantityMessage
 
 logger = logging.getLogger(__name__)
 
