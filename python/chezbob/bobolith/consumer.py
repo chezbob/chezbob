@@ -12,7 +12,7 @@ from chezbob.bobolith.apps.appliances.protocol import MessageEncoder, MessageDec
     RelayMessage, DeliverMessage
 from chezbob.bobolith.apps.inventory.models import Product, Inventory
 from chezbob.bobolith.apps.inventory.protocol import GetNameMessage, GetPriceMessage, GetQuantityMessage, NameResponse, \
-    PriceResponse, QuantityResponse, SetPriceMessage, AddQuantityMessage
+    PriceResponse, QuantityResponse, AddQuantityMessage, AddQuantityResponse
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +60,8 @@ class ApplianceConsumer(JsonWebsocketConsumer):
             self.receive_get_quantity(msg)
         if isinstance(msg, RelayMessage):
             self.receive_relay(msg)
+        if isinstance(msg, AddQuantityMessage):
+            self.receive_add_quantity(msg)
 
     def receive_ping(self, ping_msg: PingMessage):
         pong_msg = ping_msg.reply(message=ping_msg.message)
@@ -136,20 +138,6 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         response = QuantityResponse.make_reply(reply_to=get_quantity_msg, quantity=quantity)
         self.send_json(response)
 
-    # Update to a new price. This will only be done manually by admins,
-    # so I'm not concerned with race conditions
-    def receive_set_price(self, set_price_msg: SetPriceMessage):
-        sku = set_price_msg.sku
-        new_price = set_price_msg.new_price
-
-        product = Product.objects.get(pk = sku)
-        new_Money(Decimal(new_price['amount']), new_price['currency'])
-        product.price = new_price
-        
-        response = SetPriceResponse.make_reply(reply_to=set_price_msg, success=true)
-        self.send_json(response)
-
-
     # TODO: should this prevent people from making item quantity go negative?
     def receive_add_quantity(self, add_quantity_msg: AddQuantityMessage):
         sku = add_quantity_msg.sku
@@ -160,7 +148,7 @@ class ApplianceConsumer(JsonWebsocketConsumer):
         # Update it
         inventory.quantity += quantity_to_add
         inventory.save()
-        response = AddQuantityResponse(reply_to=add_quantity_msg, success=True)
+        response = AddQuantityResponse.make_reply(reply_to=add_quantity_msg, success=True)
         self.send_json(response)
         
 

@@ -45,20 +45,6 @@ class GetQuantityMessage(Message, msg_type='get_quantity'):
 class QuantityResponse(Message, msg_type='quantity_response'):
     quantity: int
 
-
-
-# Appliance sends SetPriceMessage
-# server responds with SetPriceResponse
-@dataclass(frozen=True)
-class SetPriceMessage(Message, msg_type='set_price'):
-    sku: str
-    new_price: dict
-
-@dataclass(frozen=True)
-class SetPriceResponse(Message, msg_type='set_price_response'):
-    success: bool
-
-
 # Appliance sends AddQuantityMessage
 # server responds with AddQuantityResponse
 @dataclass(frozen=True)
