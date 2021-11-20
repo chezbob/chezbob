@@ -55,8 +55,7 @@ async def connect_and_ping():
         name_response = await ws.recv()
         print(name_response)
 
-        # 3. Get and print the price
-        # 2. Get and print the name
+        # 3. Get and print the quantity
         await ws.send(json.dumps({
             "header": {
                 "version": 0,
@@ -69,6 +68,35 @@ async def connect_and_ping():
         }))
         quantity_response = await ws.recv()
         print(quantity_response)
+
+        await ws.send(json.dumps({
+            "header": {
+                "version": 0,
+                "msg_type": "add_quantity",
+                "msg_id": str(uuid.uuid4())[:8],
+            },
+            "body": {
+                "sku": "BARREL_FUNYUN",
+                "quantity_to_add": 3
+            }
+        }))
+        quantity_response = await ws.recv()
+        print(quantity_response)
+
+        # 5. Print the new quantity
+        await ws.send(json.dumps({
+            "header": {
+                "version": 0,
+                "msg_type": "get_quantity",
+                "msg_id": str(uuid.uuid4())[:8],
+            },
+            "body": {
+                "sku": "BARREL_FUNYUN"
+            }
+        }))
+        quantity_response = await ws.recv()
+        print(quantity_response)
+
 
 
 asyncio.get_event_loop().run_until_complete(connect_and_ping())
