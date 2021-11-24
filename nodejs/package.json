@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node relay.js",
+    "prettier": "prettier --write .",
     "setup": "npm install && knex --knexfile=server/inventory/db/knexfile.js migrate:latest && knex --knexfile=server/inventory/db/knexfile.js seed:run",
     "debug": "./debug.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,5 +18,8 @@
     "sqlite3": "^5.0.2",
     "uuid": "^8.3.2",
     "ws": "^8.2.3"
+  },
+  "devDependencies": {
+    "prettier": "2.4.1"
   }
 }

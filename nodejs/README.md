@@ -1,5 +1,7 @@
 ## Getting Started
+
 Run:
+
 - `npm run setup`
 - `npm run debug` (make sure you have tmux installed)
 
