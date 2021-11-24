@@ -1,7 +1,7 @@
 import {ReconnectingSocket} from '../../common/reconnecting-socket.js';
 import {v4 as uuidv4} from "uuid";
 import knex from "knex";
-import config from "./knexfile.js";
+import config from "./db/knexfile.js";
 
 let db = knex(config.development);
 let inventory = await ReconnectingSocket.connect('inventory');
