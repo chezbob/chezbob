@@ -1,44 +1,42 @@
 // Update with your config settings.
 
-const __dirname = new URL('.', import.meta.url).pathname;
+const __dirname = new URL(".", import.meta.url).pathname;
 export default {
-
   development: {
-    client: 'sqlite3',
+    client: "sqlite3",
     connection: {
-      filename: __dirname + '/dev.sqlite3'
+      filename: __dirname + "/dev.sqlite3",
     },
     seeds: {
-      directory: [__dirname + '/seeds', __dirname + '/seeds/dev'],
+      directory: [__dirname + "/seeds", __dirname + "/seeds/dev"],
       recursive: false,
-    }
+    },
   },
 
   migrations: {
-    directory: __dirname + '/migrations',
+    directory: __dirname + "/migrations",
   },
 
   seeds: {
-      directory: __dirname + '/seeds',
+    directory: __dirname + "/seeds",
 
-      // We have development specific seeds  in seeds/dev
-      recursive: false
+    // We have development specific seeds  in seeds/dev
+    recursive: false,
   },
 
   production: {
-    client: 'postgresql',
+    client: "postgresql",
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      database: "my_db",
+      user: "username",
+      password: "password",
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'knex_migrations'
-    }
-  }
-
+      tableName: "knex_migrations",
+    },
+  },
 };
