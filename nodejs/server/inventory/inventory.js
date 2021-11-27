@@ -12,8 +12,23 @@ inventory.on("info_req", async (msg) => {
   let response_to = msg.header.id;
   let barcode = msg.body.barcode;
 
-  let items = await db("inventory").select().where({ barcode });
-  console.log(items);
+  let items = await db("inventory").select().where({ barcode }).limit(1);
+  
+  if (items.length === 1) {
+    return inventory.send(
+      JSON.stringify({
+        header: {
+          id: uuidv4(),
+          response_to,
+          to: src,
+          type: "item_info",
+        },
+        body: items[0],
+      })
+    );
+  }
+
+  let users = await db("users").select().where({ barcode }).limit(1);
 
   if (items.length === 0) {
     inventory.send(
@@ -22,9 +37,9 @@ inventory.on("info_req", async (msg) => {
           id: uuidv4(),
           response_to,
           to: src,
-          type: "item_info_not_found",
+          type: "user_info",
         },
-        body: {},
+        body: users[0],
       })
     );
   } else {
@@ -34,9 +49,9 @@ inventory.on("info_req", async (msg) => {
           id: uuidv4(),
           response_to,
           to: src,
-          type: "item_info",
+          type: "info_not_found",
         },
-        body: items[0],
+        body: {},
       })
     );
   }

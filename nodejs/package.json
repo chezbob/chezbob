@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node relay.js",
     "prettier": "prettier --write .",
+    "knex": "knex --knexfile=server/inventory/db/knexfile.js",
     "setup": "npm install && knex --knexfile=server/inventory/db/knexfile.js migrate:latest && knex --knexfile=server/inventory/db/knexfile.js seed:run",
     "debug": "./debug.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
