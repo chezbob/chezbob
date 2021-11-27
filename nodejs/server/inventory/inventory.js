@@ -13,7 +13,7 @@ inventory.on("info_req", async (msg) => {
   let barcode = msg.body.barcode;
 
   let items = await db("inventory").select().where({ barcode }).limit(1);
-  
+
   if (items.length === 1) {
     return inventory.send(
       JSON.stringify({
