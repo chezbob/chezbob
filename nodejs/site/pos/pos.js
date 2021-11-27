@@ -1,6 +1,5 @@
 
 import { ReconnectingSocket } from "/common/reconnecting-socket.js";
-import { setText } from "./terminal.js";
 
 //#Source https://bit.ly/2neWfJ2
 const uuid = () =>
@@ -14,7 +13,7 @@ const uuid = () =>
 let socket = await ReconnectingSocket.connect("pos");
 
 socket.on("scan_event", async (msg) => {
-    let item_info = await socket.request({
+    let info = await socket.request({
         header: {
             to: "/inventory",
             id: uuid(),
@@ -25,9 +24,21 @@ socket.on("scan_event", async (msg) => {
         },
     });
 
-    price_check(item_info);
+    switch (info.header.type) {
+        case "item_info":
+            price_check(info);
+            break;
+        case "user_info":
+            login(info)
+            break;
+        default:
+            console.error("Unknown response: ", info);
+    }
 });
 
+function login(user_info) {
+    console.log("LOGIN: ", user_info);
+}
 
 function price_check(item_info) {
     let pc = document.getElementById('price-check');
