@@ -35,7 +35,7 @@ socket.on("scan_event", async (msg) => {
       if (curr_user() === null) {
         price_check(info.body);
       } else {
-        purchase(info.body);
+        await purchase(info.body);
       }
       break;
     case "user_info":
@@ -68,8 +68,19 @@ function curr_user() {
   return STATE.user;
 }
 
-function purchase(item_info) {
-  console.log("TODO: implement purchasing");
+async function purchase(item_info) {
+  start_logout_timer();
+  await socket.request({
+    header: {
+      to: "/inventory",
+      id: uuid(),
+      type: "purchase",
+    },
+    body: {
+      user_id: curr_user(),
+      item_id: item_info.id,
+    },
+  });
 }
 
 function start_logout_timer() {
