@@ -94,11 +94,14 @@ body {
     }
 }
 
-#terminal {
-    position: relative;
+header {
+    display: flex;
+    justify-content: space-between;
 }
 
-
+#user_state {
+    display: flex;
+}
 
 /** PRICE CHECK **/
 #price-check {
