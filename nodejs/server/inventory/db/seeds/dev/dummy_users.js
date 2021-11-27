@@ -1,9 +1,6 @@
 export async function seed(knex) {
   // Deletes ALL existing entries
-  return knex("users")
-    .del()
-    .then(function () {
-      // Inserts seed entries
-      return knex("users").insert([{ id: 1, barcode: "1111" }]);
-    });
+  await knex("users").del();
+  await knex("users").insert([{ id: 1, barcode: "1111" }]);
+  await knex("transactions").insert([{ id: 1, user_id: 1, cents: 1337 }]);
 }

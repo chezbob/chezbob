@@ -49,10 +49,64 @@ inventory.on("info_req", async (msg) => {
           id: uuidv4(),
           response_to,
           to: src,
-          type: "info_not_found",
+          type: "item_not_found",
         },
         body: {},
       })
     );
   }
+});
+
+inventory.on("purchase", async (purchase) => {
+  const user_id = purchase.body?.user_id;
+  const item_id = purchase.body?.item_id;
+
+  if (!user_id || !item_id) {
+    return console.error("Invalid request: ", purchase);
+  }
+
+  // First, confirm the item exists
+  let items = await db("inventory").select().where({ id: item_id }).limit(1);
+  if (items.length === 0) {
+    inventory.send(
+      JSON.stringify({
+        header: {
+          id: uuidv4(),
+          response_to: purchase.header.id,
+          to: purchase.header.from,
+          type: "item_not_found",
+        },
+        body: {},
+      })
+    );
+  }
+
+  let cents = items[0].cents;
+
+  try {
+    await db("transactions").insert([{ user_id, item_id, cents: -cents }]);
+  } catch (e) {
+    // TODO: surface errors to the client
+    return console.error(e);
+  }
+
+  // TODO: Evaluate the perf of this. Might need to denormalize
+  let balance = (
+    await db("transactions").sum({ balance: "cents" }).where({ user_id })
+  )[0].balance;
+
+  inventory.send(
+    JSON.stringify({
+      header: {
+        id: uuidv4(),
+        response_to: purchase.header.id,
+        to: purchase.header.from,
+        type: "purchase_success",
+      },
+      body: {
+        item: items[0],
+        balance,
+      },
+    })
+  );
 });
