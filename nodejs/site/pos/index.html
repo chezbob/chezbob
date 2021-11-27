@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="./pos.css">
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="./pos.css" />
     <title>Document</title>
     <script>
       window.global = window;
@@ -14,23 +14,31 @@
 
   <body>
     <div id="screen">
-        <!-- slowly moving scanline -->
-            <div class="scanline"></div>
-            <!-- the input and output -->
-            <div id="terminal">
-              <header>
-                <div id="logo">
-                  <div style="color: aqua; display: inline-block; transform:rotate(90deg)">:)</div>&nbsp;Chez Bob
-                </div>
-                <div id="user_state">
-                  <div id="user">
-                    Scan ID to sign in
-                  </div>
-                  <div id="timer"></div>
-              </header>
-
-              <div id="price-check"></div>
+      <!-- slowly moving scanline -->
+      <div class="scanline"></div>
+      <!-- the input and output -->
+      <div id="terminal">
+        <header>
+          <div id="logo">
+            <div
+              style="
+                color: aqua;
+                display: inline-block;
+                transform: rotate(90deg);
+              "
+            >
+              :)
             </div>
+            &nbsp;Chez Bob
+          </div>
+          <div id="user_state">
+            <div id="user">Scan ID to sign in</div>
+            <div id="timer"></div>
+          </div>
+        </header>
+
+        <div id="price-check"></div>
+      </div>
     </div>
     <script type="module" src="./pos.js"></script>
   </body>
