@@ -213,4 +213,5 @@ button:active {
 #hint {
   display: block;
   width: max-content;
+  margin-top: 4em;
 }
