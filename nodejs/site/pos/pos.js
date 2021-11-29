@@ -54,7 +54,9 @@ function login(user_info) {
   document.getElementById("logout").disabled = false;
   start_logout_timer();
 
-  reset();
+  setTitle("");
+  setContent("");
+  setHint("Scan item to purchase");
 }
 
 function logout() {
@@ -129,6 +131,11 @@ function price_check(item_info) {
 function reset() {
   setTitle("");
   setContent("");
+  setHint(`
+    - Scan your ID to sign in
+    <br />
+    - Scan an item to price-check
+  `)
 }
 
 function setTitle(title) {
@@ -137,6 +144,10 @@ function setTitle(title) {
 
 function setContent(content) {
   document.getElementById("price-check").innerHTML = content;
+}
+
+function setHint(content) {
+  document.getElementById("hint").innerHTML = content;
 }
 
 function appendContent(content) {
