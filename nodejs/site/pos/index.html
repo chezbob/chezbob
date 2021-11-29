@@ -19,25 +19,24 @@
       <!-- the input and output -->
       <div id="terminal">
         <header>
-          <div id="logo">
-            <div
-              style="
-                color: aqua;
-                display: inline-block;
-                transform: rotate(90deg);
-              "
-            >
-              :)
-            </div>
-            &nbsp;Chez Bob
-          </div>
+          <div>Chez Bob</div>
           <div id="user_state">
-            <div id="user">Scan ID to sign in</div>
+            <div id="user"></div>
             <div id="timer"></div>
           </div>
         </header>
-
-        <div id="price-check"></div>
+        <div id="title">
+          <div id="title-text"></div>
+          <div id="eyes">&bull; &bull;</div>
+        </div>
+        <div id="price-check" class="closed"></div>
+        <div id="hint">
+          <br />
+          <br />
+          Scan your ID to sign in
+          <br />-or-<br />
+          Scan an item to price-check
+        </div>
       </div>
     </div>
     <script type="module" src="./pos.js"></script>
