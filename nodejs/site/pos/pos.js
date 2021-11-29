@@ -14,6 +14,7 @@ let socket = await ReconnectingSocket.connect("pos");
 let STATE = {
   user: null, // the id of the currently signed in user. null if none
   user_timeout: null, // the time at which the user gets signed out
+  purchases: [], // all purchased items
 };
 
 const SESSION_TIME = 30000;
@@ -50,6 +51,7 @@ socket.on("scan_event", async (msg) => {
 
 function login(user_info) {
   STATE.user = user_info.id;
+  STATE.purchases = [];
 
   document.getElementById("logout").disabled = false;
   start_logout_timer();
@@ -87,12 +89,34 @@ async function purchase(item_info) {
     },
   });
 
+  STATE.purchases.push(resp.body.item);
+  const sum = STATE.purchases.reduce((sum, i) => sum + i.cents, 0);
   setTitle("Purchases");
-  appendContent(
-    `<div>${resp.body.item.name}</div><div class="dots"></div><div>${Math.floor(
-      resp.body.item.cents / 100
-    )}.${resp.body.item.cents % 100}</div>`
+  setContent(
+    STATE.purchases.map(price_row).join("") +
+      `<br><div class='totals'>
+      <div>Total: </div>
+      <div>${dollars(sum)}</div>
+      <div>Balance: </div>
+      <div>${dollars(resp.body.balance)}</div>
+    </div>`
   );
+}
+
+function price_row(item) {
+  return `<div class='price-row'>
+        <span class='price-name'>
+            ${item.name}
+        </span>
+        <span class="dots"></span>
+        <span class='price-cost'>
+            ${dollars(item.cents)}
+        </span>
+    </div>`;
+}
+
+function dollars(cents) {
+  return `${Math.floor(cents / 100)}.${Math.abs(cents) % 100}`;
 }
 
 function start_logout_timer() {
@@ -121,11 +145,7 @@ setInterval(set_timer_text, 1000);
 
 function price_check(item_info) {
   setTitle("Price Check");
-  setContent(
-    `<div>${item_info.name}</div><div class="dots"></div><div>${Math.floor(
-      item_info.cents / 100
-    )}.${item_info.cents % 100}</div>`
-  );
+  setContent(price_row(item_info));
 }
 
 function reset() {
@@ -135,7 +155,7 @@ function reset() {
     - Scan your ID to sign in
     <br />
     - Scan an item to price-check
-  `)
+  `);
 }
 
 function setTitle(title) {
