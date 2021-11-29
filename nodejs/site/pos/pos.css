@@ -7,6 +7,7 @@ html {
 :root {
   --chez-blue: aqua;
   --chez-bg: #222222;
+  --bob-color: var(--chez-blue);
 }
 body {
   display: grid;
@@ -135,7 +136,7 @@ button:active {
   margin-bottom: 80px;
   line-height: normal;
   text-align: center;
-  color: var(--chez-blue);
+  color: var(--bob-color);
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
@@ -183,7 +184,7 @@ button:active {
 #content {
   margin: 0 auto;
   display: grid;
-  border: 7px solid var(--chez-blue);
+  border: 7px solid var(--bob-color);
   border-radius: 10px;
   transition: all 200ms linear;
   box-sizing: border-box;
@@ -191,7 +192,7 @@ button:active {
   padding: 10px;
   width: 100%;
   overflow: hidden;
-  --line-color: var(--chez-blue);
+  --line-color: var(--bob-color);
   display: flex;
   flex-direction: column;
 }

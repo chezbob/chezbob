@@ -55,7 +55,7 @@ function login(user_info) {
 
   document.getElementById("logout").disabled = false;
   start_logout_timer();
-
+  document.documentElement.style.setProperty('--bob-color', "lime")
   setTitle("");
   setContent("");
   setHint("Scan item to purchase");
@@ -63,7 +63,7 @@ function login(user_info) {
 
 function logout() {
   STATE.user = null;
-
+  document.documentElement.style.setProperty('--bob-color', "var(--chez-blue)")
   document.getElementById("logout").disabled = true;
   reset();
 }
