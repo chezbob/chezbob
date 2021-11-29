@@ -23,7 +23,7 @@ body {
   grid-area: t;
   overflow: hidden;
   background: var(--chez-bg);
-  font-family: 'Press Start 2P', "FreeMono", monospace;
+  font-family: "Press Start 2P", "FreeMono", monospace;
   color: white;
   font-size: 24px;
   font-weight: bold;
@@ -105,8 +105,7 @@ header {
 }
 
 button {
-  padding: 0.5em 0.75em;
-  padding-right: 0.25em;
+  padding: 0.5em 0.25em 0.25em 0.75em;
   background: transparent;
   color: inherit;
   border: 3px solid white;
@@ -154,22 +153,36 @@ button:active {
   height: 100%;
   font-size: 96px;
   line-height: 1em;
-  margin-bottom: .1em;
+  margin-bottom: 0.1em;
 }
 .eye:first-child {
-    margin-right: 0.5em;
+  margin-right: 0.5em;
 }
 
 #title-text:not(:empty) + #eyes {
   margin-top: -1.1em;
+}
 
+.totals {
+  display: inline-grid;
+  grid-template:
+    "s sd" auto
+    "b bd" auto
+    / auto auto;
+  width: min-content;
+  align-self: flex-end;
+  column-gap: 1em;
+  margin-top: 1em;
+}
+
+.totals > *:nth-child(even) {
+  text-align: right;
 }
 
 /** PRICE CHECK **/
 #price-check {
   margin: 0 auto;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
   border: 7px solid var(--chez-blue);
   border-radius: 10px;
   transition: all 200ms linear;
@@ -179,6 +192,8 @@ button:active {
   width: 100%;
   overflow: hidden;
   --line-color: var(--chez-blue);
+  display: flex;
+  flex-direction: column;
 }
 
 .glow {
@@ -198,11 +213,20 @@ button:active {
   text-shadow: none;
 }
 
-#price-check > * {
+/* Rows of price-check and purchase */
+.price-row {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.price-row > .price-name,
+.price-row > .price-cost {
+  width: max-content;
   white-space: nowrap;
 }
 
 .dots {
+  flex: 0 1 auto;
   overflow: hidden;
   text-overflow: "";
 }
