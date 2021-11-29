@@ -6,6 +6,7 @@ html {
 
 :root {
   --chez-blue: aqua;
+  --chez-bg: #222222;
 }
 body {
   display: grid;
@@ -21,7 +22,7 @@ body {
 #screen {
   grid-area: t;
   overflow: hidden;
-  background: #222222;
+  background: var(--chez-bg);
   font-family: "FreeMono", monospace;
   color: white;
   font-size: 36px;
@@ -98,10 +99,24 @@ header {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  height: 2em;
 }
 
-#user_state {
-  display: flex;
+button {
+  padding: 0 0.5em;
+  background: transparent;
+  color: inherit;
+  border: 3px solid white;
+  border-radius: 10px;
+}
+
+button:active {
+  background: white;
+  color: var(--chez-bg);
+}
+
+#logout[disabled] {
+  display: none;
 }
 
 #terminal {

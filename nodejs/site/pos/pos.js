@@ -50,18 +50,22 @@ socket.on("scan_event", async (msg) => {
 
 function login(user_info) {
   STATE.user = user_info.id;
+
+  document.getElementById("logout").disabled = false;
   start_logout_timer();
-  document.getElementById("user").innerHTML = curr_user();
 
   reset();
 }
 
 function logout() {
   STATE.user = null;
-  document.getElementById("user").innerHTML = "";
-  document.getElementById("timer").innerHTML = "";
+
+  document.getElementById("logout").disabled = true;
   reset();
 }
+
+logout();
+document.getElementById("logout").addEventListener("click", logout);
 
 function curr_user() {
   return STATE.user;
@@ -102,7 +106,7 @@ function set_timer_text() {
     if (millis_remaining <= 0) {
       logout();
     } else {
-      document.getElementById("timer").innerText = `(${Math.floor(
+      document.getElementById("logout").innerText = `Sign Out(${Math.floor(
         millis_remaining / 1000
       )})`;
     }
