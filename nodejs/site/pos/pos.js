@@ -53,8 +53,6 @@ function login(user_info) {
   start_logout_timer();
   document.getElementById("user").innerHTML = curr_user();
 
-  // Set the timer text immediately so it appears at the same time as the user
-  set_timer_text();
   reset();
 }
 
@@ -93,6 +91,9 @@ async function purchase(item_info) {
 
 function start_logout_timer() {
   STATE.user_timeout = Date.now() + SESSION_TIME;
+
+  // Set the timer text immediately so it appears at the same time as the user
+  set_timer_text();
 }
 
 function set_timer_text() {

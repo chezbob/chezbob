@@ -22,7 +22,6 @@ body {
   grid-area: t;
   overflow: hidden;
   background: #222222;
-  box-shadow: inset 0 0 40px #222;
   font-family: "FreeMono", monospace;
   color: white;
   font-size: 36px;
@@ -98,6 +97,7 @@ body {
 header {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 
 #user_state {
@@ -107,29 +107,33 @@ header {
 #terminal {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 #title {
-  margin-bottom: 40px;
-  height: 1.2em;
+  min-width: 3em;
+  margin-bottom: 80px;
+  line-height: normal;
   text-align: center;
   color: var(--chez-blue);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  font-size: 48px;
+  overflow-y: hidden;
+  font-size: 96px;
 }
 
 #title-text {
   order: 2;
+  font-size: 0.5em;
 }
 #eyes {
   order: 1;
   transition: all 200ms linear;
+  height: 100%;
 }
 
 #title-text:not(:empty) + #eyes {
-  margin-top: -1.5em;
+  margin-top: -1em;
 }
 
 /** PRICE CHECK **/
@@ -155,8 +159,8 @@ header {
     inset 0 0 3px var(--chez-blue);
 }
 #price-check:empty {
-  width: 130px;
-  height: 75px;
+  width: 260px;
+  height: 150px;
   aspect-ratio: 1.75 / 1;
   border-radius: 10px 10px 50% 50% / 10px 10px 100% 100%;
   color: transparent;
@@ -176,6 +180,6 @@ header {
 }
 
 #hint {
-  display: inline-block;
-  text-align: center;
+  display: block;
+  width: max-content;
 }
