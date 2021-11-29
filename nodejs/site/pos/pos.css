@@ -23,9 +23,9 @@ body {
   grid-area: t;
   overflow: hidden;
   background: var(--chez-bg);
-  font-family: "FreeMono", monospace;
+  font-family: 'Press Start 2P', "FreeMono", monospace;
   color: white;
-  font-size: 36px;
+  font-size: 24px;
   font-weight: bold;
   text-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
     -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
@@ -99,15 +99,21 @@ header {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  height: 2em;
+  height: 2.5em;
+  margin-bottom: 1em;
+  align-items: center;
 }
 
 button {
-  padding: 0 0.5em;
+  padding: 0.5em 0.75em;
+  padding-right: 0.25em;
   background: transparent;
   color: inherit;
   border: 3px solid white;
-  border-radius: 10px;
+  /* border-radius: 10px; */
+  --line-color: white;
+  text-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
+    -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
 }
 
 button:active {
@@ -126,7 +132,7 @@ button:active {
 }
 
 #title {
-  min-width: 3em;
+  min-width: 4em;
   margin-bottom: 80px;
   line-height: normal;
   text-align: center;
@@ -134,21 +140,29 @@ button:active {
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
-  font-size: 96px;
+  font-size: 48px;
 }
 
 #title-text {
   order: 2;
   font-size: 0.5em;
 }
+
 #eyes {
   order: 1;
   transition: all 200ms linear;
   height: 100%;
+  font-size: 96px;
+  line-height: 1em;
+  margin-bottom: .1em;
+}
+.eye:first-child {
+    margin-right: 0.5em;
 }
 
 #title-text:not(:empty) + #eyes {
-  margin-top: -1em;
+  margin-top: -1.1em;
+
 }
 
 /** PRICE CHECK **/
@@ -164,15 +178,17 @@ button:active {
   padding: 10px;
   width: 100%;
   overflow: hidden;
+  --line-color: var(--chez-blue);
 }
 
-#price-check {
+.glow {
   box-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
-    -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px var(--chez-blue),
+    -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px var(--line-color),
     inset 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
     inset -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3),
-    inset 0 0 3px var(--chez-blue);
+    inset 0 0 3px var(--line-color);
 }
+
 #price-check:empty {
   width: 260px;
   height: 150px;
