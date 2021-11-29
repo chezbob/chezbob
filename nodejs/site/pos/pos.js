@@ -55,13 +55,14 @@ function login(user_info) {
 
   // Set the timer text immediately so it appears at the same time as the user
   set_timer_text();
-  document.getElementById("price-check").innerHTML = "";
+  reset();
 }
 
 function logout() {
   STATE.user = null;
   document.getElementById("user").innerHTML = "";
   document.getElementById("timer").innerHTML = "";
+  reset();
 }
 
 function curr_user() {
@@ -70,7 +71,7 @@ function curr_user() {
 
 async function purchase(item_info) {
   start_logout_timer();
-  await socket.request({
+  let resp = await socket.request({
     header: {
       to: "/inventory",
       id: uuid(),
@@ -81,6 +82,13 @@ async function purchase(item_info) {
       item_id: item_info.id,
     },
   });
+
+  setTitle("Purchases");
+  appendContent(
+    `<div>${resp.body.item.name}</div><div class="dots"></div><div>${Math.floor(
+      resp.body.item.cents / 100
+    )}.${resp.body.item.cents % 100}</div>`
+  );
 }
 
 function start_logout_timer() {
@@ -105,10 +113,27 @@ function set_timer_text() {
 setInterval(set_timer_text, 1000);
 
 function price_check(item_info) {
-  let pc = document.getElementById("price-check");
-  pc.innerHTML += `<div>${
-    item_info.name
-  }</div><div class="dots"></div><div>${Math.floor(item_info.cents / 100)}.${
-    item_info.cents % 100
-  }</div>`;
+  setTitle("Price Check");
+  setContent(
+    `<div>${item_info.name}</div><div class="dots"></div><div>${Math.floor(
+      item_info.cents / 100
+    )}.${item_info.cents % 100}</div>`
+  );
+}
+
+function reset() {
+  setTitle("");
+  setContent("");
+}
+
+function setTitle(title) {
+  document.getElementById("title-text").innerHTML = title;
+}
+
+function setContent(content) {
+  document.getElementById("price-check").innerHTML = content;
+}
+
+function appendContent(content) {
+  document.getElementById("price-check").innerHTML += content;
 }
