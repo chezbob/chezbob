@@ -163,7 +163,7 @@ function setTitle(title) {
 }
 
 function setContent(content) {
-  document.getElementById("price-check").innerHTML = content;
+  document.getElementById("content").innerHTML = content;
 }
 
 function setHint(content) {
@@ -171,5 +171,5 @@ function setHint(content) {
 }
 
 function appendContent(content) {
-  document.getElementById("price-check").innerHTML += content;
+  document.getElementById("content").innerHTML += content;
 }

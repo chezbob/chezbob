@@ -180,7 +180,7 @@ button:active {
 }
 
 /** PRICE CHECK **/
-#price-check {
+#content {
   margin: 0 auto;
   display: grid;
   border: 7px solid var(--chez-blue);
@@ -204,7 +204,7 @@ button:active {
     inset 0 0 3px var(--line-color);
 }
 
-#price-check:empty {
+#content:empty {
   width: 260px;
   height: 150px;
   aspect-ratio: 1.75 / 1;
