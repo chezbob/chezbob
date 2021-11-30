@@ -75,7 +75,7 @@ body {
       rgba(0, 255, 0, 0.02),
       rgba(0, 0, 255, 0.06)
     );
-  background-size: 100% 2px, 3px 100%;
+  background-size: 100% 2px, 2px 100%;
   z-index: 2;
   pointer-events: none;
 }

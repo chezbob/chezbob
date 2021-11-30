@@ -1,5 +1,4 @@
 import { ReconnectingSocket } from "../../common/reconnecting-socket.js";
-import { v4 as uuidv4 } from "uuid";
 import knex from "knex";
 import config from "./db/knexfile.js";
 
