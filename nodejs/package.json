@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "knex": "^0.95.14",
+    "node-hid": "^2.1.1",
     "sqlite3": "^5.0.2",
     "uuid": "^8.3.2",
     "ws": "^8.2.3"
