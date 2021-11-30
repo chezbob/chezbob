@@ -138,39 +138,6 @@ button:active {
   height: 100%;
 }
 
-#title {
-  min-width: 4em;
-  margin-bottom: 80px;
-  line-height: normal;
-  text-align: center;
-  color: var(--bob-color);
-  display: flex;
-  flex-direction: column;
-  overflow-y: hidden;
-  font-size: 48px;
-}
-
-#title-text {
-  order: 2;
-  font-size: 0.5em;
-}
-
-#eyes {
-  order: 1;
-  transition: all 200ms linear;
-  height: 100%;
-  font-size: 96px;
-  line-height: 1em;
-  margin-bottom: 0.1em;
-}
-.eye:first-child {
-  margin-right: 0.5em;
-}
-
-#title-text:not(:empty) + #eyes {
-  margin-top: -1.1em;
-}
-
 .totals {
   display: inline-grid;
   grid-template:
@@ -212,7 +179,7 @@ button:active {
     inset 0 0 3px var(--line-color);
 }
 
-#content:empty {
+#content:not([data-title]) {
   width: 260px;
   height: 150px;
   aspect-ratio: 1.75 / 1;
@@ -258,12 +225,14 @@ button:active {
   padding: var(--top-padding) 1em 1em 1em;
 }
 
+/* style for the title on Bob's mouth */
 #content::before {
   content: "";
   position: absolute;
-  display: inline-block;
   align-self: center;
   transform: translateY(calc(-1.5em - var(--top-padding)));
+  display: inline-block;
+  opacity: 0;
 
   /** Make it stretch out to appear */
   max-width: 0;
@@ -281,7 +250,32 @@ button:active {
 }
 
 #content[data-title]::before {
+  opacity: 1;
   content: attr(data-title);
   border: 7px solid var(--bob-color);
   max-width: 100%;
+}
+
+#title {
+  min-width: 4em;
+  margin-bottom: 80px;
+  line-height: normal;
+  text-align: center;
+  color: var(--bob-color);
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  font-size: 48px;
+}
+
+#eyes {
+  text-align: center;
+  color: var(--bob-color);
+  font-size: 96px;
+  min-width: 4em;
+  margin-bottom: 80px;
+}
+
+.eye:first-child {
+  margin-right: 0.5em;
 }
