@@ -192,7 +192,7 @@ button:active {
   margin: 0 auto;
   display: grid;
   border: 7px solid var(--bob-color);
-  border-radius: 10px;
+  border-radius: 0 0 20px 20px;
   transition: all 200ms linear;
   aspect-ratio: unset;
   padding: 10px;
