@@ -59,6 +59,10 @@ function validate_message(data) {
     throw "Missing or malformed 'type' field";
   }
 
+  if (typeof msg.body !== "object" && msg.error === undefined) {
+    throw "Must have either a body or an error";
+  }
+
   return msg;
 }
 

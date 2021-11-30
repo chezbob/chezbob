@@ -26,8 +26,7 @@ inventory.handle("info_req", async (msg) => {
   }
 
   let users = await db("users").select().where({ barcode }).limit(1);
-
-  if (items.length === 1) {
+  if (users.length === 1) {
     return {
       header: {
         response_to,
