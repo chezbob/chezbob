@@ -1,13 +1,6 @@
 import { ReconnectingSocket } from "/common/reconnecting-socket.js";
 
 //#Source https://bit.ly/2neWfJ2
-const uuid = () =>
-  ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-    (
-      c ^
-      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-    ).toString(16)
-  );
 
 let socket = await ReconnectingSocket.connect("pos");
 
@@ -20,30 +13,31 @@ let STATE = {
 const SESSION_TIME = 30000;
 
 socket.on("scan_event", async (msg) => {
-  let info = await socket.request({
-    header: {
-      to: "/inventory",
-      id: uuid(),
-      type: "info_req",
-    },
-    body: {
-      barcode: msg.body.barcode,
-    },
-  });
+  try {
+    let info = await socket.request({
+      header: {
+        to: "/inventory",
+        type: "info_req",
+      },
+      body: {
+        barcode: msg.body.barcode,
+      },
+    });
 
-  switch (info.header.type) {
-    case "item_info":
-      if (curr_user() === null) {
-        price_check(info.body);
-      } else {
-        await purchase(info.body);
-      }
-      break;
-    case "user_info":
-      login(info.body);
-      break;
-    default:
-      console.error("Unknown response: ", info);
+    switch (info.header.type) {
+      case "item_info":
+        if (curr_user() === null) {
+          price_check(info.body);
+        } else {
+          await purchase(info.body);
+        }
+        break;
+      case "user_info":
+        login(info.body);
+        break;
+    }
+  } catch (e) {
+    console.error("Unknown response: ", e);
   }
 });
 
@@ -55,7 +49,7 @@ function login(user_info) {
 
   document.getElementById("logout").disabled = false;
   start_logout_timer();
-  document.documentElement.style.setProperty('--bob-color', "lime")
+  document.documentElement.style.setProperty("--bob-color", "lime");
   setTitle("");
   setContent("");
   setHint("Scan item to purchase");
@@ -63,7 +57,7 @@ function login(user_info) {
 
 function logout() {
   STATE.user = null;
-  document.documentElement.style.setProperty('--bob-color', "var(--chez-blue)")
+  document.documentElement.style.setProperty("--bob-color", "var(--chez-blue)");
   document.getElementById("logout").disabled = true;
   reset();
 }
