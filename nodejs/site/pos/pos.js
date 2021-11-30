@@ -50,7 +50,7 @@ function login(user_info) {
   document.getElementById("logout").disabled = false;
   start_logout_timer();
   document.documentElement.style.setProperty("--bob-color", "lime");
-  setTitle("");
+  setTitle(null);
   setContent("");
   setHint("Scan item to purchase");
 }
@@ -74,7 +74,6 @@ async function purchase(item_info) {
   let resp = await socket.request({
     header: {
       to: "/inventory",
-      id: uuid(),
       type: "purchase",
     },
     body: {
@@ -84,17 +83,20 @@ async function purchase(item_info) {
   });
 
   STATE.purchases.push(resp.body.item);
-  const sum = STATE.purchases.reduce((sum, i) => sum + i.cents, 0);
   setTitle("Purchases");
   setContent(
-    STATE.purchases.map(price_row).join("") +
-      `<br><div class='totals'>
+    STATE.purchases.map(price_row).join("") + totals(resp.body.balance)
+  );
+}
+
+function totals(balance) {
+  const sum = STATE.purchases.reduce((sum, i) => sum + i.cents, 0);
+  return `<br><div class='totals'>
       <div>Total: </div>
       <div>${dollars(sum)}</div>
       <div>Balance: </div>
-      <div>${dollars(resp.body.balance)}</div>
-    </div>`
-  );
+      <div>${dollars(balance)}</div>
+    </div>`;
 }
 
 function price_row(item) {
@@ -143,7 +145,7 @@ function price_check(item_info) {
 }
 
 function reset() {
-  setTitle("");
+  setTitle(null);
   setContent("");
   setHint(`
     - Scan your ID to sign in
@@ -153,7 +155,11 @@ function reset() {
 }
 
 function setTitle(title) {
-  document.getElementById("title-text").innerHTML = title;
+  if (title === null) {
+    delete document.getElementById("content").dataset.title;
+  } else {
+    document.getElementById("content").dataset.title = title;
+  }
 }
 
 function setContent(content) {

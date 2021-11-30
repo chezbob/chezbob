@@ -126,9 +126,16 @@ button:active {
 }
 
 #terminal {
-  display: flex;
-  flex-direction: column;
   align-items: center;
+
+  display: grid;
+  grid-template:
+    "header" auto
+    "face" 1fr
+    "instructions" 30%
+    "footer" 2em / 100%;
+
+  height: 100%;
 }
 
 #title {
@@ -187,7 +194,6 @@ button:active {
   border: 7px solid var(--bob-color);
   border-radius: 10px;
   transition: all 200ms linear;
-  box-sizing: border-box;
   aspect-ratio: unset;
   padding: 10px;
   width: 100%;
@@ -197,7 +203,8 @@ button:active {
   flex-direction: column;
 }
 
-.glow {
+.glow,
+#content[data-title]::before {
   box-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
     -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px var(--line-color),
     inset 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
@@ -239,4 +246,42 @@ button:active {
   display: block;
   width: max-content;
   margin-top: 4em;
+}
+
+/******
+ FACE
+******/
+
+#content {
+  --top-padding: 2em;
+  overflow: visible;
+  padding: var(--top-padding) 1em 1em 1em;
+}
+
+#content::before {
+  content: "";
+  position: absolute;
+  display: inline-block;
+  align-self: center;
+  transform: translateY(calc(-1.5em - var(--top-padding)));
+
+  /** Make it stretch out to appear */
+  max-width: 0;
+  transition: max-width 1s linear;
+
+  padding: 0.25em 0.5em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+
+  background: var(--chez-bg);
+  color: var(--bob-color);
+  border-radius: 7px;
+  --line-color: var(--bob-color);
+}
+
+#content[data-title]::before {
+  content: attr(data-title);
+  border: 7px solid var(--bob-color);
+  max-width: 100%;
 }
