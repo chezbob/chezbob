@@ -24,10 +24,10 @@ function handleMessage(data, isBinary) {
     return;
   }
 
-  debug(() => console.log(msg));
-
   let to = msg.header.to;
   msg.header.from = this.name;
+
+  debug(() => console.log(msg));
 
   for (let client of wss.clients) {
     if (client.name === to) {
