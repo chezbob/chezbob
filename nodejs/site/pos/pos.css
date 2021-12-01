@@ -9,6 +9,7 @@ html {
   --chez-bg: #222222;
   --bob-color: var(--chez-blue);
 }
+
 body {
   display: grid;
   position: relative;
@@ -127,7 +128,6 @@ button:active {
 
 #terminal {
   align-items: center;
-
   display: grid;
   grid-template:
     "header" auto
@@ -179,15 +179,6 @@ button:active {
     inset 0 0 3px var(--line-color);
 }
 
-#content:not([data-title]) {
-  width: 260px;
-  height: 150px;
-  aspect-ratio: 1.75 / 1;
-  border-radius: 10px 10px 50% 50% / 10px 10px 100% 100%;
-  color: transparent;
-  text-shadow: none;
-}
-
 /* Rows of price-check and purchase */
 .price-row {
   display: flex;
@@ -212,17 +203,35 @@ button:active {
 #hint {
   display: block;
   width: max-content;
-  margin-top: 4em;
+  justify-self: center;
 }
 
 /******
  FACE
 ******/
 
+#face {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
 #content {
   --top-padding: 2em;
   overflow: visible;
   padding: var(--top-padding) 1em 1em 1em;
+  flex-grow: 1;
+}
+
+/* Styling for the mouth with no data in it */
+#content:not([data-title]) {
+  flex-grow: 0;
+  width: 260px;
+  height: 150px;
+  aspect-ratio: 1.75 / 1;
+  border-radius: 10px 10px 50% 50% / 10px 10px 100% 100%;
+  color: transparent;
+  text-shadow: none;
 }
 
 /* style for the title on Bob's mouth */
