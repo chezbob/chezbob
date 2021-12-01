@@ -114,7 +114,7 @@ function price_row(item) {
 function dollars(cents) {
   let d = Math.floor(cents / 100);
   let c = Math.abs(cents) % 100;
-  return `${d}.${c < 10 ? '0' + c : c}`;
+  return `${d}.${c < 10 ? "0" + c : c}`;
 }
 
 function start_logout_timer() {
