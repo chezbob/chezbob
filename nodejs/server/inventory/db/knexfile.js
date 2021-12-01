@@ -4,6 +4,7 @@ const __dirname = new URL(".", import.meta.url).pathname;
 export default {
   development: {
     client: "sqlite3",
+    useNullAsDefault: true,
     connection: {
       filename: __dirname + "/dev.sqlite3",
     },
