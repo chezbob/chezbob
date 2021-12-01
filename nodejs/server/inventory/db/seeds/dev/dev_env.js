@@ -1,0 +1,22 @@
+export async function seed(knex) {
+  // Deletes ALL existing entries
+  await knex("users").del();
+  await knex("transactions").del();
+  await knex("barcodes").del();
+
+  await knex("inventory").insert([
+    {
+      id: 1,
+      name: "Reeses Peanutbutter Cup",
+      cents: 110,
+      stock: 0,
+    },
+    { id: 2, name: "Red Bull", cents: 50, stock: 1 },
+  ]);
+  await knex("users").insert({ id: 1 });
+  await knex("transactions").insert([{ id: 1, user_id: 1, cents: 1337 }]);
+
+  await knex("barcodes").insert({ item_id: 1, barcode: "1234" });
+  await knex("barcodes").insert({ item_id: 1, barcode: "0000" });
+  await knex("barcodes").insert({ user_id: 1, barcode: "1111" });
+}

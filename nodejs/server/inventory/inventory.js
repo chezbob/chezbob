@@ -11,7 +11,11 @@ inventory.handle("info_req", async (msg) => {
   let response_to = msg.header.id;
   let barcode = msg.body.barcode;
 
-  let items = await db("inventory").select().where({ barcode }).limit(1);
+  let items = await db("inventory")
+    .join("barcodes", "barcodes.item_id", "=", "inventory.id")
+    .select()
+    .where({ barcode })
+    .limit(1);
 
   if (items.length === 1) {
     return {
@@ -24,7 +28,11 @@ inventory.handle("info_req", async (msg) => {
     };
   }
 
-  let users = await db("users").select().where({ barcode }).limit(1);
+  let users = await db("users")
+    .join("barcodes", "barcodes.user_id", "=", "users.id")
+    .select()
+    .where({ barcode })
+    .limit(1);
   if (users.length === 1) {
     return {
       header: {
