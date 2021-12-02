@@ -7,7 +7,7 @@ export async function seed(knex) {
   await knex("inventory").insert([
     {
       id: 1,
-      name: "Reeses Peanutbutter Cup",
+      name: "Reese's Peanutbutter Cup",
       cents: 110,
       stock: 0,
     },
