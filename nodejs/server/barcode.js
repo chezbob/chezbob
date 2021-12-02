@@ -1,7 +1,7 @@
 import { ReconnectingSocket } from "../common/reconnecting-socket.js";
 import { stdin as input, stdout as output } from "process";
 import * as readline from "readline/promises";
-import { HID } from "node-hid";
+import { devices, HID } from "node-hid";
 const rl = readline.createInterface({ input, output });
 
 let socket = await ReconnectingSocket.connect(
@@ -11,7 +11,11 @@ let socket = await ReconnectingSocket.connect(
 
 function connect() {
   try {
-    var handle = new HID("/dev/hidraw1");
+    var hid_devices = devices();
+    var scanner = hid_devices.find(d => {
+      d.product.includes("3800");
+    });
+    var handle = new HID(scanner.path);
   } catch (e) {
     setTimeout(connect, 1000);
     return;
