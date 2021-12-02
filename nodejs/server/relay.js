@@ -1,5 +1,5 @@
 import { WebSocketServer, WebSocket } from "ws";
-import { debug } from "../../common/reconnecting-socket.js";
+import { debug } from "../common/reconnecting-socket.js";
 
 const wss = new WebSocketServer({
   port: 8080,

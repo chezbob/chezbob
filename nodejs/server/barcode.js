@@ -1,4 +1,4 @@
-import { ReconnectingSocket } from "../../common/reconnecting-socket.js";
+import { ReconnectingSocket } from "../common/reconnecting-socket.js";
 import { stdin as input, stdout as output } from "process";
 import * as readline from "readline/promises";
 import { HID } from "node-hid";
