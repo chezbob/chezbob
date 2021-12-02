@@ -69,22 +69,3 @@ function validate_message(data) {
 function handleClose() {
   console.log(`Client disconnected ${this.name}`);
 }
-
-let alice = new WebSocket("ws://localhost:8080/alice");
-alice.on("open", () => {
-  alice.send(
-    JSON.stringify({
-      header: {
-        to: "/bob",
-      },
-      body: {
-        barcode: 1234,
-      },
-    })
-  );
-});
-
-let bob = new WebSocket("ws://localhost:8080/bob");
-bob.on("message", (data) => {
-  console.log(JSON.parse(data.toString()));
-});
