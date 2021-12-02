@@ -1,5 +1,3 @@
-const server = "ws://localhost:8080/";
-
 // isomorphic baybee
 let CustomEvent =
   global.CustomEvent ||
@@ -44,7 +42,7 @@ export class ReconnectingSocket extends EventTarget {
   //
   // Beyond that, the native websocket object cannot reconnect. This means on disconnect, all handlers are lost.
   // On ReconnectingSocket, handlers are maintained across reconnects which are handled transparently.
-  static async connect(role) {
+  static async connect(server, role) {
     const path = server + role;
 
     debug(() => console.log(`Attempting to connect to ${path}`));
