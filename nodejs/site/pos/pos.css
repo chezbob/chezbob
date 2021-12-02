@@ -7,6 +7,7 @@ html {
 :root {
   --chez-blue: aqua;
   --chez-bg: #222222;
+  --chez-red: rgb(255, 70, 101);
   --bob-color: var(--chez-blue);
 }
 
@@ -126,12 +127,18 @@ button:active {
   display: none;
 }
 
+#error {
+  color: var(--chez-red);
+  text-align: center;
+}
+
 #terminal {
   align-items: center;
   display: grid;
   grid-template:
     "header" auto
     "face" 1fr
+    "error" auto
     "instructions" 30%
     "footer" 2em / 100%;
 
@@ -214,6 +221,11 @@ button:active {
   display: flex;
   flex-direction: column;
   align-self: stretch;
+}
+
+/* Price check is only ever one line, so don't expand the mouth too much */
+#content[data-title="Price Check"] {
+  flex-grow: 0;
 }
 
 #content {
