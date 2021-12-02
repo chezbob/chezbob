@@ -26,6 +26,7 @@ socket.on("scan_event", async (msg) => {
 
     switch (info.header.type) {
       case "item_info":
+        clear_alert();
         if (curr_user() === null) {
           price_check(info.body);
         } else {
@@ -33,11 +34,17 @@ socket.on("scan_event", async (msg) => {
         }
         break;
       case "user_info":
+        clear_alert();
         login(info.body);
         break;
     }
   } catch (e) {
-    console.error("Unknown response: ", e);
+    if (e.error) {
+      speak(e.error);
+    } else {
+      console.error(e);
+    }
+
   }
 });
 
@@ -172,6 +179,16 @@ function setHint(content) {
   document.getElementById("hint").innerHTML = content;
 }
 
-function appendContent(content) {
-  document.getElementById("content").innerHTML += content;
+
+let speech_timeout = null;
+function speak(txt) {
+  document.getElementById('error').innerHTML = txt;
+  if (speech_timeout) {
+    clearTimeout(speech_timeout);
+  }
+  speech_timeout = setTimeout(clear_alert, 5000)
+}
+
+function clear_alert() {
+    document.getElementById('error').innerHTML = "&nbsp;";
 }
