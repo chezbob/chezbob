@@ -3,7 +3,11 @@ import { stdin as input, stdout as output } from "process";
 import * as readline from "readline/promises";
 import { HID } from "node-hid";
 const rl = readline.createInterface({ input, output });
-let socket = await ReconnectingSocket.connect("barcode");
+
+let socket = await ReconnectingSocket.connect(
+  process.env.RELAY_SERVER,
+  "barcode"
+);
 
 function connect() {
   try {

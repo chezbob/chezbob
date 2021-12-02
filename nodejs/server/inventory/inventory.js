@@ -3,7 +3,10 @@ import knex from "knex";
 import config from "./db/knexfile.js";
 
 let db = knex(config.development);
-let inventory = await ReconnectingSocket.connect("inventory");
+let inventory = await ReconnectingSocket.connect(
+  process.env.RELAY_SERVER,
+  "inventory"
+);
 
 inventory.handle("info_req", async (msg) => {
   console.log(msg);

@@ -2,7 +2,7 @@ import { ReconnectingSocket } from "/common/reconnecting-socket.js";
 
 //#Source https://bit.ly/2neWfJ2
 
-let socket = await ReconnectingSocket.connect("pos");
+let socket = await ReconnectingSocket.connect("ws://localhost:8080/", "pos");
 
 let STATE = {
   user: null, // the id of the currently signed in user. null if none
