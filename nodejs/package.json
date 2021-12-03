@@ -17,7 +17,7 @@
   "dependencies": {
     "knex": "^0.95.14",
     "node-hid": "^2.1.1",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "npm:@vscode/sqlite3@^5.0.7",
     "ws": "^8.2.3"
   },
   "devDependencies": {
