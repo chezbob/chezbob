@@ -1,8 +1,9 @@
 ## Getting Started
+Install node v17 with npm. I recommend using nvm since distro packages can fall behind.
 
 Run:
 
-- `npm run setup`
+- `npm run setup` (might take a bit, builds sqlite3)
 - `npm run debug` (make sure you have tmux installed)
 
 Open `http://localhost:8081/pos` in the browser.
