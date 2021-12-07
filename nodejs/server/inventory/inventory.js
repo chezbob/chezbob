@@ -16,7 +16,7 @@ inventory.handle("info_req", async (msg) => {
 
   let items = await db("inventory")
     .join("barcodes", "barcodes.item_id", "=", "inventory.id")
-    .select()
+    .select(["inventory.id as id", "name", "cents"])
     .where({ barcode })
     .limit(1);
 
@@ -32,8 +32,9 @@ inventory.handle("info_req", async (msg) => {
   }
 
   let users = await db("users")
+    .select(["users.id as id", "balance"])
     .join("barcodes", "barcodes.user_id", "=", "users.id")
-    .select()
+    .join("balances", "balances.id", "=", "users.id")
     .where({ barcode })
     .limit(1);
   if (users.length === 1) {
@@ -65,7 +66,7 @@ inventory.on("purchase", async (purchase) => {
   }
 
   // First, confirm the item exists
-  let items = await db("inventory").select().where({ id: item_id }).limit(1);
+  let items = await db("inventory").select(["id", "name", "cents"]).where({ id: item_id }).limit(1);
   if (items.length === 0) {
     throw new Error("Unknown item");
   }
@@ -77,7 +78,7 @@ inventory.on("purchase", async (purchase) => {
 
   // TODO: Evaluate the perf of this. Might need to denormalize
   let balance = (
-    await db("transactions").sum({ balance: "cents" }).where({ user_id })
+    await db("balances").where({ id: user_id })
   )[0].balance;
 
   inventory.send({
