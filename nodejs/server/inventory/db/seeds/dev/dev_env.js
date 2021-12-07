@@ -13,7 +13,7 @@ export async function seed(knex) {
     },
     { id: 2, name: "Red Bull", cents: 50, stock: 1 },
   ]);
-  await knex("users").insert({ id: 1 });
+  await knex("users").insert({ id: 1, "email": "chez@bob.com" });
   await knex("transactions").insert([{ id: 1, user_id: 1, cents: 1337 }]);
 
   await knex("barcodes").insert({ item_id: 1, barcode: "1234" });
