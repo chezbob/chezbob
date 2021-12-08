@@ -1,14 +1,52 @@
 import { ReconnectingSocket } from "/common/reconnecting-socket.js";
 
-//#Source https://bit.ly/2neWfJ2
-
 let socket = await ReconnectingSocket.connect("ws://localhost:8080/", "pos");
 
 let STATE = {
-  user: null, // the id of the currently signed in user. null if none
+  user_info: null, // The info for the currently signed_in user
   user_timeout: null, // the time at which the user gets signed out
   purchases: [], // all purchased items
+  hint: null,
+  price_check: null // item_info for a price check
 };
+
+
+function render() {
+  let user = curr_user();
+  console.log("render");
+  if (user) {
+    document.getElementById("logout").disabled = false;
+    document.body.style.setProperty('--bob-color', "var(--chez-green");
+    setBalance(STATE.user_info?.balance);
+    setHint(STATE.user_info?.hint ?? "- Scan an item to purchase");
+    if (STATE.purchases.length > 0) {
+      setTitle("Purchases");
+      setContent(
+        STATE.purchases.map(price_row).join("") + totals()
+      );
+    } else {
+      setTitle(null);
+      setContent(null);
+    }
+  } else {
+    document.getElementById("logout").disabled = true;
+    document.body.style.setProperty('--bob-color', "var(--chez-blue");
+    setBalance(null);
+    setHint(`
+      - Scan your ID to sign in
+      <br />
+      - Scan an item to price-check
+    `);
+    if (STATE.price_check) {
+      setTitle("Price Check");
+      setContent(price_row(STATE.price_check));
+    } else {
+      setTitle(null);
+      setContent(null);
+    }
+  }
+}
+
 
 const SESSION_TIME = 30000;
 
@@ -26,18 +64,16 @@ socket.on("scan_event", async (msg) => {
 
     switch (info.header.type) {
       case "item_info":
-        clear_alert();
         if (curr_user() === null) {
-          price_check(info.body);
+          STATE.price_check = info.body;
         } else {
           await purchase(info.body);
         }
         break;
       case "user_info":
         if (curr_user() !== null) {
-          return speak("Already signed in");
+          speak("Already signed in");
         }
-        clear_alert();
         login(info.body);
         break;
     }
@@ -47,38 +83,29 @@ socket.on("scan_event", async (msg) => {
     } else {
       console.error(e);
     }
-
   }
+  render();
 });
 
 /** User management */
 
 function login(user_info) {
-  STATE.user = user_info.id;
+  STATE.user_info = user_info;
   STATE.purchases = [];
 
-  document.getElementById("logout").disabled = false;
   start_logout_timer();
-  document.documentElement.style.setProperty("--bob-color", "lime");
-  setTitle(null);
-  setContent("");
-  setBalance(user_info.balance);
-  setHint("Scan item to purchase");
 }
 
 function logout() {
   STATE.user = null;
-  document.documentElement.style.setProperty("--bob-color", "var(--chez-blue)");
-  document.getElementById("logout").disabled = true;
-  setBalance(null);
-  reset();
+  render();
 }
 
 logout();
 document.getElementById("logout").addEventListener("click", logout);
 
 function curr_user() {
-  return STATE.user;
+  return STATE.user_info;
 }
 
 async function purchase(item_info) {
@@ -89,17 +116,12 @@ async function purchase(item_info) {
       type: "purchase",
     },
     body: {
-      user_id: curr_user(),
+      user_id: curr_user().id,
       item_id: item_info.id,
     },
   });
-
+  
   STATE.purchases.push(resp.body.item);
-  setTitle("Purchases");
-  setBalance(resp.body.balance);
-  setContent(
-    STATE.purchases.map(price_row).join("") + totals()
-  );
 }
 
 function totals() {
@@ -152,20 +174,6 @@ function set_timer_text() {
 // if no user is signed in
 setInterval(set_timer_text, 1000);
 
-function price_check(item_info) {
-  setTitle("Price Check");
-  setContent(price_row(item_info));
-}
-
-function reset() {
-  setTitle(null);
-  setContent("");
-  setHint(`
-    - Scan your ID to sign in
-    <br />
-    - Scan an item to price-check
-  `);
-}
 
 function setTitle(title) {
   if (title === null) {
