@@ -34,6 +34,9 @@ socket.on("scan_event", async (msg) => {
         }
         break;
       case "user_info":
+        if (curr_user() !== null) {
+          return speak("Already signed in");
+        }
         clear_alert();
         login(info.body);
         break;
