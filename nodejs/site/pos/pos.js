@@ -122,6 +122,7 @@ async function purchase(item_info) {
   });
   
   STATE.purchases.push(resp.body.item);
+  STATE.user_info.balance = resp.body.balance;
 }
 
 function totals() {
