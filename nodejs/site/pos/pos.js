@@ -7,30 +7,27 @@ let STATE = {
   user_timeout: null, // the time at which the user gets signed out
   purchases: [], // all purchased items
   hint: null,
-  price_check: null // item_info for a price check
+  price_check: null, // item_info for a price check
 };
-
 
 function render() {
   let user = curr_user();
   console.log("render");
   if (user) {
     document.getElementById("logout").disabled = false;
-    document.body.style.setProperty('--bob-color', "var(--chez-green");
+    document.body.style.setProperty("--bob-color", "var(--chez-green");
     setBalance(STATE.user_info?.balance);
     setHint(STATE.user_info?.hint ?? "- Scan an item to purchase");
     if (STATE.purchases.length > 0) {
       setTitle("Purchases");
-      setContent(
-        STATE.purchases.map(price_row).join("") + totals()
-      );
+      setContent(STATE.purchases.map(price_row).join("") + totals());
     } else {
       setTitle(null);
       setContent(null);
     }
   } else {
     document.getElementById("logout").disabled = true;
-    document.body.style.setProperty('--bob-color', "var(--chez-blue");
+    document.body.style.setProperty("--bob-color", "var(--chez-blue");
     setBalance(null);
     setHint(`
       - Scan your ID to sign in
@@ -46,7 +43,6 @@ function render() {
     }
   }
 }
-
 
 const SESSION_TIME = 30000;
 
@@ -92,7 +88,7 @@ socket.on("scan_event", async (msg) => {
 function login(user_info) {
   STATE.user_info = user_info;
   STATE.purchases = [];
-
+  STATE.price_check = null;
   start_logout_timer();
 }
 
@@ -120,7 +116,7 @@ async function purchase(item_info) {
       item_id: item_info.id,
     },
   });
-  
+
   STATE.purchases.push(resp.body.item);
   STATE.user_info.balance = resp.body.balance;
 }
@@ -175,7 +171,6 @@ function set_timer_text() {
 // if no user is signed in
 setInterval(set_timer_text, 1000);
 
-
 function setTitle(title) {
   if (title === null) {
     delete document.getElementById("content").dataset.title;
@@ -197,27 +192,26 @@ function setBalance(cents) {
   if (cents) {
     elem.dataset.balance = dollars(cents);
     if (cents > 0) {
-      elem.classList.add('positive');
-      elem.classList.remove('negative');
+      elem.classList.add("positive");
+      elem.classList.remove("negative");
     } else {
-      elem.classList.add('negative');
-      elem.classList.remove('positive');
+      elem.classList.add("negative");
+      elem.classList.remove("positive");
     }
   } else {
     delete document.getElementById("balance").dataset.balance;
   }
 }
 
-
 let speech_timeout = null;
 function speak(txt) {
-  document.getElementById('error').innerHTML = txt;
+  document.getElementById("error").innerHTML = txt;
   if (speech_timeout) {
     clearTimeout(speech_timeout);
   }
-  speech_timeout = setTimeout(clear_alert, 5000)
+  speech_timeout = setTimeout(clear_alert, 5000);
 }
 
 function clear_alert() {
-    document.getElementById('error').innerHTML = "&nbsp;";
+  document.getElementById("error").innerHTML = "&nbsp;";
 }
