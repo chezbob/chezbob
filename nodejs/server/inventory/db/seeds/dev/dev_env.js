@@ -18,6 +18,6 @@ export async function seed(knex) {
   await knex("transactions").insert([{ id: 1, user_id: 1, cents: 1337 }]);
 
   await knex("barcodes").insert({ item_id: 1, barcode: "1234" });
-  await knex("barcodes").insert({ item_id: 1, barcode: "0000" });
+  await knex("barcodes").insert({ item_id: 2, barcode: "0000" });
   await knex("barcodes").insert({ user_id: 1, barcode: "1111" });
 }
