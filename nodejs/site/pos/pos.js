@@ -59,6 +59,7 @@ function login(user_info) {
   document.documentElement.style.setProperty("--bob-color", "lime");
   setTitle(null);
   setContent("");
+  setBalance(user_info.balance);
   setHint("Scan item to purchase");
 }
 
@@ -66,6 +67,7 @@ function logout() {
   STATE.user = null;
   document.documentElement.style.setProperty("--bob-color", "var(--chez-blue)");
   document.getElementById("logout").disabled = true;
+  setBalance(null);
   reset();
 }
 
@@ -91,18 +93,17 @@ async function purchase(item_info) {
 
   STATE.purchases.push(resp.body.item);
   setTitle("Purchases");
+  setBalance(resp.body.balance);
   setContent(
-    STATE.purchases.map(price_row).join("") + totals(resp.body.balance)
+    STATE.purchases.map(price_row).join("") + totals()
   );
 }
 
-function totals(balance) {
+function totals() {
   const sum = STATE.purchases.reduce((sum, i) => sum + i.cents, 0);
   return `<br><div class='totals'>
       <div>Total: </div>
       <div>${dollars(sum)}</div>
-      <div>Balance: </div>
-      <div>${dollars(balance)}</div>
     </div>`;
 }
 
@@ -177,6 +178,22 @@ function setContent(content) {
 
 function setHint(content) {
   document.getElementById("hint").innerHTML = content;
+}
+
+function setBalance(cents) {
+  const elem = document.getElementById("balance");
+  if (cents) {
+    elem.dataset.balance = dollars(cents);
+    if (cents > 0) {
+      elem.classList.add('positive');
+      elem.classList.remove('negative');
+    } else {
+      elem.classList.add('negative');
+      elem.classList.remove('positive');
+    }
+  } else {
+    delete document.getElementById("balance").dataset.balance;
+  }
 }
 
 
