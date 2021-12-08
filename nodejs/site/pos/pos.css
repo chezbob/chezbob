@@ -7,6 +7,7 @@ html {
 :root {
   --chez-blue: aqua;
   --chez-bg: #222222;
+  --chez-green: lime;
   --chez-red: rgb(255, 70, 101);
   --bob-color: var(--chez-blue);
 }
@@ -299,4 +300,32 @@ button:active {
 
 .eye:first-child {
   margin-right: 0.5em;
+}
+
+
+
+#balance {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#balance:not([data-balance]) {
+  display: none;
+}
+
+#balance::after {
+  content: attr(data-balance);
+}
+
+#balance.positive::after {
+  color: var(--chez-green);
+}
+
+#balance.negative::after {
+  color: var(--chez-red);
+}
+
+#balance[data-balance] + #logo {
+  display: none;
 }
