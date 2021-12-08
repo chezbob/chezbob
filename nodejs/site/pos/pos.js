@@ -97,7 +97,7 @@ function login(user_info) {
 }
 
 function logout() {
-  STATE.user = null;
+  STATE.user_info = null;
   render();
 }
 
