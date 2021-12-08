@@ -66,7 +66,10 @@ inventory.on("purchase", async (purchase) => {
   }
 
   // First, confirm the item exists
-  let items = await db("inventory").select(["id", "name", "cents"]).where({ id: item_id }).limit(1);
+  let items = await db("inventory")
+    .select(["id", "name", "cents"])
+    .where({ id: item_id })
+    .limit(1);
   if (items.length === 0) {
     throw new Error("Unknown item");
   }
@@ -77,9 +80,7 @@ inventory.on("purchase", async (purchase) => {
   await db("transactions").insert([{ user_id, item_id, cents: -cents }]);
 
   // TODO: Evaluate the perf of this. Might need to denormalize
-  let balance = (
-    await db("balances").where({ id: user_id })
-  )[0].balance;
+  let balance = (await db("balances").where({ id: user_id }))[0].balance;
 
   inventory.send({
     header: {
