@@ -80,11 +80,17 @@ function setState(new_state) {
   render(STATE);
 }
 
+// Determines how long the user has after any interaction before the session gets reset
 const SESSION_TIME = 30000;
 
 socket.on("scan_event", async (msg) => {
   try {
+    // prolong the session
     add_session_time();
+
+    // Remove any old error messages for the sake of clarity
+    clear_error();
+
     let info = await socket.request({
       header: {
         to: "/inventory",
@@ -110,15 +116,17 @@ socket.on("scan_event", async (msg) => {
         break;
       case "user_info":
         if (state.user_info) {
-          speak("Already signed in");
+          set_error("Already signed in");
         } else {
           login(info.body);
         }
         break;
     }
   } catch (e) {
+    // If it has an `error` member, then it's an error from the socket request
+    // and should be displayed
     if (e.error) {
-      speak(e.error);
+      set_error(e.error);
     } else {
       console.error(e);
     }
@@ -138,11 +146,11 @@ function login(user_info) {
 
 }
 
-function logout() {
+function reset() {
   setState(DEFAULT_STATE);
 }
 
-document.getElementById("logout").addEventListener("click", logout);
+document.getElementById("logout").addEventListener("click", reset);
 
 function curr_user() {
   return get_state().user_info;
@@ -177,7 +185,6 @@ function add_session_time() {
   })
 }
 
-// 
 function totals() {
   const sum = get_state().purchases.reduce((sum, i) => sum + i.cents, 0);
   return `<br><div class='totals'>
@@ -216,12 +223,12 @@ function set_timer_text() {
 }
 
 // It's just easier to leave the reset timer always running and have it do nothing
-// if no user is signed in
+// if the timeout isn't set
 setInterval(() => {
   if (get_state().reset_timeout !== null) {
     const millis_remaining = get_state().reset_timeout - Date.now();
     if (millis_remaining <= 0) {
-      logout();
+      reset();
     }
   }
   render(get_state());
@@ -259,8 +266,8 @@ function setBalance(cents) {
   }
 }
 
-let speech_timeout = null;
-function speak(txt) {
+let error_timeout = null;
+function set_error(txt) {
   setState({
     ...get_state(),
     error: txt,
@@ -271,7 +278,7 @@ function speak(txt) {
   speech_timeout = setTimeout(clear_alert, 5000);
 }
 
-function clear_alert() {
+function clear_error() {
   setState({
     ...get_state(),
     error: null
