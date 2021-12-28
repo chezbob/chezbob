@@ -2,6 +2,8 @@ import { ReconnectingSocket } from "../../common/reconnecting-socket.js";
 import knex from "knex";
 import config from "./db/knexfile.js";
 
+const MIN_BALANCE = -10_00; // Minimum balance a user can hold
+
 let db = knex(config.development);
 let inventory = await ReconnectingSocket.connect(
   process.env.RELAY_SERVER,
@@ -57,7 +59,7 @@ inventory.handle("info_req", async (msg) => {
   };
 });
 
-inventory.on("purchase", async (purchase) => {
+inventory.handle("purchase", async (purchase) => {
   const user_id = purchase.body?.user_id;
   const item_id = purchase.body?.item_id;
 
@@ -76,11 +78,16 @@ inventory.on("purchase", async (purchase) => {
 
   let cents = items[0].cents;
 
+  // TODO: Evaluate the perf of this. Might need to denormalize
+  let balance = (await db("balances").where({ id: user_id }))[0].balance;
+  let new_balance = balance - cents;
+  if (new_balance < MIN_BALANCE) {
+    throw new Error("Balance too low");
+  }
+
   // Then insert the transaction
   await db("transactions").insert([{ user_id, item_id, cents: -cents }]);
 
-  // TODO: Evaluate the perf of this. Might need to denormalize
-  let balance = (await db("balances").where({ id: user_id }))[0].balance;
 
   inventory.send({
     header: {
@@ -90,7 +97,7 @@ inventory.on("purchase", async (purchase) => {
     },
     body: {
       item: items[0],
-      balance,
+      balance: new_balance,
     },
   });
 });
