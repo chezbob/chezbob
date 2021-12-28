@@ -2,9 +2,8 @@ import { ReconnectingSocket } from "/common/reconnecting-socket.js";
 
 let socket = await ReconnectingSocket.connect("ws://localhost:8080/", "pos");
 
-
 // Chez bob's UI is reasonably dynamic so we manage the state using this state object
-//   routines can call setState({...}) to update the state and trigger a rerender 
+//   routines can call setState({...}) to update the state and trigger a rerender
 //
 // We attach it to the window for easy debugging but it should only be accessed through get_state()
 // to prevent awkward closure capture nonsense.
@@ -29,7 +28,6 @@ function get_state() {
 // in React.
 window.render = (state) => {
   if (state.user_info) {
-
     document.getElementById("logout").disabled = false;
     document.body.style.setProperty("--bob-color", "var(--chez-green");
     setBalance(state.user_info?.balance);
@@ -61,11 +59,10 @@ window.render = (state) => {
   }
 
   document.getElementById("error").innerHTML = state.error;
-}
+};
 
 // We need to render immediately because browsers are weird and will cache our data attributes
 render(get_state());
-
 
 // Use setState to trigger a rerender.
 // Note: rendering is asynchronous so that multiple calls to
@@ -111,7 +108,7 @@ socket.on("scan_event", async (msg) => {
           setState({
             ...state,
             price_check: info.body,
-          })
+          });
         }
         break;
       case "user_info":
@@ -143,7 +140,6 @@ function login(user_info) {
     purchases: [],
     price_check: null,
   });
-
 }
 
 function reset() {
@@ -169,12 +165,12 @@ async function purchase(item_info) {
   });
 
   setState({
-      ...get_state(),
-      purchases: [...get_state().purchases, resp.body.item],
-      user_info: {
-        ...get_state().user_info,
-        balance: resp.body.balance
-      }
+    ...get_state(),
+    purchases: [...get_state().purchases, resp.body.item],
+    user_info: {
+      ...get_state().user_info,
+      balance: resp.body.balance,
+    },
   });
 }
 
@@ -182,7 +178,7 @@ function add_session_time() {
   setState({
     ...get_state(),
     reset_timeout: Date.now() + SESSION_TIME,
-  })
+  });
 }
 
 function totals() {
@@ -210,7 +206,6 @@ function dollars(cents) {
   let c = Math.abs(cents) % 100;
   return `${d}.${c < 10 ? "0" + c : c}`;
 }
-
 
 function set_timer_text() {
   if (curr_user() !== null) {
@@ -271,7 +266,7 @@ function set_error(txt) {
   setState({
     ...get_state(),
     error: txt,
-  })
+  });
   if (speech_timeout) {
     clearTimeout(speech_timeout);
   }
@@ -281,6 +276,6 @@ function set_error(txt) {
 function clear_error() {
   setState({
     ...get_state(),
-    error: null
-  })
+    error: null,
+  });
 }

@@ -10,9 +10,8 @@ export async function seed(knex) {
       id: 1,
       name: "Reese's Peanutbutter Cup",
       cents: 110,
-      stock: 0,
     },
-    { id: 2, name: "Red Bull", cents: 50, stock: 1 },
+    { id: 2, name: "Red Bull", cents: 50 },
   ]);
   await knex("users").insert({ id: 1, email: "chez@bob.com" });
   await knex("transactions").insert([{ id: 1, user_id: 1, cents: 1337 }]);
