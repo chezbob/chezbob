@@ -140,6 +140,7 @@ export class ReconnectingSocket extends EventTarget {
     this.on(msg_type, async (msg) => {
       return cb(msg)
         .catch((e) => {
+          console.error(e);
           this.send({
             header: {
               to: msg.header.from,

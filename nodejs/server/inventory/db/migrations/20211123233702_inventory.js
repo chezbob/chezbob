@@ -3,7 +3,6 @@ export function up(knex) {
     table.increments("id");
     table.string("name", 255).notNullable();
     table.integer("cents").notNullable();
-    table.integer("stock").notNullable();
     table.string("barcode").notNullable().unique();
   });
 }
