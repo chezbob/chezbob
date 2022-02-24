@@ -13,7 +13,7 @@ function connect() {
   try {
     var hid_devices = devices();
     var scanner = hid_devices.find((d) => {
-      d.product.includes("3800");
+      return d.product.includes("3800");
     });
     var handle = new HID(scanner.path);
   } catch (e) {
