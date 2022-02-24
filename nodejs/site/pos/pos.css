@@ -221,7 +221,8 @@ button:active {
 #face {
   display: flex;
   flex-direction: column;
-  align-self: stretch;
+  justify-self: stretch;
+  align-self: center;
 }
 
 /* Price check is only ever one line, so don't expand the mouth too much */
