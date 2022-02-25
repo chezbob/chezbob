@@ -12,17 +12,17 @@ import { NFC } from "nfc-pcsc";
 
 // Required config options to specify the location of the relay server, what to call this instance of the nfc service, and where to send its data
 const RELAY_SERVER =
-  process.env.SERVER_IDENT ||
-  (console.error("Must provide RELAY_SERVER environment variable") &&
-    process.exit(1));
+  process.env.RELAY_SERVER ||
+  console.error("Must provide RELAY_SERVER environment variable") ||
+  process.exit(1);
 const SERVICE_IDENT =
-  process.env.SERVER_IDENT ||
-  (console.error("Must provide SERVICE_IDENT environment variable") &&
-    process.exit(1));
+  process.env.SERVICE_IDENT ||
+  console.error("Must provide SERVICE_IDENT environment variable") ||
+  process.exit(1);
 const DESTINATION_IDENT =
-  process.env.SERVER_IDENT ||
-  (console.error("Must provide DESTINATION_IDENT environment variable") &&
-    process.exit(1));
+  process.env.DESTINATION_IDENT ||
+  console.error("Must provide DESTINATION_IDENT environment variable") ||
+  process.exit(1);
 
 let socket = await ReconnectingSocket.connect(RELAY_SERVER, SERVICE_IDENT);
 
