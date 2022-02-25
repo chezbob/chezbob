@@ -7,6 +7,7 @@
     service will likely hang.
 */
 
+import { ReconnectingSocket } from "../common/reconnecting-socket.js";
 import { NFC } from "nfc-pcsc";
 
 // Required config options to specify the location of the relay server, what to call this instance of the nfc service, and where to send its data
