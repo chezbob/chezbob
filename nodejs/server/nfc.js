@@ -58,7 +58,7 @@ nfc.on("reader", (reader) => {
       },
       body: {
         // Shave off the last byte which is a null terminator
-        barcode: barcode.toString("hex", buffer.length - 1),
+        barcode: barcode.toString("hex", barcode.length - 1),
       },
     });
   });
