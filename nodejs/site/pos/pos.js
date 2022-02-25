@@ -90,7 +90,7 @@ socket.on("scan_event", async (msg) => {
 
     let info = await socket.request({
       header: {
-        to: "/inventory",
+        to: "inventory",
         type: "info_req",
       },
       body: {
@@ -155,7 +155,7 @@ function curr_user() {
 async function purchase(item_info) {
   let resp = await socket.request({
     header: {
-      to: "/inventory",
+      to: "inventory",
       type: "purchase",
     },
     body: {
