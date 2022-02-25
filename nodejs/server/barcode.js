@@ -13,21 +13,25 @@ import { devices, HID } from "node-hid";
 
 const rl = readline.createInterface({ input, output });
 
+
 // Required config options to specify the location of the relay server, what to call this instance of the nfc service, and where to send its data
 const RELAY_SERVER =
-  process.env.SERVER_IDENT ||
-  (console.error("Must provide RELAY_SERVER environment variable") &&
-    process.exit(1));
+  process.env.RELAY_SERVER ||
+  console.error("Must provide RELAY_SERVER environment variable") || 
+    process.exit(1);
 const SERVICE_IDENT =
-  process.env.SERVER_IDENT ||
-  (console.error("Must provide SERVICE_IDENT environment variable") &&
-    process.exit(1));
+  process.env.SERVICE_IDENT ||
+  console.error("Must provide SERVICE_IDENT environment variable") || 
+    process.exit(1);
 const DESTINATION_IDENT =
-  process.env.SERVER_IDENT ||
-  (console.error("Must provide DESTINATION_IDENT environment variable") &&
-    process.exit(1));
+  process.env.DESTINATION_IDENT ||
+  console.error("Must provide DESTINATION_IDENT environment variable") || 
+    process.exit(1);
 
-let socket = await ReconnectingSocket.connect(RELAY_SERVER, SERVICE_IDENT);
+let socket = await ReconnectingSocket.connect(
+  RELAY_SERVER,
+  SERVICE_IDENT 
+);
 
 // Connect will try to find an attached barcode scanner, retrying every second
 function connect() {
@@ -50,12 +54,15 @@ function connect() {
   // On any kind of error, just initiate a reconnect
   handle.on("error", connect);
 
+
   handle.on("data", (d) => {
     // This code manually parses the HID data.
     let len = d.readUInt8(1);
     let code = d.slice(5, 5 + len).toString();
 
+
     console.log(code);
+
     send(code.toString());
   });
 }
