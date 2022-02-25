@@ -48,6 +48,8 @@ function send(barcode) {
 // The physical scanner operates asynchronously
 connect();
 
+
+
 // Set up a debug prompt for manual entry
 while (true) {
   let input = await rl.question("*barcode* ");
