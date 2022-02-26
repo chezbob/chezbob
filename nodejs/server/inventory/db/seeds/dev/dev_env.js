@@ -1,9 +1,10 @@
 export async function seed(knex) {
   // Deletes ALL existing entries
-  await knex("users").del();
-  await knex("inventory").del();
-  await knex("transactions").del();
+
   await knex("barcodes").del();
+  await knex("transactions").del();
+  await knex("inventory").del();
+  await knex("users").del();
 
   await knex("inventory").insert([
     {
