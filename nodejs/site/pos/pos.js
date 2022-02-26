@@ -261,16 +261,17 @@ function setBalance(cents) {
   }
 }
 
+
 let error_timeout = null;
 function set_error(txt) {
   setState({
     ...get_state(),
     error: txt,
   });
-  if (speech_timeout) {
-    clearTimeout(speech_timeout);
+  if (error_timeout) {
+    clearTimeout(error_timeout);
   }
-  speech_timeout = setTimeout(clear_alert, 5000);
+  error_timeout = setTimeout(clear_error, 5000);
 }
 
 function clear_error() {
