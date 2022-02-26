@@ -10,7 +10,8 @@ wss.on("connection", handleConnect);
 function handleConnect(ws, req) {
   debug(() => console.log(`New connection: ${req.url}`));
 
-  ws.name = req.url;
+  // skip the leading slash
+  ws.name = req.url.substring(1);
   ws.on("message", handleMessage.bind(ws));
   ws.on("close", handleClose.bind(ws));
 }
