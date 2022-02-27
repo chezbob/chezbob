@@ -294,6 +294,7 @@ button:active {
 #eyes {
   text-align: center;
   color: var(--bob-color);
+  transition: color 200ms linear;
   font-size: 96px;
   min-width: 4em;
   margin-bottom: 80px;
