@@ -115,7 +115,6 @@ export class PriceCheck extends Session {
   title = `Price Check`;
 
   get content() {
-    console.log(this.item);
     return price_row(this.item);
   }
 }
@@ -173,7 +172,7 @@ export class LoggedIn extends Session {
   }
 
   async purchase(item) {
-    const mode = new Purchasing(item);
+    const mode = new Purchasing(this.user);
     await mode.purchase(item);
     set_mode(mode);
   }
@@ -203,7 +202,7 @@ export class Purchasing extends LoggedIn {
         item_id: item_info.id,
       },
     });
-
+    console.log("RESP", resp);
     this.purchases.push(resp.body.item);
     this.user.balance = resp.body.balance;
     this.render();
