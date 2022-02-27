@@ -129,8 +129,6 @@ export class LoggedIn extends Session {
   user;
   title = null;
   color = "green";
-  purchases = [];
-
   hint = `- Scan an item to purchase`;
 
   constructor(user) {
