@@ -2,7 +2,7 @@ import { ReconnectingSocket } from "../../common/reconnecting-socket.js";
 import knex from "knex";
 import config from "./db/knexfile.js";
 
-const MIN_BALANCE = -10_00; // Minimum balance a user can hold
+const MIN_BALANCE = -Infinity; // Minimum balance a user can hold (currently disabled)
 
 let db = knex(config.development);
 let inventory = await ReconnectingSocket.connect(
