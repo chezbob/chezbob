@@ -128,7 +128,7 @@ export class PriceCheck extends Session {
 export class LoggedIn extends Session {
   user;
   title = null;
-  color = "green";
+  color = "var(--chez-green)";
   hint = `- Scan an item to purchase`;
 
   constructor(user) {
@@ -151,6 +151,7 @@ export class LoggedIn extends Session {
   }
 
   async on_scan(msg) {
+    this.error = null;
     let info = await socket.request({
       header: {
         to: "inventory",
