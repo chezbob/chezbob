@@ -39,7 +39,7 @@ class Mode {
     document.getElementById("hint").innerHTML = this.hint;
 
     // Set error
-    document.getElementById("error").innerHTML = this.error || "";
+    document.getElementById("error").innerHTML = this.error || "&nbsp;";
   }
 
   /**
