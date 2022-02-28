@@ -1,21 +1,35 @@
+/**
+ * The inventory service that powers all of chezbob's persisted state
+ */
+
 import { ReconnectingSocket } from "../../common/reconnecting-socket.js";
 import knex from "knex";
 import config from "./db/knexfile.js";
 
 const MIN_BALANCE = -Infinity; // Minimum balance a user can hold (currently disabled)
 
+// TODO: Allow swapping between dev and prod
 let db = knex(config.development);
 let inventory = await ReconnectingSocket.connect(
   process.env.RELAY_SERVER,
   "inventory"
 );
 
+// `info_req` is a request for information about a barcode or nfc code
+// The inventory service will return either a `user_info` or an `item_info`
+// object so callers should handle both cases. If it is neither,
+// expect an `item_not_found` error.
 inventory.handle("info_req", async (msg) => {
   console.log(msg);
   let src = msg.header.from;
   let response_to = msg.header.id;
   let barcode = msg.body.barcode;
 
+  // To keep things simple, let's just do two queries. Remember, chez bob has an
+  // incredibly low QPS and is hosted on a single network so it's okay to be a little
+  // wasteful in the name of being clear.
+
+  // First up: is it an item?
   let items = await db("inventory")
     .join("barcodes", "barcodes.item_id", "=", "inventory.id")
     .select(["inventory.id as id", "name", "barcode", "cents"])
@@ -33,6 +47,7 @@ inventory.handle("info_req", async (msg) => {
     };
   }
 
+  // Okay, not an item... is it a user?
   let users = await db("users")
     .select(["users.id as id", "balance"])
     .join("barcodes", "barcodes.user_id", "=", "users.id")
@@ -49,6 +64,7 @@ inventory.handle("info_req", async (msg) => {
       body: users[0],
     };
   }
+
   return {
     header: {
       response_to,
@@ -59,6 +75,7 @@ inventory.handle("info_req", async (msg) => {
   };
 });
 
+// Purchasing 
 inventory.handle("purchase", async (purchase) => {
   const user_id = purchase.body?.user_id;
   const item_id = purchase.body?.item_id;
@@ -67,7 +84,9 @@ inventory.handle("purchase", async (purchase) => {
     return console.error("Invalid request: ", purchase);
   }
 
-  // First, confirm the item exists
+  // First, confirm the item exists. Ultimately this would be unncesary
+  // if we fully trusted the client to call info_req first, but better
+  // safe than sorry.
   let items = await db("inventory")
     .select(["id", "name", "cents"])
     .where({ id: item_id })
@@ -100,6 +119,9 @@ inventory.handle("purchase", async (purchase) => {
   };
 });
 
+// `update_info` is an administration endpoint for editing the set of
+// known items in chezbob. It functions as an "upsert", so if the item_info
+// comes with an id, we'll update the record, otherwise we'll create a new one.
 inventory.handle("update_info", async (item_info) => {
   // If an id is not provided, we need to insert
   let id = item_info.body.id;
