@@ -33,7 +33,6 @@ body {
   font-weight: bold;
   text-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
     -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
-
 }
 
 .scanline {
@@ -98,7 +97,7 @@ header {
 }
 
 button {
-  padding: 0.5em 0.25em 0.25em 0.75em;
+  padding: 0.5em 0.5em 0.25em 0.5em;
   background: transparent;
   color: inherit;
   border: 3px solid white;
@@ -115,6 +114,21 @@ button:active {
 
 #logout[disabled] {
   display: none;
+}
+
+input[type="text"],
+input[type="password"] {
+  --line-color: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  padding: 0.5em 0.5em 0.25em 0.5em;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  --line-color: var(--bob-color);
+  outline: var(--line-color) 3px solid;
 }
 
 #error {
@@ -174,7 +188,7 @@ button:active {
     -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px var(--line-color),
     inset 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
     inset -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3),
-    inset 0 0 3px var(--line-color);
+    inset 0 0 3px var(--line-color) !important;
 }
 
 /* Rows of price-check and purchase */
@@ -199,7 +213,8 @@ button:active {
 }
 
 #hint {
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: max-content;
   justify-self: center;
 }

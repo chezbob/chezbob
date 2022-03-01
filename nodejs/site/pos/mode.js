@@ -19,6 +19,9 @@ class Mode {
   // The render function is the only routine that updates the DOM. This means our UI is a function
   // from mode to UI.
   render() {
+    if (window.mode != this) {
+      return;
+    }
     // Set color
     document.body.style.setProperty("--bob-color", this.color);
 
@@ -33,13 +36,25 @@ class Mode {
     }
 
     // Set content
-    document.getElementById("content").innerHTML = this.content;
+    const content = document.getElementById("content");
+    const new_content = this.content;
+    if (content.innerHTML != new_content) {
+      content.innerHTML = new_content;
+    }
 
     // Set hint
-    document.getElementById("hint").innerHTML = this.hint;
+    const hint = document.getElementById("hint");
+    const new_hint = this.hint;
+    if (hint.innerHTML != new_hint) {
+      hint.innerHTML = new_hint;
+    }
 
     // Set error
-    document.getElementById("error").innerHTML = this.error || "&nbsp;";
+    const error = document.getElementById("error");
+    const new_error = this.error || "&nbsp;";
+    if (error.innerHTML != new_error) {
+      error.innerHTML = new_error;
+    }
   }
 
   /**
@@ -56,10 +71,14 @@ class Mode {
 export class DefaultMode extends Mode {
   color = "var(--chez-blue)";
   title = null;
+  content = null;
   hint = `
       - Scan your ID to sign in
       <br />
       - Scan an item to price-check
+      <br />
+      <div style="align-self: center; margin: 1em;">- or -</div>
+      <button style="align-self: center" onclick="window.mode.manualLogin()">Manual Login</button>
     `;
   get header() {
     return `
@@ -86,6 +105,10 @@ export class DefaultMode extends Mode {
         set_mode(new LoggedIn(info.body));
         break;
     }
+  }
+
+  manualLogin() {
+    set_mode(new ManualLogin());
   }
 }
 
@@ -126,9 +149,14 @@ export class PriceCheck extends Session {
  */
 export class LoggedIn extends Session {
   user;
+  rerender = true;
   title = null;
   color = "var(--chez-green)";
-  hint = `- Scan an item to purchase`;
+  hint = `
+    - Scan an item to purchase<br>
+    <div style="align-self: center; margin: 1em;">- or -</div>
+    <button onclick="window.mode.manage_account()">Manage Account</button>   
+  `;
 
   constructor(user) {
     super();
@@ -177,6 +205,10 @@ export class LoggedIn extends Session {
     set_mode(mode);
   }
 
+  manage_account() {
+    set_mode(new ManageAccount(this.user));
+  }
+
   logout() {
     set_mode(new DefaultMode());
   }
@@ -214,5 +246,110 @@ export class Purchasing extends LoggedIn {
         <div>Total: </div>
         <div>${dollars(sum)}</div>
         </div>`;
+  }
+}
+
+class ManualLogin extends DefaultMode {
+  title = `Sign In`;
+  hint = `
+      - Scan your ID to sign in
+      <br>
+      - Scan an item to price-check
+    `;
+
+  content = `
+        <form onsubmit="window.mode.attemptLogin(event)" style="align-self: center">
+            <input type="text" placeholder="username" name="username" class="glow"><br><br>
+            <input type="password" placeholder="password" name="password" class="glow"><br><br>
+            <button type="submit">Sign In</button>
+            <button onclick="window.mode.cancel()" style="float: right">Cancel</button>
+        </form>
+    `;
+
+  async attemptLogin(event) {
+    event.preventDefault();
+    const username = document.querySelector("input[name=username]").value;
+    const password = document.querySelector("input[name=password]").value;
+    this.set_error("");
+    try {
+      const user = await socket.request({
+        header: {
+          to: "inventory",
+          type: "login",
+        },
+        body: {
+          username,
+          password,
+        },
+      });
+      set_mode(new LoggedIn(user.body));
+    } catch (e) {
+      console.error(e);
+      this.set_error(e.error);
+    }
+  }
+
+  cancel() {
+    set_mode(new DefaultMode());
+  }
+}
+
+class SetPassword extends LoggedIn {
+  title = `Set Password`;
+  hint = `
+        <button onclick="window.mode.cancel()">Cancel</button>
+    `;
+  content = `
+        <form onsubmit="window.mode.setPassword(event)" style="align-self: center">
+            <input type="password" placeholder="New Password" name="password" oninput="window.mode.bump_timeout()" class="glow"><br><br>
+            <input type="password" placeholder="Confirm Password" name="confirmation" oninput="window.mode.bump_timeout()" class="glow"><br><br>
+            <button type="submit">Set Password</button>
+        </form>
+    `;
+
+  async setPassword(event) {
+    event.preventDefault();
+    const password = document.querySelector("input[name=password]").value;
+    const confirmation = document.querySelector(
+      "input[name=confirmation]"
+    ).value;
+
+    if (password !== confirmation) {
+      console.log(password, confirmation);
+      return this.set_error("Passwords do not match");
+    }
+
+    await socket.request({
+      header: {
+        type: "set_password",
+        to: "inventory",
+      },
+      body: {
+        user_id: this.user.id,
+        password,
+      },
+    });
+
+    set_mode(new LoggedIn(this.user));
+  }
+
+  cancel() {
+    set_mode(new LoggedIn(this.user));
+  }
+}
+
+export class ManageAccount extends LoggedIn {
+  title = `Manage Account`;
+  hint = `<button onclick=window.mode.cancel()>Cancel</button>`;
+  content = `
+        <button onclick="window.mode.setPassword()">Set Password</button>
+    `;
+
+  setPassword() {
+    set_mode(new SetPassword(this.user));
+  }
+
+  cancel() {
+    set_mode(new LoggedIn(this.user));
   }
 }
