@@ -77,7 +77,7 @@ export class DefaultMode extends Mode {
       <br />
       - Scan an item to price-check
       <br />
-      <div style="align-self: center; margin: 1em;">- or -</div>
+      <div style="align-self: center; margin: 1em;">or</div>
       <button style="align-self: center" onclick="window.mode.manualLogin()">Manual Login</button>
     `;
     get header() {
@@ -154,7 +154,7 @@ export class LoggedIn extends Session {
     color = "var(--chez-green)";
     hint = `
     - Scan an item to purchase<br>
-    <div style="align-self: center; margin: 1em;">- or -</div>
+    <div style="align-self: center; margin: 1em;">or</div>
     <button onclick="window.mode.manage_account()">Manage Account</button>   
   `;
 
@@ -293,10 +293,34 @@ class ManualLogin extends DefaultMode {
     }
 }
 
-class SetPassword extends LoggedIn {
+
+class ManageAccount extends LoggedIn {
+    title = `Manage Account`;
+    hint = `<button onclick=window.mode.goBack()>Go Back</button>`;
+    content = `
+        <button onclick="window.mode.setPassword()">Set Password</button>
+        <button onclick="window.mode.addCard()">Add Card</button>
+    `;
+
+    setPassword() {
+        set_mode(new SetPassword(this.user));
+    }
+
+    addCard() {
+        set_mode(new AddCard(this.user));
+    }
+
+    goBack() {
+        set_mode(new LoggedIn(this.user));
+    }
+
+    on_scan() {}
+}
+
+class SetPassword extends ManageAccount {
     title = `Set Password`;
     hint = `
-        <button onclick="window.mode.cancel()">Cancel</button>
+        <button onclick="window.mode.goBack()">Go Back</button>
     `;
     content = `
         <form onsubmit="window.mode.setPassword(event)" style="align-self: center">
@@ -331,42 +355,17 @@ class SetPassword extends LoggedIn {
 
         set_mode(new LoggedIn(this.user));
     }
-
-    cancel() {
-        set_mode(new LoggedIn(this.user));
-    }
-}
-
-export class ManageAccount extends LoggedIn {
-    title = `Manage Account`;
-    hint = `<button onclick=window.mode.cancel()>Cancel</button>`;
-    content = `
-        <button onclick="window.mode.setPassword()">Set Password</button>
-        <button onclick="window.mode.addCard()">Add Card</button>
-    `;
-
-    setPassword() {
-        set_mode(new SetPassword(this.user));
-    }
-
-    addCard() {
-        set_mode(new AddCard(this.user));
-    }
-
-    cancel() {
-        set_mode(new LoggedIn(this.user));
-    }
-
-    on_scan() {}
 }
 
 
 export class AddCard extends ManageAccount {
     title = `Add Card`
     content = `Scan the card you wish to add to your account.`
-    hint = `<button onclick=window.mode.cancel()>Go Back</button>`;
+    hint = `<button onclick=window.mode.goBack()>Go Back</button>`;
 
     async on_scan(msg) {
+        this.bump_timeout();
+
         await socket.request({
             header: {
                 to: "inventory",
