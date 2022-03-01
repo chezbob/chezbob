@@ -5,6 +5,8 @@
 import { ReconnectingSocket } from "../../common/reconnecting-socket.js";
 import knex from "knex";
 import config from "./db/knexfile.js";
+import { pbkdf2, randomBytes } from "node:crypto";
+import { promisify } from "node:util";
 
 const MIN_BALANCE = -Infinity; // Minimum balance a user can hold (currently disabled)
 
@@ -14,6 +16,12 @@ let inventory = await ReconnectingSocket.connect(
   process.env.RELAY_SERVER,
   "inventory"
 );
+
+function user_info() {
+  return db("users")
+    .select(["users.id as id", "balance"])
+    .join("balances", "balances.id", "=", "users.id");
+}
 
 // `info_req` is a request for information about a barcode or nfc code
 // The inventory service will return either a `user_info` or an `item_info`
@@ -39,8 +47,6 @@ inventory.handle("info_req", async (msg) => {
   if (items.length === 1) {
     return {
       header: {
-        response_to,
-        to: src,
         type: "item_info",
       },
       body: items[0],
@@ -48,10 +54,8 @@ inventory.handle("info_req", async (msg) => {
   }
 
   // Okay, not an item... is it a user?
-  let users = await db("users")
-    .select(["users.id as id", "balance"])
+  let users = await user_info()
     .join("barcodes", "barcodes.user_id", "=", "users.id")
-    .join("balances", "balances.id", "=", "users.id")
     .where({ barcode })
     .limit(1);
   if (users.length === 1) {
@@ -67,15 +71,81 @@ inventory.handle("info_req", async (msg) => {
 
   return {
     header: {
-      response_to,
-      to: src,
       type: "item_not_found",
     },
     error: "Unknown barcode",
   };
 });
 
-// Purchasing 
+inventory.handle("login", async (attempt) => {
+  const username = attempt.body?.username;
+  const password = attempt.body?.password;
+
+  if (typeof username !== "string") {
+    throw new Error("Invalid request: ", attempt);
+  }
+
+  let users = await db("users").where({ username }).limit(1);
+  if (users.length !== 1) {
+    throw new Error("Invalid username/password");
+  }
+
+  const user = users[0];
+
+  console.log(user);
+
+  if (user.password_hash) {
+    const hashed = await perform_hash(password, user.password_salt);
+    if (hashed !== user.password_hash) {
+      throw new Error("Invalid username/password");
+    }
+  }
+
+  const balance = (await db("balances").where({ id: user.id }).limit(1))[0]
+    .balance;
+
+  return {
+    header: {
+      type: "user_info",
+    },
+    body: {
+      id: user.id,
+      balance,
+    },
+  };
+});
+
+async function perform_hash(pwd, salt) {
+  return (await promisify(pbkdf2)(pwd, salt, 1000, 64, "sha512")).toString(
+    "hex"
+  );
+}
+
+inventory.handle("set_password", async (set_password) => {
+  const user_id = set_password.body?.user_id;
+  const password = set_password.body?.password;
+
+  if (!user_id || !password) {
+    return console.error("Invalid set_password request: ", set_password);
+  }
+
+  const password_salt = randomBytes(64).toString("hex");
+  const password_hash = await perform_hash(password, password_salt);
+
+  await db("users").where({ id: user_id }).update({
+    password_hash,
+    password_salt,
+  });
+
+  return {
+    header: {
+      type: "set_password_success",
+    },
+    body: {},
+  };
+});
+
+// Purchasing
 inventory.handle("purchase", async (purchase) => {
   const user_id = purchase.body?.user_id;
   const item_id = purchase.body?.item_id;
@@ -127,6 +197,9 @@ inventory.handle("update_info", async (item_info) => {
   let id = item_info.body.id;
   if (id === null) {
     console.log("Creating new item");
+
+    // Be sure to use a transaction since we have to update both the inventory
+    // and the barcode tables together. This ensures consistency.
     await db.transaction(async (trx) => {
       let item_id = (
         await trx("inventory").insert([
