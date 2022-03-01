@@ -77,6 +77,27 @@ inventory.handle("info_req", async (msg) => {
   };
 });
 
+inventory.handle('add_user_card', async (add_user_card) => {
+  const user_id = add_user_card.body?.user_id;
+  const barcode = add_user_card.body?.barcode;
+
+  if (!user_id || !barcode) {
+    throw new Error("Invalid add_user_card request: ", add_user_card);
+  }
+
+  await db("barcodes").insert({
+    barcode,
+    user_id
+  });
+
+  return {
+    header: {
+      type: "add_user_card_success"
+    },
+    body: {}
+  }
+});
+
 inventory.handle("login", async (attempt) => {
   const username = attempt.body?.username;
   const password = attempt.body?.password;
