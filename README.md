@@ -15,10 +15,10 @@ You can manually input barcode values using the barcode panel.
 
 Chez bob consists of:
 
-    - Web frontends (see `web-frontend/`)
-    - Hardware-managing servers (see `devices`)
-    - The inventory server (see `server/inventory/`)
-    - A relay server which routes data between chez bob's various servers and clients (see `server/relay.js`)
+- Web frontends (see `web-frontend/`)
+- Hardware-managing servers (see `devices`)
+- The inventory server (see `server/inventory/`)
+- A relay server which routes data between chez bob's various servers and clients (see `server/relay.js`)
 
 All of these components communicate through the relay server, using WebSockets.
 For example, when a barcode is scanned, the barcode server sends a notification
