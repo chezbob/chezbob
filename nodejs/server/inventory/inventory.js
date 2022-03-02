@@ -77,19 +77,17 @@ inventory.handle("info_req", async (msg) => {
   };
 });
 
-inventory.handle('add_user_card', async (add_user_card) => {
+inventory.handle("add_user_card", async (add_user_card) => {
   const user_id = add_user_card.body?.user_id;
   const barcode = add_user_card.body?.barcode;
   console.log(typeof user_id);
-  if (typeof user_id !== 'number' || typeof barcode !== 'string') {
+  if (typeof user_id !== "number" || typeof barcode !== "string") {
     throw new Error("Invalid add_user_card request: ", add_user_card);
   }
 
-
   await db.transaction(async (trx) => {
-
     // Check to make sure this barcode isn't already registered
-    const existing = await trx("barcodes").where({barcode}).limit(1);
+    const existing = await trx("barcodes").where({ barcode }).limit(1);
     if (existing.length !== 0) {
       if (existing[0].user_id === user_id) {
         throw new Error("Card already registered to your account");
@@ -100,18 +98,16 @@ inventory.handle('add_user_card', async (add_user_card) => {
 
     await trx("barcodes").insert({
       barcode,
-      user_id
+      user_id,
     });
-
   });
-
 
   return {
     header: {
-      type: "add_user_card_success"
+      type: "add_user_card_success",
     },
-    body: {}
-  }
+    body: {},
+  };
 });
 
 inventory.handle("login", async (attempt) => {

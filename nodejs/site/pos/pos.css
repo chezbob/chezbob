@@ -109,7 +109,7 @@ button {
   --line-color: white;
   text-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
     -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
-    margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 button:active {
