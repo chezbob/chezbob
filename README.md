@@ -1,77 +1,29 @@
-# chezbob-bobolith
+## Getting Started
 
-Instructions to set up bobolith on fresh server:
+Install node v17 with npm. For development I recommend using nvm, but for
+deployment you should use official packages (since nvm just installs for the user)
 
-```
-1. Install initial dependencies
-sudo apt-get update
-sudo apt install git curl git-core gcc make zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libssl-dev postgresql libpq-dev python3-dev
+Run:
 
-2. Clone this repo 
-git clone https://github.com/chezbob/chezbob-bobolith.git
-# And enter it
-cd chezbob-bobolith/
+- `npm run setup` (might take a bit, builds sqlite3)
+- `npm run debug` (make sure you have tmux installed)
 
-3. Install python and related tools
-# First python & pip
-sudo apt-get -y install python3-pip
+Open `http://localhost:8081/pos` in the browser.
+You can manually input barcode values using the barcode panel.
 
-# And now, pyenv
-git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+## Architecture
 
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> ~/.bashrc
-source ~/.bashrc
+#### What
 
-# And now pipenv
-pip install pipenv
+Chez bob consists of: - Web frontends (see `site/`) - Hardware-managing servers (see `server/barcode/`) - The inventory server (see `server/inventory/`) - A relay server which routes data between chez bob's various servers and clients
 
-4. Install postgres
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -\n
-sudo apt-get install postgresql
-sudo apt-get install postgresql-12
+#### Why?
 
-5. Configure postgres
-# Enter postgres shell
-sudo -i -u postgres
+Chez bob uses a web frontend, but needs to accept input from various devices
+like barcode scanners and money machines. It also has odd outputs like the
+coffee grinder. Web pages cannot directly access these kinds of peripherals.
 
-# Create the bobolith role 
-createuser --interactive --pwprompt
+To circumvent the limitations of web pages, we use websockets. A small server
+with direct hardware access can communicate with the POS over those websockets.
 
-# With responses: (ask chezbob admin about password)
-Enter name of role to add: bobolith
-Enter password for new role: 
-Enter it again: 
-Shall the new role be a superuser? (y/n) n
-Shall the new role be allowed to create databases? (y/n) n
-Shall the new role be allowed to create more new roles? (y/n) n
-
-# Enter psql
-psql
-
-# Create bobolith database
-CREATE DATABASE bobolith WITH OWNER=bobolith; 
-
-# And exit 
-\q
-exit
-
-6. Configure project
-# install python dependencies
-pipenv sync
-# And enter the virtualenv
-pipenv shell
-# and migrate
-python manage.py migrate
-# and start it! 
-python manage.py runserver
-
-7. Setup for Development
-python manage.py createsuperuser
-python manage.py loaddata chezbob/bobolith/apps/appliances/fixtures/dummy_appliances.json
-python manage.py loaddata chezbob/bobolith/apps/inventory/fixtures/dumb_products.json
-
-```
-
+The `inventory` service is unique because it _could_ be a web server. It uses a very standard request/response flow. However for the sake of traceability and consistency we use the same websocket protocol to communicate with it.
