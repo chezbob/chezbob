@@ -205,6 +205,23 @@ export class LoggedIn extends Session {
     set_mode(mode);
   }
 
+  async on_deposit(deposit_money) {
+    const cents = deposit_money.body?.cents;
+    if (typeof cents !== "number") {
+      throw new Error("Invalid deposit_money request");
+    }
+
+    return await socket.request({
+      header: {
+        to: "inventory",
+        type: "deposit_money",
+      },
+      body: {
+        cents,
+      },
+    });
+  }
+
   manage_account() {
     set_mode(new ManageAccount(this.user));
   }
