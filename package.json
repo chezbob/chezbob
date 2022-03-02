@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "fmt": "prettier --write .",
-    "knex": "knex --knexfile=server/inventory/db/knexfile.js",
+    "knex": "knex --knexfile=server/db/knexfile.js",
     "setup": "npm install && knex --knexfile=server/db/knexfile.js migrate:latest && knex --knexfile=server/db/knexfile.js seed:run",
     "debug": "./scripts/debug.sh"
   },
