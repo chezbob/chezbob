@@ -87,10 +87,10 @@ inventory.handle("deposit_money", async (deposit_money) => {
 
   // TODO: Evaluate the perf of this. Might need to denormalize
   let balance = (await db("balances").where({ id: user_id }))[0].balance;
-  let new_balance = balance - cents;
+  let new_balance = balance + cents;
 
   // Then insert the transaction
-  await db("transactions").insert([{ user_id, item_id, cents: cents }]);
+  await db("transactions").insert([{ user_id, cents: cents }]);
 
   return {
     header: {

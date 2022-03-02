@@ -206,20 +206,34 @@ export class LoggedIn extends Session {
   }
 
   async on_deposit(deposit_money) {
+    this.bump_timeout();
     const cents = deposit_money.body?.cents;
     if (typeof cents !== "number") {
       throw new Error("Invalid deposit_money request");
     }
 
-    return await socket.request({
+    const deposit_success = await socket.request({
       header: {
         to: "inventory",
         type: "deposit_money",
       },
       body: {
+        user_id: this.user.id,
         cents,
       },
     });
+
+    this.user.balance = deposit_success.body.balance;
+
+    // Don't put rendering on the hotpath for accepting cash
+    setTimeout(() => this.render, 0);
+
+    return {
+      header: {
+        type: "deposit_success",
+      },
+      body: {},
+    };
   }
 
   manage_account() {

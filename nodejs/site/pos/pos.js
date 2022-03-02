@@ -15,7 +15,7 @@ set_mode(new DefaultMode());
 // and set up handlers that invoke mode methods like `on_scan`. This keeps us from having
 // to thread the socket object through all mode transitions, and from having to add and remove
 // handlers to the socket on the fly.
-window.socket = await ReconnectingSocket.connect("ws://localhost:8080/", "pos");
+window.socket = await ReconnectingSocket.connect("ws://bobolith:8080/", "pos");
 
 // The downside to the global socket system is that we have to establish these passthrough
 // handlers which invoke methods on the mode in response to a socket event. It's a small price to pay
@@ -39,7 +39,7 @@ socket.handle("cash_deposit", async (cash_deposit) => {
     throw new Error("POS in incorrect mode");
   }
 
-  return await window.mode.on_deposit;
+  return await window.mode.on_deposit(cash_deposit);
 });
 
 //
