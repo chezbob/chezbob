@@ -1,19 +1,15 @@
 {
-  "name": "chezbob-appliances",
+  "name": "chezbob",
   "version": "1.0.0",
   "description": "",
-  "main": "relay.js",
   "type": "module",
   "scripts": {
-    "start": "node relay.js",
-    "prettier": "prettier --write .",
+    "fmt": "prettier --write .",
     "knex": "knex --knexfile=server/inventory/db/knexfile.js",
-    "setup": "npm install && knex --knexfile=server/inventory/db/knexfile.js migrate:latest && knex --knexfile=server/inventory/db/knexfile.js seed:run",
-    "debug": "./scripts/debug.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "npm install && knex --knexfile=server/db/knexfile.js migrate:latest && knex --knexfile=server/db/knexfile.js seed:run",
+    "debug": "./scripts/debug.sh"
   },
   "author": "",
-  "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^7.5.0",
     "encrypted-smiley-secure-protocol": "github:skokov3812/encrypted-smiley-secure-protocol",
