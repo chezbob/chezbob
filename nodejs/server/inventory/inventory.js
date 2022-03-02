@@ -77,6 +77,31 @@ inventory.handle("info_req", async (msg) => {
   };
 });
 
+inventory.handle("deposit_money", async (deposit_money) => {
+  const user_id = deposit_money.body?.user_id;
+  const cents = deposit_money.body?.cents;
+
+  if (typeof user_id !== "number" || typeof cents !== "number") {
+    throw new Error(" Invalid deposit_money request: ", deposit_money);
+  }
+
+  // TODO: Evaluate the perf of this. Might need to denormalize
+  let balance = (await db("balances").where({ id: user_id }))[0].balance;
+  let new_balance = balance - cents;
+
+  // Then insert the transaction
+  await db("transactions").insert([{ user_id, item_id, cents: cents }]);
+
+  return {
+    header: {
+      type: "deposit_money_success",
+    },
+    body: {
+      balance: new_balance,
+    },
+  };
+});
+
 inventory.handle("add_user_card", async (add_user_card) => {
   const user_id = add_user_card.body?.user_id;
   const barcode = add_user_card.body?.barcode;

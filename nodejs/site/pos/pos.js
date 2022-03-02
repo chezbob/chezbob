@@ -34,6 +34,14 @@ socket.on("scan_event", async (msg) => {
   }
 });
 
+socket.handle("cash_deposit", async (cash_deposit) => {
+  if (!window.mode.on_deposit) {
+    throw new Error("POS in incorrect mode");
+  }
+
+  return await window.mode.on_deposit;
+});
+
 //
 // IMPORTANT!
 //
