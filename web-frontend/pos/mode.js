@@ -2,7 +2,7 @@ import { price_row, dollars } from "./money.js";
 
 // Determines how long the user has after any interaction before the session gets reset
 const SESSION_TIME = 30000;
-const ERROR_TIME = SESSION_TIME;
+const ERROR_TIME = 3000;
 
 /**
  * The base mode class supports rendering and error messages
