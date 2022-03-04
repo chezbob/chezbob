@@ -39,11 +39,13 @@ eSSP.on("OPEN", async () => {
   console.log("SERIAL NUMBER:", serial.info.serial_number);
 
   const result = await eSSP.command("SETUP_REQUEST");
+  const channel_mask = [];
   // The reader is configured to handle USD. Each denomination (1, 5, 20, etc.)
   // is assigned a channel. While these ought to never change, it's best to pull
   // them from the reader just in case. Note that this whole app comes crumbling down
   // if the reader is not set to USD, but at least the console log below will let you know what happened
   for (let i = 0; i < result.info.channel_value.length; i++) {
+    channel_mask.push(1);
     channels[result.info.channel_value[i]] = {
       value: result.info.expanded_channel_value[i],
       country_code: result.info.expanded_channel_country_code[i],
@@ -51,6 +53,11 @@ eSSP.on("OPEN", async () => {
   }
 
   console.log(channels);
+
+  // Enable receviing all denominations
+  await eSSP.command("SET_CHANNEL_INHIBITS", {
+    channels: channel_mask
+  });
 
   // Make it glow red. In an ideal world, we'd set this dynamically based on the POS, but that
   // complicates the protocol so we just leave it always on.
