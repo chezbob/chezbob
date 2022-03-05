@@ -39,7 +39,7 @@ class Mode {
     const content = document.getElementById("content");
     const new_content = this.content;
     if (content.innerHTML != new_content) {
-      content.innerHTML = new_content;
+      content.innerHTML = new_content ?? '';
     }
 
     // Set hint
@@ -71,7 +71,6 @@ class Mode {
 export class DefaultMode extends Mode {
   color = "var(--chez-blue)";
   title = null;
-  content = null;
   hint = `
       - Scan your ID to sign in
       <br />
@@ -146,7 +145,7 @@ export class PriceCheck extends Session {
   title = `Price Check`;
 
   get content() {
-    return price_row(this.item);
+	 return  price_row(this.item);
   }
 }
 
