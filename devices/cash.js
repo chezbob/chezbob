@@ -56,7 +56,7 @@ eSSP.on("OPEN", async () => {
 
   // Enable receviing all denominations
   await eSSP.command("SET_CHANNEL_INHIBITS", {
-    channels: channel_mask
+    channels: channel_mask,
   });
 
   // Make it glow red. In an ideal world, we'd set this dynamically based on the POS, but that

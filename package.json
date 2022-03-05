@@ -13,6 +13,7 @@
   "dependencies": {
     "better-sqlite3": "^7.5.0",
     "encrypted-smiley-secure-protocol": "github:skokov3812/encrypted-smiley-secure-protocol",
+    "exclusive-keyboard": "^0.1.1",
     "knex": "^1.0.3",
     "nfc-pcsc": "^0.8.1",
     "node-hid": "^2.1.1",

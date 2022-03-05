@@ -106,7 +106,7 @@ export class DefaultMode extends Mode {
         break;
     }
   }
-  
+
   async on_deposit() {
     // Set the user visible error
     this.set_error("Must be logged in to deposit money");

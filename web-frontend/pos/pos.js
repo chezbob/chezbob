@@ -11,20 +11,19 @@ window.set_mode = (mode) => {
 // We need to render immediately because browsers are weird and will cache our data attributes
 set_mode(new DefaultMode());
 
-
 // Rather than using Modes to control the socket, we put it directly on the window
 // and set up handlers that invoke mode methods like `on_scan`. This keeps us from having
 // to thread the socket object through all mode transitions, and from having to add and remove
 // handlers to the socket on the fly.
 window.socket = await (async () => {
-	// Allow URL parameters to configure the location of the relay server.
-	// Default to ws://localhost:8080/
-	const params = new URLSearchParams(window.location.search);
-	const host = params.get('relay_host') ?? 'localhost';
-	const port = params.get('relay_port') ?? '8080';
+  // Allow URL parameters to configure the location of the relay server.
+  // Default to ws://localhost:8080/
+  const params = new URLSearchParams(window.location.search);
+  const host = params.get("relay_host") ?? "localhost";
+  const port = params.get("relay_port") ?? "8080";
 
-	return await ReconnectingSocket.connect(`ws://${host}:${port}/`, "pos");
-})()
+  return await ReconnectingSocket.connect(`ws://${host}:${port}/`, "pos");
+})();
 
 // The downside to the global socket system is that we have to establish these passthrough
 // handlers which invoke methods on the mode in response to a socket event. It's a small price to pay
