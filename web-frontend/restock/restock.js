@@ -18,16 +18,15 @@ let buffer = "";
 // This is super generous. If a fully barcode has not been read after 1 second, start over.
 let timeout;
 document.onkeydown = ({key}) => {
+  if (key === "Enter" && buffer !== '') {
+    scan(buffer);
+    buffer = "";
+  }
   // Only accept input if no input element is selected
   if (window.activeElement === undefined && key.match(/^[0-9]$/)){
     clearTimeout(timeout);
     buffer += key
-    if (buffer.length === 12) {
-      scan(buffer);
-      buffer = "";
-    } else {
-      timeout = setTimeout(() => buffer = '', 1000);
-    }
+    timeout = setTimeout(() => buffer = '', 1000);
   }
 };
 
