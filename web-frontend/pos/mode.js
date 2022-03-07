@@ -39,7 +39,7 @@ class Mode {
     const content = document.getElementById("content");
     const new_content = this.content;
     if (content.innerHTML != new_content) {
-      content.innerHTML = new_content ?? '';
+      content.innerHTML = new_content ?? "";
     }
 
     // Set hint
@@ -72,12 +72,13 @@ export class DefaultMode extends Mode {
   color = "var(--chez-blue)";
   title = null;
   hint = `
-      - Scan your ID to sign in
+      - Tap your ID to sign in
       <br />
       - Scan an item to price-check
       <br />
       <div style="align-self: center; margin: 1em;">or</div>
       <button style="align-self: center" onclick="window.mode.manualLogin()">Manual Login</button>
+      <button style="align-self: center" onclick="window.mode.helpMode()">Help</button>
     `;
   get header() {
     return `
@@ -117,6 +118,10 @@ export class DefaultMode extends Mode {
   manualLogin() {
     set_mode(new ManualLogin());
   }
+
+  helpMode() {
+    set_mode(new HelpMode());
+  }
 }
 
 export class Session extends DefaultMode {
@@ -145,7 +150,7 @@ export class PriceCheck extends Session {
   title = `Price Check`;
 
   get content() {
-	 return  price_row(this.item);
+    return price_row(this.item);
   }
 }
 
@@ -162,7 +167,7 @@ export class LoggedIn extends Session {
   hint = `
     - Scan an item to purchase<br>
     <div style="align-self: center; margin: 1em;">or</div>
-    <button onclick="window.mode.manage_account()">Manage Account</button>   
+    <button onclick="window.mode.manage_account()">Manage Account</button>
   `;
 
   constructor(user) {
@@ -290,7 +295,7 @@ export class Purchasing extends LoggedIn {
 class ManualLogin extends DefaultMode {
   title = `Sign In`;
   hint = `
-      - Scan your ID to sign in
+      - Tap your ID to sign in
       <br>
       - Scan an item to price-check
     `;
@@ -326,6 +331,22 @@ class ManualLogin extends DefaultMode {
       this.set_error(e.error);
     }
   }
+
+  cancel() {
+    set_mode(new DefaultMode());
+  }
+}
+
+class HelpMode extends DefaultMode {
+  title = `Chez Bob Help`;
+  hint = `
+      <button onclick="window.mode.cancel()" style="float: right">Cancel</button>
+
+    `;
+
+  content = `
+      - Email chezbob@cs.ucsd.edu for any unanswered questions.
+    `;
 
   cancel() {
     set_mode(new DefaultMode());
