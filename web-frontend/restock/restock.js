@@ -1,7 +1,15 @@
 import { ReconnectingSocket } from "/shared/reconnecting-socket.js";
 
-// We claim to be POS so that we receive scan events
-let socket = await ReconnectingSocket.connect("ws://localhost:8080/", "pos");
+let socket = await (async () => {
+  // Allow URL parameters to configure the location of the relay server.
+  // Default to ws://localhost:8080/
+  const params = new URLSearchParams(window.location.search);
+  const host = params.get("relay_host") ?? "localhost";
+  const port = params.get("relay_port") ?? "8080";
+
+  // We claim to be POS so that we receive scan events
+  return await ReconnectingSocket.connect(`ws://${host}:${port}/`, "pos");
+})();
 
 socket.on("scan_event", async (msg) => {
   report("");
