@@ -340,12 +340,52 @@ class ManualLogin extends DefaultMode {
 class HelpMode extends DefaultMode {
   title = `Chez Bob Help`;
   hint = `
-      <button onclick="window.mode.cancel()" style="float: right">Cancel</button>
-
+      <button onclick="window.mode.cancel()" style="float: center">Cancel</button>
     `;
 
   content = `
-      - Email chezbob@cs.ucsd.edu for any unanswered questions.
+      Chez Bob food is not free. The department does not pay for Chez Bob items.
+      <br><br>
+      Chez Bob runs on the honor system: people pay for what they take by using their accounts.
+      <br><br>
+      Chez Bob account is not tied to any other UCSD system --- it is unique to Chez Bob.
+      <br><br>
+
+      <div class="faq-container">
+        What is Chez Bob?
+        <div class="faq-body">
+          - Chez Bob is our snack co-op run by grad students, located in the grad
+          student lounge.
+          <br>
+          - We buy food and drinks from Costco and sell them to grad
+          students, faculty, staff and visitors roughly at cost.
+        </div>
+      </div>
+      <br>
+      <div class="faq-container">
+        How do I use Chez Bob?
+        <div class="faq-body">
+          - We automatically create Chez Bob accounts with the same username as your usual UCSD
+          username, with no password.
+          <br>
+          - You can login at the kiosk.
+          <br>
+          - After your first login, you can also register your _new_ ID card or any NFC card under "Manage Account"
+          <br>
+          - If you do not have account, email chezbob@cs.ucsd.edu.
+        </div>
+      </div>
+      <br>
+      <div class="faq-container">
+        How do I pay for the food?
+        <div class="faq-body">
+        - After login, you can use the bill acceptor on the kiosk to add money to your account.
+        <br>
+        - We are working on other means of adding money to your account.
+        </div>
+      </div>
+      <br>
+      Email chezbob@cs.ucsd.edu for any unanswered questions.
     `;
 
   cancel() {

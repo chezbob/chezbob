@@ -339,3 +339,18 @@ input[type="password"]:focus {
 #balance[data-balance] + #logo {
   display: none;
 }
+
+.faq-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.faq-body {
+  margin: auto;
+  /*display: flex;*/
+  /*text-align: center;*/
+  width: 95%;
+  padding: auto;
+  font-size: 20px;
+  font-weight: normal;
+}
