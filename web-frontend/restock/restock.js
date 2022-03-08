@@ -17,16 +17,16 @@ let buffer = "";
 // We'll say that all barcode scanners should emit their letters less than 1 second apart
 // This is super generous. If a fully barcode has not been read after 1 second, start over.
 let timeout;
-document.onkeydown = ({key}) => {
-  if (key === "Enter" && buffer !== '') {
+document.onkeydown = ({ key }) => {
+  if (key === "Enter" && buffer !== "") {
     scan(buffer);
     buffer = "";
   }
   // Only accept input if no input element is selected
-  if (window.activeElement === undefined && key.match(/^[0-9]$/)){
+  if (window.activeElement === undefined && key.match(/^[0-9]$/)) {
     clearTimeout(timeout);
-    buffer += key
-    timeout = setTimeout(() => buffer = '', 1000);
+    buffer += key;
+    timeout = setTimeout(() => (buffer = ""), 1000);
   }
 };
 
@@ -53,9 +53,9 @@ async function scan(upc) {
         break;
     }
   } catch (e) {
-    render({ barcode: upc});
+    render({ barcode: upc });
   }
-};
+}
 
 function render(obj) {
   let html = `
@@ -65,7 +65,9 @@ function render(obj) {
             <label for="barcode">Barcode: </label> 
             <input disabled type="text" name="barcode" value="${
               obj?.barcode ?? ""
-            }"/> ${obj.cents !== undefined ? `Current Cost: ${dollars(obj.cents)}`: ''}
+            }"/> ${
+    obj.cents !== undefined ? `Current Cost: ${dollars(obj.cents)}` : ""
+  }
             <br />
             <label for="name">Name: </label> 
             <input required minlength=1 title="Cannot be empty" type="text" name="name" value="${
@@ -104,7 +106,6 @@ function form_values() {
     }
   });
   return values;
-
 }
 
 function calculate_cost_in_cents() {
@@ -117,7 +118,8 @@ function calculate_cost_in_cents() {
 }
 
 window.display_cost = () => {
-  document.getElementById('cost').innerHTML = "$" + dollars(calculate_cost_in_cents());
+  document.getElementById("cost").innerHTML =
+    "$" + dollars(calculate_cost_in_cents());
 };
 
 function dollars(cents) {
