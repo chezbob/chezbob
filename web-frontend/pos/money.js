@@ -11,7 +11,7 @@ export function price_row(item) {
 }
 
 export function dollars(cents) {
-  let d = Math.floor(cents / 100);
+  let d = Math.trunc(cents / 100);
   let c = Math.abs(cents) % 100;
   return `${d}.${c < 10 ? "0" + c : c}`;
 }
