@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+html {
+  height: 100%;
+  width: 100%;
+  display: grid;
+}
+
+:root {
+  --chez-blue: aqua;
+  --chez-bg: #222222;
+  --chez-green: lime;
+  --chez-purple: rgb(255, 73, 255);
+  --chez-red: rgb(255, 70, 101);
+  --bob-color: var(--chez-blue);
+  --scan-height: 6px;
+}
+
+body {
+  display: grid;
+  position: relative;
+  background: white;
+  height: 100%;
+  overflow: hidden;
+}
+
+#screen {
+  overflow: auto;
+  background: var(--chez-bg);
+  font-family: "Press Start 2P", "FreeMono", monospace;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
+    -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
+}
+
+#screen:before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.06),
+      rgba(0, 255, 0, 0.02),
+      rgba(0, 0, 255, 0.06)
+    );
+  background-size: 100% 2px, 2px 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+
+
+.scanline {
+  width: 100%;
+  height: 100px;
+  z-index: 8;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(255, 255, 255, 0.2) 10%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  opacity: 0.1;
+  position: absolute;
+  bottom: 100%;
+  animation: scanline 10s linear infinite;
+}
+
+
+@keyframes scanline {
+  0% {
+    bottom: 100%;
+  }
+  80% {
+    bottom: 100%;
+  }
+  100% {
+    bottom: 0%;
+  }
+}
+
+button {
+  padding: 0.5em 0.5em 0.25em 0.5em;
+  background: transparent;
+  color: inherit;
+  border: 3px solid white;
+  /* border-radius: 10px; */
+  --line-color: white;
+  text-shadow: 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
+    -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3), 0 0 3px;
+  margin-bottom: 1em;
+}
+
+button:active {
+  background: white;
+  color: var(--chez-bg);
+}
+
+input[type="text"],
+input[type="password"] {
+  --line-color: transparent;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  padding: 0.5em 0.5em 0.25em 0.5em;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  --line-color: var(--bob-color);
+  outline: var(--line-color) 3px solid;
+}
