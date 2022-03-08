@@ -338,19 +338,61 @@ class ManualLogin extends DefaultMode {
 }
 
 class HelpMode extends DefaultMode {
+  color = "var(--chez-purple)"
   title = `Chez Bob Help`;
   hint = `
-      <button onclick="window.mode.cancel()" style="float: center">Cancel</button>
+      <button onclick="window.mode.back()" style="float: center">Back</button>
     `;
 
   content = `
-      Chez Bob food is not free. The department does not pay for Chez Bob items.
+      <style>
+        h1 {
+          color: var(--bob-color);
+          font-size: inherit;
+          margin-top: 2em;
+        }
+        section {
+          margin-top: 1em;
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          padding-left: 1em;
+        }
+      </style>
+      - Chez Bob food is not free.
+      <br>
+      - Chez Bob runs on the honor system<br>
+      - Use your account to pay 
       <br><br>
-      Chez Bob runs on the honor system: people pay for what they take by using their accounts.
-      <br><br>
-      Chez Bob account is not tied to any other UCSD system --- it is unique to Chez Bob.
-      <br><br>
+      <h1>How do I sign in?</h1>
+      <section>
+      Accounts are automatically created for you.<br>
+      Try manually logging in:
+      <div style="margin-top: 1em;">
+      username: [your active directory username]<br>
+      password: <br>
+      </div>
+      </section>
 
+      <h1>How do I pay?</h1>
+      <section>
+        Once you log in, you can deposit cash
+      </section>
+     
+      <h1>I still have questions</h1>
+      <section>
+        <p>Email <span style="color: var(--bob-color)">chezbob@cs.ucsd.edu</span> for any help.
+      </section>
+    `;
+
+  back() {
+    set_mode(new DefaultMode());
+  }
+}
+
+/*
+
+      - There is no password by default
       <div class="faq-container">
         What is Chez Bob?
         <div class="faq-body">
@@ -386,12 +428,7 @@ class HelpMode extends DefaultMode {
       </div>
       <br>
       Email chezbob@cs.ucsd.edu for any unanswered questions.
-    `;
-
-  cancel() {
-    set_mode(new DefaultMode());
-  }
-}
+*/
 
 class ManageAccount extends LoggedIn {
   title = `Manage Account`;

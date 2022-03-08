@@ -8,6 +8,7 @@ html {
   --chez-blue: aqua;
   --chez-bg: #222222;
   --chez-green: lime;
+  --chez-purple: rgb(255, 73, 255);
   --chez-red: rgb(255, 70, 101);
   --bob-color: var(--chez-blue);
 }
@@ -184,6 +185,7 @@ input[type="password"]:focus {
   overflow: hidden;
   --line-color: var(--bob-color);
   display: flex;
+
   flex-direction: column;
 }
 
@@ -233,11 +235,6 @@ input[type="password"]:focus {
   flex-direction: column;
   justify-self: stretch;
   align-self: center;
-}
-
-/* Price check is only ever one line, so don't expand the mouth too much */
-#content[data-title="Price Check"] {
-  flex-grow: 0;
 }
 
 #content {
