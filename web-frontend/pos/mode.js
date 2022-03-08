@@ -369,7 +369,7 @@ class HelpMode extends DefaultMode {
       Accounts are automatically created for you.<br>
       Try manually logging in:
       <div style="margin-top: 1em;">
-      username: [your active directory username]<br>
+      username: [your active directory]<br>
       password: <br>
       </div>
       </section>
