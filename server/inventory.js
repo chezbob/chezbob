@@ -10,8 +10,17 @@ import { promisify } from "node:util";
 
 const MIN_BALANCE = -Infinity; // Minimum balance a user can hold (currently disabled)
 
-// TODO: Allow swapping between dev and prod
-let db = knex(config.development);
+// Required config options to specify the location of the relay server, what to call this instance of the nfc service, and where to send its data
+const DEPLOYMENT_MODE =
+  process.env.DEPLOYMENT_MODE ||
+  console.error("Must provide DEPLOYMENT_MODE environment variable") ||
+  process.exit(1);
+
+if (!["production", "development"].includes(DEPLOYMENT_MODE)) {
+  console.error("DEPLOYMENT_MODE must be either 'production' or 'development'");
+}
+
+let db = knex(config[DEPLOYMENT_MODE]);
 let inventory = await ReconnectingSocket.connect(
   process.env.RELAY_SERVER,
   "inventory"

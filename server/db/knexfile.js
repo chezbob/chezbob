@@ -26,18 +26,14 @@ export default {
   },
 
   production: {
-    client: "postgresql",
+    client: "better-sqlite3",
+    useNullAsDefault: true,
     connection: {
-      database: "my_db",
-      user: "username",
-      password: "password",
+      filename: __dirname + "/prod.sqlite3",
     },
-    pool: {
-      min: 2,
-      max: 10,
-    },
-    migrations: {
-      tableName: "knex_migrations",
+    seeds: {
+      directory: [__dirname + "/seeds", __dirname + "/seeds/prod"],
+      recursive: false,
     },
   },
 };
