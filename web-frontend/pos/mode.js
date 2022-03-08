@@ -366,7 +366,7 @@ class HelpMode extends DefaultMode {
       <br><br>
       <h1>How do I sign in?</h1>
       <section>
-      Accounts are automatically created for you.<br>
+      Your account is automatically created<br>
       Try manually logging in:
       <div style="margin-top: 1em;">
       username: [your active directory]<br>
