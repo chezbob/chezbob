@@ -30,7 +30,7 @@ window.socket = await (async () => {
 // for the simplicity we get by having modes be cheap and dumb.
 socket.on("scan_event", async (msg) => {
   try {
-    window.mode.on_scan && (await window.mode.on_scan(msg));
+    window.mode.on_scan && (await window.mode.on_scan(msg.body.barcode));
   } catch (e) {
     // If it has an `error` member, then it's an error from the socket request
     // and should be displayed

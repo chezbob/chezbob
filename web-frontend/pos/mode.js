@@ -73,27 +73,28 @@ export class DefaultMode extends Mode {
   title = null;
   hint = `
       - Tap your ID to sign in
-      <br />
+      <br>
       - Scan an item to price-check
-      <br />
-      <div style="align-self: center; margin: 1em;">or</div>
+      <br>
+      <div style="align-self: center; margin-top: 1em;">or</div>
       <button style="align-self: center" onclick="window.mode.manualLogin()">Manual Login</button>
-      <button style="align-self: center" onclick="window.mode.helpMode()">Help</button>
     `;
+
   get header() {
     return `
         <div id="logo">Chez Bob</div>
+        <button onclick="window.mode.helpMode()">Help</button>
     `;
   }
 
-  async on_scan(msg) {
+  async on_scan(barcode) {
     let info = await socket.request({
       header: {
         to: "inventory",
         type: "info_req",
       },
       body: {
-        barcode: msg.body.barcode,
+        barcode,
       },
     });
 
@@ -166,6 +167,7 @@ export class LoggedIn extends Session {
   color = "var(--chez-green)";
   hint = `
     - Scan an item to purchase<br>
+    <button onclick="window.mode.manual_purchase()">No Barcode?</button>
     <div style="align-self: center; margin: 1em;">or</div>
     <button onclick="window.mode.manage_account()">Manage Account</button>
   `;
@@ -189,7 +191,7 @@ export class LoggedIn extends Session {
         `;
   }
 
-  async on_scan(msg) {
+  async on_scan(barcode) {
     this.error = null;
     let info = await socket.request({
       header: {
@@ -197,7 +199,7 @@ export class LoggedIn extends Session {
         type: "info_req",
       },
       body: {
-        barcode: msg.body.barcode,
+        barcode,
       },
     });
 
@@ -252,14 +254,23 @@ export class LoggedIn extends Session {
     set_mode(new ManageAccount(this.user));
   }
 
+  manual_purchase() {
+    set_mode(new ManualPurchase(this.user, []));
+  }
+
   logout() {
     set_mode(new DefaultMode());
   }
 }
 
 export class Purchasing extends LoggedIn {
-  purchases = [];
-  title = "Purchases";
+  purchases;
+  title = "Purchasing";
+
+  constructor(user, purchases) {
+    super(user);
+    this.purchases = purchases;
+  }
 
   get content() {
     return this.purchases.map(price_row).join("") + this.totals();
@@ -285,10 +296,59 @@ export class Purchasing extends LoggedIn {
 
   totals() {
     const sum = this.purchases.reduce((sum, i) => sum + i.cents, 0);
-    return `<br><div class='totals'>
+    return `<br><div class="totals">
         <div>Total: </div>
         <div>${dollars(sum)}</div>
         </div>`;
+  }
+
+  manual_purchase() {
+    set_mode(new ManualPurchase(this.user, this.purchases));
+  }
+}
+
+export class ManualPurchase extends Purchasing {
+  title = "Manual Purchase";
+
+  content = `
+    <h1>Coffee & Drinks</h1>
+    <section>
+      <button data-barcode="488348702402" onclick="window.mode.select_item(event)">Cold Brew Coffee</button>
+    </section>
+
+    <h1>Small Snacks</h1>
+    <section>
+      <button data-barcode="697941861007" onclick="window.mode.select_item(event)">Madeline Cookie</button>
+    </section>
+
+    <h1>Ice Cream</h1>
+    <section>
+      <button data-barcode="482573882311" onclick="window.mode.select_item(event)">Kirkland Ice Cream Bars</button>
+      <button data-barcode="411337930531" onclick="window.mode.select_item(event)">Nestle Product</button>
+    </section>
+  `;
+
+  hint = `
+      <button onclick="window.mode.back()" style="float: center">Back</button>
+    `;
+
+  back() {
+    if (this.purchases.length === 0) {
+      set_mode(new LoggedIn(this.user));
+    } else {
+      set_mode(new Purchasing(this.user, this.purchases));
+    }
+  }
+
+  async select_item(event) {
+    const barcode = event.target.dataset.barcode;
+    const mode = new Purchasing(this.user, this.purchases);
+    try {
+      await mode.on_scan(barcode);
+    } catch (e) {
+      this.set_error(e.error ?? e);
+    }
+    set_mode(mode);
   }
 }
 
@@ -338,27 +398,18 @@ class ManualLogin extends DefaultMode {
 }
 
 class HelpMode extends DefaultMode {
-  color = "var(--chez-purple)"
+  color = "var(--chez-purple)";
   title = `Chez Bob Help`;
+  get header() {
+    return `
+        <div id="logo">Chez Bob</div>
+    `;
+  }
   hint = `
       <button onclick="window.mode.back()" style="float: center">Back</button>
     `;
 
   content = `
-      <style>
-        h1 {
-          color: var(--bob-color);
-          font-size: inherit;
-          margin-top: 2em;
-        }
-        section {
-          margin-top: 1em;
-          flex-grow: 1;
-          display: flex;
-          flex-direction: column;
-          padding-left: 1em;
-        }
-      </style>
       - Chez Bob food is not free.
       <br>
       - Chez Bob runs on the honor system<br>
@@ -498,7 +549,7 @@ export class AddCard extends ManageAccount {
   content = `Scan the card you wish to add to your account.`;
   hint = `<button onclick=window.mode.goBack()>Go Back</button>`;
 
-  async on_scan(msg) {
+  async on_scan(barcode) {
     this.bump_timeout();
 
     await socket.request({
@@ -508,7 +559,7 @@ export class AddCard extends ManageAccount {
       },
       body: {
         user_id: this.user.id,
-        barcode: msg.body.barcode,
+        barcode,
       },
     });
 

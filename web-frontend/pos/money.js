@@ -1,10 +1,10 @@
 export function price_row(item) {
-  return `<div class='price-row'>
-        <span class='price-name'>
+  return `<div class="price-row">
+        <span class="price-name">
             ${item.name}
         </span>
         <span class="dots"></span>
-        <span class='price-cost'>
+        <span class="price-cost">
             ${dollars(item.cents)}
         </span>
     </div>`;
