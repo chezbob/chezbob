@@ -3,24 +3,12 @@
  */
 
 import { ReconnectingSocket } from "../shared/reconnecting-socket.js";
-import knex from "knex";
-import config from "./db/knexfile.js";
+import {db} from "./db.js";
 import { pbkdf2, randomBytes } from "node:crypto";
 import { promisify } from "node:util";
 
 const MIN_BALANCE = -Infinity; // Minimum balance a user can hold (currently disabled)
 
-// Required config options to specify the location of the relay server, what to call this instance of the nfc service, and where to send its data
-const DEPLOYMENT_MODE =
-  process.env.DEPLOYMENT_MODE ||
-  console.error("Must provide DEPLOYMENT_MODE environment variable") ||
-  process.exit(1);
-
-if (!["production", "development"].includes(DEPLOYMENT_MODE)) {
-  console.error("DEPLOYMENT_MODE must be either 'production' or 'development'");
-}
-
-let db = knex(config[DEPLOYMENT_MODE]);
 let inventory = await ReconnectingSocket.connect(
   process.env.RELAY_SERVER,
   "inventory"

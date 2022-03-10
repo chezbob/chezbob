@@ -7,7 +7,8 @@
     "fmt": "prettier --write .",
     "knex": "knex --knexfile=server/db/knexfile.js",
     "setup": "npm install && knex --knexfile=server/db/knexfile.js migrate:latest && knex --knexfile=server/db/knexfile.js seed:run",
-    "debug": "./scripts/debug.sh"
+    "debug": "./scripts/debug.sh",
+    "add_users": "node ./scripts/add_users.js"
   },
   "author": "",
   "dependencies": {
