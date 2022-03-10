@@ -1,4 +1,24 @@
-#! /usr/bin/env node
+/*
+    The add_users script reads a list of emails (one per line) from stdin
+    and creates users for all of them.
+
+    Common usage:   cat new_user.txt | npm run add_users
+
+
+    The usernames of the generated users are pulled from the email:
+        
+        foo@email.com
+
+    results in:
+
+        | username |        foo       |
+        -------------------------------
+        |    foo   |  foo@email.com   |
+
+    If the username or email exists, the conflict will be printed to stderr
+*/
+
+
 import {db} from "../server/db.js";
 import { stdin as input, stdout as output } from "node:process";
 import * as readline from "readline/promises";
