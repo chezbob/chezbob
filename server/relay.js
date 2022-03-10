@@ -1,8 +1,41 @@
 import { WebSocketServer, WebSocket } from "ws";
+import { createServer } from "http";
+import { parse } from "url";
 import { debug } from "../shared/reconnecting-socket.js";
 
 const wss = new WebSocketServer({
-  port: 8080,
+  noServer: true,
+});
+
+const httpServer = createServer();
+
+httpServer.on("upgrade", (req, socket, head) => {
+  const { pathname } = parse(req.url);
+
+  // skip the leading slash
+  const name = pathname.substring(1);
+  let name_taken = false;
+  for (const c of wss.clients) {
+    if (c.name === name) {
+      name_taken = true;
+      break;
+    }
+  }
+
+  if (name_taken) {
+    socket.write("HTTP/1.1 409 Conflict\r\n\r\n");
+    console.log(
+      `Rejected client because name is taken: ${name}`,
+      req.rawHeaders
+    );
+    socket.destroy();
+    return;
+  }
+
+  wss.handleUpgrade(req, socket, head, function done(ws) {
+    ws.name = name;
+    wss.emit("connection", ws, req);
+  });
 });
 
 wss.on("connection", handleConnect);
@@ -10,8 +43,6 @@ wss.on("connection", handleConnect);
 function handleConnect(ws, req) {
   debug(() => console.log(`New connection: ${req.url}`));
 
-  // skip the leading slash
-  ws.name = req.url.substring(1);
   ws.on("message", handleMessage.bind(ws));
   ws.on("close", handleClose.bind(ws));
 }
@@ -70,3 +101,5 @@ function validate_message(data) {
 function handleClose() {
   console.log(`Client disconnected ${this.name}`);
 }
+
+httpServer.listen(8080);
