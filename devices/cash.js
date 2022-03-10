@@ -28,7 +28,7 @@ let eSSP = new sspLib({
   polling: false,
 });
 
-const channels = {};
+const channels = [];
 
 eSSP.on("OPEN", async () => {
   console.log("open");
@@ -46,7 +46,9 @@ eSSP.on("OPEN", async () => {
   // if the reader is not set to USD, but at least the console log below will let you know what happened
   for (let i = 0; i < result.info.channel_value.length; i++) {
     channel_mask.push(1);
-    channels[result.info.channel_value[i]] = {
+    // Channels are 1 indexed so we need to increment one. This means that channels is a sparse array where
+    // index 0 is undefined
+    channels[i + 1] = {
       value: result.info.expanded_channel_value[i],
       country_code: result.info.expanded_channel_country_code[i],
     };
