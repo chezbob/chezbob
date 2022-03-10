@@ -47,7 +47,7 @@ const keyboard = new ExclusiveKeyboard(
 // this for them.
 //
 // This timeout is a heuristic, we picked it cuz it feels good.
-const DEBOUNCE_TIMEOUT = 750;
+const DEBOUNCE_TIMEOUT = 2000;
 let last_scan_time = 0;
 
 keyboard.on("keypress", (event) => {
