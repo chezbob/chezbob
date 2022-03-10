@@ -214,7 +214,7 @@ export class LoggedIn extends Session {
   }
 
   async purchase(item) {
-    const mode = new Purchasing(this.user);
+    const mode = new Purchasing(this.user, []);
     await mode.purchase(item);
     set_mode(mode);
   }
