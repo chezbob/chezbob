@@ -8,8 +8,6 @@ window.set_mode = (mode) => {
   window.mode.render();
 };
 
-// We need to render immediately because browsers are weird and will cache our data attributes
-set_mode(new DefaultMode());
 
 // Rather than using Modes to control the socket, we put it directly on the window
 // and set up handlers that invoke mode methods like `on_scan`. This keeps us from having
@@ -24,6 +22,9 @@ window.socket = await (async () => {
 
   return await ReconnectingSocket.connect(`ws://${host}:${port}/`, "pos");
 })();
+
+// We need to render immediately because browsers are weird and will cache our data attributes
+set_mode(new DefaultMode());
 
 // The downside to the global socket system is that we have to establish these passthrough
 // handlers which invoke methods on the mode in response to a socket event. It's a small price to pay
