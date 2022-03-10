@@ -3,7 +3,7 @@
  */
 
 import { ReconnectingSocket } from "../shared/reconnecting-socket.js";
-import {db} from "./db.js";
+import { db } from "./db.js";
 import { pbkdf2, randomBytes } from "node:crypto";
 import { promisify } from "node:util";
 

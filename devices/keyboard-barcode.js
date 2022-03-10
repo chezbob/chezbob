@@ -62,7 +62,7 @@ keyboard.on("keypress", (event) => {
     console.log({ barcode });
 
     // Ignore the scan if it happened too fast
-    if ((Date.now() - last_scan_time) > DEBOUNCE_TIMEOUT) {
+    if (Date.now() - last_scan_time > DEBOUNCE_TIMEOUT) {
       // Reset the debounce timer
       last_scan_time = Date.now();
 
