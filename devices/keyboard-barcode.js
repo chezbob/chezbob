@@ -42,6 +42,14 @@ const keyboard = new ExclusiveKeyboard(
   true
 );
 
+// Barcode readers in "automatic" mode will sometimes scan the same item twice
+// in rapid succession. This is almost always a mistake so we'll manually debounce
+// this for them.
+//
+// This timeout is a heuristic, we picked it cuz it feels good.
+const DEBOUNCE_TIMEOUT = 750;
+let last_scan_time = 0;
+
 keyboard.on("keypress", (event) => {
   const match = event.keyId.match(KEY_REGEX);
   if (match) {
@@ -52,15 +60,22 @@ keyboard.on("keypress", (event) => {
 
   if (event.keyId === "KEY_ENTER" && barcode !== "") {
     console.log({ barcode });
-    socket.send({
-      header: {
-        to: DESTINATION_IDENT,
-        type: "scan_event",
-      },
-      body: {
-        barcode,
-      },
-    });
+
+    // Ignore the scan if it happened too fast
+    if ((Date.now() - last_scan_time) > DEBOUNCE_TIMEOUT) {
+      // Reset the debounce timer
+      last_scan_time = Date.now();
+
+      socket.send({
+        header: {
+          to: DESTINATION_IDENT,
+          type: "scan_event",
+        },
+        body: {
+          barcode,
+        },
+      });
+    }
     barcode = "";
   }
 });
