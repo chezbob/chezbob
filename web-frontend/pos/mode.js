@@ -78,6 +78,7 @@ export class DefaultMode extends Mode {
       <br>
       <div style="align-self: center; margin-top: 1em;">or</div>
       <button style="align-self: center" onclick="window.mode.manualLogin()">Manual Login</button>
+      <button style="align-self: center" onclick="window.mode.noBarcodePriceCheck()">No Barcode Price Check</button>
     `;
 
   get header() {
@@ -116,6 +117,10 @@ export class DefaultMode extends Mode {
     throw new Error("Not logged in");
   }
 
+  noBarcodePriceCheck() {
+    set_mode(new noBarcodePriceCheck());
+  }
+
   manualLogin() {
     set_mode(new ManualLogin());
   }
@@ -152,6 +157,44 @@ export class PriceCheck extends Session {
 
   get content() {
     return price_row(this.item);
+  }
+}
+
+export class noBarcodePriceCheck extends Session {
+  title = "Manual Price Check";
+
+  content = `
+    <h1>Coffee & Drinks</h1>
+    <section>
+      <button data-barcode="488348702402" onclick="window.mode.select_item(event)">Cold Brew Coffee</button>
+    </section>
+
+    <h1>Small Snacks</h1>
+    <section>
+      <button data-barcode="697941861007" onclick="window.mode.select_item(event)">Madeline Cookie</button>
+    </section>
+
+    <h1>Ice Cream</h1>
+    <section>
+      <button data-barcode="482573882311" onclick="window.mode.select_item(event)">Kirkland Ice Cream Bars</button>
+      <button data-barcode="411337930531" onclick="window.mode.select_item(event)">Nestle Product</button>
+    </section>
+  `;
+
+  hint = `
+      <button onclick="window.mode.back()" style="float: center">Back</button>
+    `;
+
+  back() {
+    set_mode(new DefaultMode());
+  }
+
+  async select_item(event) {
+    try {
+      await this.on_scan(event.target.dataset.barcode);
+    } catch (e) {
+      this.set_error(e.error ?? e);
+    }
   }
 }
 
@@ -413,7 +456,7 @@ class HelpMode extends DefaultMode {
       - Chez Bob food is not free.
       <br>
       - Chez Bob runs on the honor system<br>
-      - Use your account to pay 
+      - Use your account to pay
       <br><br>
       <h1>How do I sign in?</h1>
       <section>
@@ -429,7 +472,7 @@ class HelpMode extends DefaultMode {
       <section>
         Once you log in, you can deposit cash
       </section>
-     
+
       <h1>I still have questions</h1>
       <section>
         <p>Email <span style="color: var(--bob-color)">chezbob@cs.ucsd.edu</span> for any help.

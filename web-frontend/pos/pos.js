@@ -8,7 +8,6 @@ window.set_mode = (mode) => {
   window.mode.render();
 };
 
-
 // Rather than using Modes to control the socket, we put it directly on the window
 // and set up handlers that invoke mode methods like `on_scan`. This keeps us from having
 // to thread the socket object through all mode transitions, and from having to add and remove
