@@ -589,7 +589,7 @@ class SetPassword extends ManageAccount {
 
 export class AddCard extends ManageAccount {
   title = `Add Card`;
-  content = `Scan the card you wish to add to your account.`;
+  content = `Tap the card you wish to add to your account.`;
   hint = `<button onclick=window.mode.goBack()>Go Back</button>`;
 
   async on_scan(barcode) {
