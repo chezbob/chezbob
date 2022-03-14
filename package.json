@@ -8,7 +8,8 @@
     "knex": "knex --knexfile=server/db/knexfile.js",
     "setup": "npm install && knex --knexfile=server/db/knexfile.js migrate:latest && knex --knexfile=server/db/knexfile.js seed:run",
     "debug": "./scripts/debug.sh",
-    "add_users": "node ./scripts/add_users.js"
+    "add_users": "node ./scripts/add_users.js",
+    "msg": "node ./scripts/msg.js"
   },
   "author": "",
   "dependencies": {

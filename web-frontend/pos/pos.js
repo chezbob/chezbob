@@ -42,6 +42,10 @@ socket.on("scan_event", async (msg) => {
   }
 });
 
+socket.on("refresh", () => {
+  window.location.reload();
+});
+
 socket.handle("cash_deposit", async (cash_deposit) => {
   if (!window.mode.on_deposit) {
     throw new Error("POS in incorrect mode");
