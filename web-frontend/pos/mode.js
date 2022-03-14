@@ -118,7 +118,7 @@ export class DefaultMode extends Mode {
   }
 
   noBarcodePriceCheck() {
-    set_mode(new noBarcodePriceCheck());
+    set_mode(new NoBarcodePriceCheck());
   }
 
   manualLogin() {
@@ -160,11 +160,11 @@ export class PriceCheck extends Session {
   }
 }
 
-export class noBarcodePriceCheck extends Session {
+export class NoBarcodePriceCheck extends Session {
   title = "Manual Price Check";
 
   content = `
-    <h1>Coffee & Drinks</h1>
+    <h1>Coffee &amp; Drinks</h1>
     <section>
       <button data-barcode="488348702402" onclick="window.mode.select_item(event)">Cold Brew Coffee</button>
     </section>
@@ -354,7 +354,7 @@ export class ManualPurchase extends Purchasing {
   title = "Manual Purchase";
 
   content = `
-    <h1>Coffee & Drinks</h1>
+    <h1>Coffee &amp; Drinks</h1>
     <section>
       <button data-barcode="488348702402" onclick="window.mode.select_item(event)">Cold Brew Coffee</button>
     </section>
