@@ -257,7 +257,7 @@ export class LoggedIn extends Session {
   }
 
   async purchase(item) {
-    const mode = new Purchasing(this.user, []);
+    const mode = new Purchases(this.user, []);
     await mode.purchase(item);
     set_mode(mode);
   }
@@ -306,9 +306,9 @@ export class LoggedIn extends Session {
   }
 }
 
-export class Purchasing extends LoggedIn {
+export class Purchases extends LoggedIn {
   purchases;
-  title = "Purchasing";
+  title = "Purchases";
 
   constructor(user, purchases) {
     super(user);
@@ -350,7 +350,7 @@ export class Purchasing extends LoggedIn {
   }
 }
 
-export class ManualPurchase extends Purchasing {
+export class ManualPurchase extends Purchases {
   title = "Manual Purchase";
 
   content = `
@@ -379,13 +379,13 @@ export class ManualPurchase extends Purchasing {
     if (this.purchases.length === 0) {
       set_mode(new LoggedIn(this.user));
     } else {
-      set_mode(new Purchasing(this.user, this.purchases));
+      set_mode(new Purchases(this.user, this.purchases));
     }
   }
 
   async select_item(event) {
     const barcode = event.target.dataset.barcode;
-    const mode = new Purchasing(this.user, this.purchases);
+    const mode = new Purchases(this.user, this.purchases);
     try {
       await mode.on_scan(barcode);
     } catch (e) {
