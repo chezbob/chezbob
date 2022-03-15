@@ -210,6 +210,7 @@ export class LoggedIn extends Session {
   color = "var(--chez-green)";
   hint = `
     - Scan an item to purchase<br>
+    - Deposit money using bill acceptor<br>
     <button onclick="window.mode.manual_purchase()">No Barcode?</button>
     <div style="align-self: center; margin: 1em;">or</div>
     <button onclick="window.mode.manage_account()">Manage Account</button>
