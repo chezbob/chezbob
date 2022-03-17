@@ -59,13 +59,17 @@ function handleMessage(data, isBinary) {
   let to = msg.header.to;
   msg.header.from = this.name;
 
-  debug(() => console.log(msg));
-
   for (let client of wss.clients) {
     if (client.name === to) {
       client.send(JSON.stringify(msg));
     }
   }
+
+  // Filter out any contents we shoudln't log
+  if (is_sensitive(msg)) {
+    msg.body = {};
+  }
+  debug(() => console.log(msg));
 }
 
 function validate_message(data) {
@@ -96,6 +100,10 @@ function validate_message(data) {
   }
 
   return msg;
+}
+
+function is_sensitive(msg) {
+  return msg.header.type === "login";
 }
 
 function handleClose() {
