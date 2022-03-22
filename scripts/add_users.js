@@ -22,6 +22,7 @@ import { db } from "../server/db.js";
 import { stdin as input, stdout as output } from "node:process";
 import * as readline from "readline/promises";
 
+const BATCH_SIZE = 100;
 const rl = readline.createInterface({ input, output });
 const emails = [];
 
@@ -37,35 +38,45 @@ rl.on("line", (line) => {
 });
 
 rl.on("close", async () => {
-  const conflicts = await db("users")
-    .select(["username", "email"])
-    .whereIn(
-      "username",
-      emails.map((e) => e.username)
-    )
-    .orWhereIn(
-      "email",
-      emails.map((e) => e.email)
+  let conflicts = [];
+  let inserted_count = 0;
+
+  // We need to process the list of emails in chunks because sqlite will get mad
+  // Technically we could do this as the emails come in through STDOUT. This would
+  // allow us to not have to hold the whole list in JS memory but eh, it's fine.
+  for (let i = 0; i < emails.length; i += BATCH_SIZE) {
+    const batch = emails.slice(i, Math.min(emails.length, i + BATCH_SIZE));
+    const batch_conflicts = await db("users")
+      .select(["username", "email"])
+      .whereIn(
+        "username",
+        batch.map((e) => e.username)
+      )
+      .orWhereIn(
+        "email",
+        batch.map((e) => e.email)
+      );
+
+    conflicts = conflicts.concat(batch_conflicts);
+
+    const conflictingEmails = new Set(batch_conflicts.map((c) => c.email));
+    const conflictingUsernames = new Set(batch_conflicts.map((c) => c.username));
+    const validEmails = batch.filter(
+      (e) =>
+        !conflictingEmails.has(e.email) && !conflictingUsernames.has(e.username)
     );
 
-  if (conflicts.length > 0) {
-    console.error(`Found ${conflicts.length} conflicts`);
-    for (let c of conflicts) {
-      console.log(c.username, "\t", c.email);
+    if (validEmails.length > 0) {
+      console.log(`Inserting batch of ${validEmails.length} emails.`);
+      await db("users").insert(validEmails);
+      inserted_count += validEmails.length;
     }
   }
 
-  const conflictingEmails = new Set(conflicts.map((c) => c.email));
-  const conflictingUsernames = new Set(conflicts.map((c) => c.username));
-  const validEmails = emails.filter(
-    (e) =>
-      !conflictingEmails.has(e.email) && !conflictingUsernames.has(e.username)
-  );
-
-  console.log(`Inserting ${validEmails.length} emails.`);
-  if (validEmails.length > 0) {
-    await db("users").insert(validEmails);
+  for (var c of conflicts) {
+    console.log(`CONFLICT SKIPPED: ${c.username}`);
   }
-  console.log("Done");
+  console.log(`Inserted ${inserted_count} emails!`);
+  console.log(`Skipped ${conflicts.length} emails!`);
   process.exit(0);
 });
