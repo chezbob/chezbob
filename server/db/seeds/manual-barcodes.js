@@ -18,6 +18,11 @@ const data = {
     cents: 100,
     barcode: "411337930531",
   },
+
+  "York Peppermint Pattie": {
+    cents: 10,
+    barcode: "034000066421",
+  },
 };
 
 export async function seed(knex) {
