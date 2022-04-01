@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
+  "engines" : { 
+    "npm" : ">=7.0.0",
+    "node" : "17.x"
+  },
   "scripts": {
     "fmt": "prettier --write .",
     "knex": "knex --knexfile=server/db/knexfile.js",
