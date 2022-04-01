@@ -172,7 +172,7 @@ export class NoBarcodePriceCheck extends Session {
     <h1>Small Snacks</h1>
     <section>
       <button data-barcode="697941861007" onclick="window.mode.select_item(event)">Madeline Cookie</button>
-      <button data-barcode="034000066421" onclick="window.mode.select_item(event)">York Peppermine Pattie</button>
+      <button data-barcode="034000066421" onclick="window.mode.select_item(event)">York Peppermint Pattie</button>
     </section>
 
     <h1>Ice Cream</h1>
