@@ -1,4 +1,5 @@
 import { price_row, dollars } from "./money.js";
+import menu from "./barcode-menu.js";
 
 // Determines how long the user has after any interaction before the session gets reset
 const SESSION_TIME = 30000;
@@ -160,27 +161,26 @@ export class PriceCheck extends Session {
   }
 }
 
+const menu_content = Object.entries(menu)
+  .map(
+    ([category, items]) =>
+      `<h1>${category}</h1>
+     <section>
+      ${Object.entries(items)
+        .map(
+          ([item, details]) => `
+        <button data-barcode="${details.barcode}" onclick="window.mode.select_item(event)">${item}</button>
+      `
+        )
+        .join("")}
+     </section>
+    `
+  )
+  .join("");
 export class NoBarcodePriceCheck extends Session {
   title = "Manual Price Check";
 
-  content = `
-    <h1>Coffee &amp; Drinks</h1>
-    <section>
-      <button data-barcode="488348702402" onclick="window.mode.select_item(event)">Cold Brew Coffee</button>
-    </section>
-
-    <h1>Small Snacks</h1>
-    <section>
-      <button data-barcode="697941861007" onclick="window.mode.select_item(event)">Madeline Cookie</button>
-      <button data-barcode="034000066421" onclick="window.mode.select_item(event)">York Peppermint Pattie</button>
-    </section>
-
-    <h1>Ice Cream</h1>
-    <section>
-      <button data-barcode="482573882311" onclick="window.mode.select_item(event)">Kirkland Ice Cream Bars</button>
-      <button data-barcode="411337930531" onclick="window.mode.select_item(event)">Nestle Product</button>
-    </section>
-  `;
+  content = menu_content;
 
   hint = `
       <button onclick="window.mode.back()" style="float: center">Back</button>
@@ -354,26 +354,7 @@ export class Purchases extends LoggedIn {
 
 export class ManualPurchase extends Purchases {
   title = "Manual Purchase";
-
-  content = `
-    <h1>Coffee &amp; Drinks</h1>
-    <section>
-      <button data-barcode="488348702402" onclick="window.mode.select_item(event)">Cold Brew Coffee</button>
-    </section>
-
-    <h1>Small Snacks</h1>
-    <section>
-      <button data-barcode="697941861007" onclick="window.mode.select_item(event)">Madeline Cookie</button>
-      <button data-barcode="034000066421" onclick="window.mode.select_item(event)">York Peppermint Pattie</button>
-    </section>
-
-    <h1>Ice Cream</h1>
-    <section>
-      <button data-barcode="482573882311" onclick="window.mode.select_item(event)">Kirkland Ice Cream Bars</button>
-      <button data-barcode="411337930531" onclick="window.mode.select_item(event)">Nestle Product</button>
-    </section>
-  `;
-
+  content = menu_content;
   hint = `
       <button onclick="window.mode.back()" style="float: center">Back</button>
     `;

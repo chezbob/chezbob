@@ -1,23 +1,19 @@
 export async function seed(knex) {
   // Deletes ALL existing entries
-
-  await knex("barcodes").del();
-  await knex("transactions").del();
-  await knex("inventory").del();
-  await knex("users").del();
-
-  await knex("inventory").insert([
+  let [reeses_id, redbull_id] = await knex("inventory").insert([
     {
-      id: 1,
       name: "Reese's Peanutbutter Cup",
       cents: 110,
     },
-    { id: 2, name: "Red Bull", cents: 50 },
+    { name: "Red Bull", cents: 50 },
   ]);
-  await knex("users").insert({ id: 1, email: "chez@bob.com", username: "bob" });
-  await knex("transactions").insert([{ id: 1, user_id: 1, cents: 1337 }]);
+  let [user_id] = await knex("users").insert({
+    email: "chez@bob.com",
+    username: "bob",
+  });
+  await knex("transactions").insert([{ user_id, cents: 1337 }]);
 
-  await knex("barcodes").insert({ item_id: 1, barcode: "1234" });
-  await knex("barcodes").insert({ item_id: 2, barcode: "0000" });
-  await knex("barcodes").insert({ user_id: 1, barcode: "1111" });
+  await knex("barcodes").insert({ item_id: reeses_id, barcode: "1234" });
+  await knex("barcodes").insert({ item_id: redbull_id, barcode: "0000" });
+  await knex("barcodes").insert({ user_id, barcode: "1111" });
 }
