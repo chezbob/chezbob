@@ -1,7 +1,6 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { createServer } from "http";
 import { parse } from "url";
-import { debug } from "../shared/reconnecting-socket.js";
 
 const wss = new WebSocketServer({
   noServer: true,
@@ -41,7 +40,7 @@ httpServer.on("upgrade", (req, socket, head) => {
 wss.on("connection", handleConnect);
 
 function handleConnect(ws, req) {
-  debug(() => console.log(`New connection: ${req.url}`));
+  console.log(`New connection: ${req.url}`);
 
   ws.on("message", handleMessage.bind(ws));
   ws.on("close", handleClose.bind(ws));
@@ -69,7 +68,7 @@ function handleMessage(data, isBinary) {
   if (is_sensitive(msg)) {
     msg.body = {};
   }
-  debug(() => console.log(msg));
+  console.log(msg);
 }
 
 function validate_message(data) {

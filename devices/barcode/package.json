@@ -1,0 +1,7 @@
+{
+  "main": "barcode.js",
+  "type": "module",
+  "optionalDependencies": {
+    "exclusive-keyboard": "^0.1.1"
+  }
+}

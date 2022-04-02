@@ -9,24 +9,22 @@
   },
   "scripts": {
     "fmt": "prettier --write .",
-    "knex": "knex --knexfile=server/db/knexfile.js",
-    "setup": "npm install && knex --knexfile=server/db/knexfile.js migrate:latest && knex --knexfile=server/db/knexfile.js seed:run",
+    "setup": "npm install && npm run init --workspace=db",
     "debug": "./scripts/debug.sh",
     "add_users": "node ./scripts/add_users.js",
     "msg": "node ./scripts/msg.js"
   },
   "author": "",
-  "dependencies": {
-    "better-sqlite3": "^7.5.0",
-    "encrypted-smiley-secure-protocol": "github:skokov3812/encrypted-smiley-secure-protocol",
-    "knex": "^1.0.3",
-    "ws": "^8.2.3"
-  },
-  "optionalDependencies": {
-    "nfc-pcsc": "^0.8.1",
-    "exclusive-keyboard": "^0.1.1"
-  },
   "devDependencies": {
     "prettier": "2.4.1"
-  }
+  },
+  "workspaces": [
+    "db",
+    "devices/cash",
+    "devices/barcode",
+    "devices/nfc",
+    "inventory",
+    "relay",
+    "reconnecting-socket"
+  ]
 }

@@ -1,4 +1,4 @@
-import { ReconnectingSocket } from "/shared/reconnecting-socket.js";
+import { ReconnectingSocket } from "/reconnecting-socket.js";
 
 let socket = await (async () => {
   // Allow URL parameters to configure the location of the relay server.

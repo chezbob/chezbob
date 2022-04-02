@@ -2,8 +2,8 @@
  * The inventory service that powers all of chezbob's persisted state
  */
 
-import { ReconnectingSocket } from "../shared/reconnecting-socket.js";
-import { db } from "./db.js";
+import { ReconnectingSocket } from "reconnecting-socket";
+import { db } from "db";
 import { pbkdf2, randomBytes } from "node:crypto";
 import { promisify } from "node:util";
 

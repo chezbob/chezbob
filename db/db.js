@@ -1,5 +1,5 @@
 import knex from "knex";
-import config from "./db/knexfile.js";
+import config from "./knexfile.js";
 
 // Required config options to specify the location of the relay server, what to call this instance of the nfc service, and where to send its data
 const DEPLOYMENT_MODE =

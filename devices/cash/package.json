@@ -1,0 +1,7 @@
+{
+  "main": "cash.js",
+  "type": "module",
+  "optionalDependencies": {
+    "encrypted-smiley-secure-protocol": "github:skokov3812/encrypted-smiley-secure-protocol"
+  }
+}

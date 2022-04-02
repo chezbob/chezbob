@@ -1,0 +1,12 @@
+{
+  "main": "db.js",
+  "type": "module",
+  "scripts": {
+    "knex": "knex",
+    "init": "knex migrate:latest && knex seed:run"
+  },
+  "dependencies": {
+    "knex": "^1.0.3",
+    "better-sqlite3": "^7.5.0"
+  }
+}

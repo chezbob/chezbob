@@ -9,7 +9,7 @@
 
     Body is optional but it must be a valid JSON object string
 */
-import { ReconnectingSocket } from "../shared/reconnecting-socket.js";
+import { ReconnectingSocket } from "reconnecting-socket";
 
 // Required config options to specify the location of the relay server
 const RELAY_SERVER =

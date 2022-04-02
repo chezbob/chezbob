@@ -18,7 +18,7 @@
     If the username or email exists, the conflict will be printed to stderr
 */
 
-import { db } from "../server/db.js";
+import { db } from "db";
 import { stdin as input, stdout as output } from "node:process";
 import * as readline from "readline/promises";
 
@@ -60,7 +60,9 @@ rl.on("close", async () => {
     conflicts = conflicts.concat(batch_conflicts);
 
     const conflictingEmails = new Set(batch_conflicts.map((c) => c.email));
-    const conflictingUsernames = new Set(batch_conflicts.map((c) => c.username));
+    const conflictingUsernames = new Set(
+      batch_conflicts.map((c) => c.username)
+    );
     const validEmails = batch.filter(
       (e) =>
         !conflictingEmails.has(e.email) && !conflictingUsernames.has(e.username)

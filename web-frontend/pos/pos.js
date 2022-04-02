@@ -1,4 +1,4 @@
-import { ReconnectingSocket } from "/shared/reconnecting-socket.js";
+import { ReconnectingSocket } from "/reconnecting-socket.js";
 import { DefaultMode } from "./mode.js";
 
 // Chez-bob is organized into "modes" which govern how the app behaves and looks.

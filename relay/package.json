@@ -1,0 +1,7 @@
+{
+  "main": "relay.js",
+  "type": "module",
+  "dependencies": {
+    "ws": "^8.2.3"
+  }
+}

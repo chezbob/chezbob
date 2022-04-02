@@ -2,7 +2,7 @@
   This chezbob server implements cash scanning for money deposits.
   It requires an attached NV9 or NV10 cash reader.
 */
-import { ReconnectingSocket } from "../shared/reconnecting-socket.js";
+import { ReconnectingSocket } from "reconnecting-socket";
 import sspLib from "encrypted-smiley-secure-protocol";
 
 // Required config options to specify the location of the relay server, what to call this instance of the the service, and where to send its data
