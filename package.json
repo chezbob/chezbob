@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "engines" : { 
-    "npm" : ">=7.0.0",
-    "node" : "17.x"
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": "17.x"
   },
   "scripts": {
     "fmt": "prettier --write .",
@@ -19,10 +19,12 @@
   "dependencies": {
     "better-sqlite3": "^7.5.0",
     "encrypted-smiley-secure-protocol": "github:skokov3812/encrypted-smiley-secure-protocol",
-    "exclusive-keyboard": "^0.1.1",
     "knex": "^1.0.3",
-    "nfc-pcsc": "^0.8.1",
     "ws": "^8.2.3"
+  },
+  "optionalDependencies": {
+    "nfc-pcsc": "^0.8.1",
+    "exclusive-keyboard": "^0.1.1"
   },
   "devDependencies": {
     "prettier": "2.4.1"
