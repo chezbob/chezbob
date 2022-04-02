@@ -9,12 +9,10 @@
   This can be done like:
 
   sudo setfacl -m u:username:r /dev/input/by-id/usb-Logitech_Logitech_USB_Keyboard-event-kbd
-
-
 */
 
 import { ReconnectingSocket } from "reconnecting-socket";
-
+import ExclusiveKeyboard from "exclusive-keyboard";
 // We only respond to numeric keys
 const KEY_REGEX = /^KEY_(\d)$/;
 
@@ -36,50 +34,45 @@ const DESTINATION_IDENT =
 
 let socket = await ReconnectingSocket.connect(RELAY_SERVER, SERVICE_IDENT);
 
-try {
-  const ExclusiveKeyboard = await import("exclusive-keyboard");
-  const keyboard = new ExclusiveKeyboard(
-    "by-id/usb-Totinfo_TOT2D_PRODUCT_HID_KBW_APP-000000000-event-kbd",
-    true
-  );
+const keyboard = new ExclusiveKeyboard(
+  "by-id/usb-Totinfo_TOT2D_PRODUCT_HID_KBW_APP-000000000-event-kbd",
+  true
+);
 
-  // Barcode readers in "automatic" mode will sometimes scan the same item twice
-  // in rapid succession. This is almost always a mistake so we'll manually debounce
-  // this for them.
-  //
-  // This timeout is a heuristic, we picked it cuz it feels good.
-  const DEBOUNCE_TIMEOUT = 2000;
-  let last_scan_time = 0;
+// Barcode readers in "automatic" mode will sometimes scan the same item twice
+// in rapid succession. This is almost always a mistake so we'll manually debounce
+// this for them.
+//
+// This timeout is a heuristic, we picked it cuz it feels good.
+const DEBOUNCE_TIMEOUT = 2000;
+let last_scan_time = 0;
 
-  keyboard.on("keypress", (event) => {
-    const match = event.keyId.match(KEY_REGEX);
-    if (match) {
-      // push the letter onto the buffer
-      barcode += match[1];
-      return;
+keyboard.on("keypress", (event) => {
+  const match = event.keyId.match(KEY_REGEX);
+  if (match) {
+    // push the letter onto the buffer
+    barcode += match[1];
+    return;
+  }
+
+  if (event.keyId === "KEY_ENTER" && barcode !== "") {
+    console.log({ barcode });
+
+    // Ignore the scan if it happened too fast
+    if (Date.now() - last_scan_time > DEBOUNCE_TIMEOUT) {
+      // Reset the debounce timer
+      last_scan_time = Date.now();
+
+      socket.send({
+        header: {
+          to: DESTINATION_IDENT,
+          type: "scan_event",
+        },
+        body: {
+          barcode,
+        },
+      });
     }
-
-    if (event.keyId === "KEY_ENTER" && barcode !== "") {
-      console.log({ barcode });
-
-      // Ignore the scan if it happened too fast
-      if (Date.now() - last_scan_time > DEBOUNCE_TIMEOUT) {
-        // Reset the debounce timer
-        last_scan_time = Date.now();
-
-        socket.send({
-          header: {
-            to: DESTINATION_IDENT,
-            type: "scan_event",
-          },
-          body: {
-            barcode,
-          },
-        });
-      }
-      barcode = "";
-    }
-  });
-} catch (e) {
-  console.log("Error connecting to physical barcode scanner: ", e);
-}
+    barcode = "";
+  }
+});

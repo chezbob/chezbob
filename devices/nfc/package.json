@@ -1,5 +1,5 @@
 {
-  "main": "barcode.js",
+  "main": "nfc.js",
   "type": "module",
   "optionalDependencies": {
     "nfc-pcsc": "^0.8.1"
