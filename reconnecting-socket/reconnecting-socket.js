@@ -12,7 +12,7 @@ let WebSocket = global.WebSocket || (await import("ws")).WebSocket;
 
 let crypto = global.crypto || (await import("crypto")).webcrypto;
 
-const REQUEST_TIMEOUT = 1000;
+const REQUEST_TIMEOUT = 3000;
 
 export class ReconnectingSocket extends EventTarget {
   // `#pending is a map:  msg_id -> {resolve, reject, timeout}
