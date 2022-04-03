@@ -1,10 +1,21 @@
 header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   justify-content: space-between;
   width: 100%;
   height: 2.5em;
   margin-bottom: 1em;
   align-items: center;
+  justify-items: center;
+}
+
+header > .left {
+  justify-self: start;
+}
+
+header > .right {
+  grid-column: 3;
+  justify-self: end;
 }
 
 header button {
@@ -189,18 +200,14 @@ header button {
   margin-right: 0.5em;
 }
 
-#balance {
+.header-value {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
 }
 
-#balance:not([data-balance]) {
-  display: none;
-}
-
-#balance::after {
-  content: attr(data-balance);
+.header-value::after {
+  content: attr(data-value);
 }
 
 #balance.positive::after {
@@ -211,8 +218,8 @@ header button {
   color: var(--chez-red);
 }
 
-#balance[data-balance] + #logo {
-  display: none;
+#user::after {
+  color: var(--bob-color);
 }
 
 h1 {

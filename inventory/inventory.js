@@ -16,7 +16,7 @@ let inventory = await ReconnectingSocket.connect(
 
 function user_info() {
   return db("users")
-    .select(["users.id as id", "balance"])
+    .select(["users.id as id", "username", "balance"])
     .join("balances", "balances.id", "=", "users.id");
 }
 
@@ -165,6 +165,7 @@ inventory.handle("login", async (attempt) => {
     },
     body: {
       id: user.id,
+      username,
       balance,
     },
   };

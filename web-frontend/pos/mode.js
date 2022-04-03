@@ -72,7 +72,8 @@ class Mode {
 export class DefaultMode extends Mode {
   color = "var(--chez-blue)";
   title = null;
-  hint = `
+  get hint() {
+    return `
       - Tap your ID to sign in
       <br>
       - Scan an item to price-check
@@ -81,11 +82,12 @@ export class DefaultMode extends Mode {
       <button style="align-self: center" onclick="window.mode.manualLogin()">Manual Login</button>
       <button style="align-self: center" onclick="window.mode.noBarcodePriceCheck()">No Barcode Price Check</button>
     `;
+  }
 
   get header() {
     return `
-        <div id="logo">Chez Bob</div>
-        <button onclick="window.mode.helpMode()">Help</button>
+        <div id="logo" class="left">Chez Bob</div>
+        <button class="right" onclick="window.mode.helpMode()">Help</button>
     `;
   }
 
@@ -209,13 +211,15 @@ export class LoggedIn extends Session {
   rerender = true;
   title = null;
   color = "var(--chez-green)";
-  hint = `
-    - Scan an item to purchase<br>
-    - Deposit money using bill acceptor<br>
-    <button onclick="window.mode.manual_purchase()">No Barcode?</button>
-    <div style="align-self: center; margin: 1em;">or</div>
-    <button onclick="window.mode.manage_account()">Manage Account</button>
-  `;
+  get hint() {
+    return `
+      - Scan an item to purchase<br>
+      - Deposit money using bill acceptor<br>
+      <button onclick="window.mode.manual_purchase()">No Barcode?</button>
+      <div style="align-self: center; margin: 1em;">or</div>
+      <button onclick="window.mode.manage_account()">Manage Account</button>
+    `;
+  }
 
   constructor(user) {
     super();
@@ -224,15 +228,18 @@ export class LoggedIn extends Session {
 
   get header() {
     return `
-          <div id="balance" class=${
+          <div id="balance" class="left header-value ${
             this.user.balance > 0 ? "positive" : "negative"
-          } data-balance=${dollars(this.user.balance)}>
+          }" data-value=${dollars(this.user.balance)}>
             <div>Balance</div>
           </div>
 
-          <button id="logout" class="glow" onclick="window.mode.logout()">Sign Out(${Math.floor(
-            this.millis_remaining() / 1000
-          )})</button>
+          <div id="user" class="header-value"
+            data-value=${this.user.username}>
+            <div>Username</div>
+          </div>
+
+          <button id="logout" class="glow right" onclick="window.mode.logout()">Sign Out(<session-timer></session-timer>)</button>
         `;
   }
 
@@ -355,9 +362,11 @@ export class Purchases extends LoggedIn {
 export class ManualPurchase extends Purchases {
   title = "Manual Purchase";
   content = menu_content;
-  hint = `
+  get hint() {
+    return `
       <button onclick="window.mode.back()" style="float: center">Back</button>
     `;
+  }
 
   back() {
     if (this.purchases.length === 0) {
@@ -381,11 +390,13 @@ export class ManualPurchase extends Purchases {
 
 class ManualLogin extends DefaultMode {
   title = `Sign In`;
-  hint = `
+  get hint() {
+    return `
       - Tap your ID to sign in
       <br>
       - Scan an item to price-check
     `;
+  }
 
   content = `
         <form onsubmit="window.mode.attemptLogin(event)" style="align-self: center">
@@ -432,9 +443,11 @@ class HelpMode extends DefaultMode {
         <div id="logo">Chez Bob</div>
     `;
   }
-  hint = `
+  get hint() {
+    return `
       <button onclick="window.mode.back()" style="float: center">Back</button>
     `;
+  }
 
   content = `
       - Chez Bob food is not free.

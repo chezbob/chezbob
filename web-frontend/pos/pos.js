@@ -1,4 +1,5 @@
 import { ReconnectingSocket } from "/shared/reconnecting-socket.js";
+import "./session-timer.js";
 import { DefaultMode } from "./mode.js";
 
 // Chez-bob is organized into "modes" which govern how the app behaves and looks.
@@ -60,12 +61,6 @@ socket.handle("cash_deposit", async (cash_deposit) => {
 // Some modes have timing-specific properties, this could be a session that needs to timeout
 // or an error that needs to disappear at some point. Rather than making modes set up and teardown
 // interval handlers, we just do that globally.
-//
-// This is a little funky because some modes need to render every second (e.g. to show session-time remainig).
-// To solve this problem inelegantly, but succinctly, we just rerender every second.
-// Typically, updates to the mode should not wait for this cycle, but should explicitly render immediately.
-// If you notice that the app is seemingly slow to update, it's likely that you forgot to explicitly render
-// and were saved by this per-second-reload
 setInterval(() => {
   // If the session times out, reset it
   if (window.mode.timeout && Date.now() > window.mode.timeout) {
@@ -75,8 +70,6 @@ setInterval(() => {
   // If the error times out, clear it
   if (window.mode.error_timeout && Date.now() > window.mode.error_timeout) {
     window.mode.error = window.mode.error_timeout = undefined;
+    window.mode.render();
   }
-
-  // Rerender
-  window.mode.render();
 }, 1000);
