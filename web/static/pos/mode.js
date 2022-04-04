@@ -440,7 +440,7 @@ class HelpMode extends DefaultMode {
   title = `Chez Bob Help`;
   get header() {
     return `
-        <div id="logo">Chez Bob</div>
+        <div id="logo" class="left">Chez Bob</div>
     `;
   }
   get hint() {
