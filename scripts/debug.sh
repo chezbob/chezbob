@@ -7,7 +7,7 @@ tmux send "SERVICE_IDENT='barcode' DESTINATION_IDENT='pos' RELAY_SERVER=$RELAY_S
 tmux split-window;
 tmux send "DEPLOYMENT_MODE='development' RELAY_SERVER=$RELAY_SERVER node inventory" ENTER;
 tmux split-window;
-tmux send "npx http-server -c-1 ./web-frontend" ENTER;
+tmux send "HTTP_PORT=8081 node web" ENTER;
 tmux select-layout main-vertical;
 tmux set -g mouse on;
 tmux a;

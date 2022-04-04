@@ -1,0 +1,7 @@
+{
+  "main": "web.js",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}

@@ -25,6 +25,7 @@
     "devices/nfc",
     "inventory",
     "relay",
-    "reconnecting-socket"
+    "reconnecting-socket",
+    "web"
   ]
 }
