@@ -1,15 +1,24 @@
-import { WebSocketServer, WebSocket } from "ws";
-import { createServer } from "http";
+import { WebSocketServer } from "ws";
+import { hybridServer } from "hybrid-http-server";
 import { parse } from "url";
 
 const wss = new WebSocketServer({
   noServer: true,
 });
 
-const httpServer = createServer();
-
-httpServer.on("upgrade", (req, socket, head) => {
+const httpApp = ((req, res) => {
+  const socket = req.socket;
   const { pathname } = parse(req.url);
+  const head = req.headers;
+
+  if (!req.headers.hasOwnProperty('upgrade')) {
+    console.log(req.headers);
+    res.statusCode = "101";
+    res.statusMessage = 'Switching Protocols';
+    res.end();
+    socket.destroy();
+    return;
+  }
 
   // skip the leading slash
   const name = pathname.substring(1);
@@ -109,4 +118,4 @@ function handleClose() {
   console.log(`Client disconnected ${this.name}`);
 }
 
-httpServer.listen(8080);
+hybridServer(httpApp);

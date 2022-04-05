@@ -1,0 +1,4 @@
+{
+    "main": "hybrid-http-server.js",
+    "type": "module"
+}

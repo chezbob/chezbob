@@ -23,9 +23,10 @@
     "devices/cash",
     "devices/barcode",
     "devices/nfc",
+    "lib/hybrid-http-server",
+    "lib/reconnecting-socket",
     "inventory",
     "relay",
-    "reconnecting-socket",
     "web"
   ]
 }

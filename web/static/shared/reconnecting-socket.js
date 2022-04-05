@@ -1,1 +1,1 @@
-../../../reconnecting-socket/reconnecting-socket.js
+../../../lib/reconnecting-socket/reconnecting-socket.js
