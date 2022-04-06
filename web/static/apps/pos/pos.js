@@ -15,12 +15,12 @@ window.set_mode = (mode) => {
 // handlers to the socket on the fly.
 window.socket = await (async () => {
   // Allow URL parameters to configure the location of the relay server.
-  // Default to ws://localhost:8080/
   const params = new URLSearchParams(window.location.search);
-  const host = params.get("relay_host") ?? "localhost";
+  const host = params.get("relay_host") ?? window.location.hostname;
   const port = params.get("relay_port") ?? "8080";
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws";
 
-  return await ReconnectingSocket.connect(`ws://${host}:${port}/`, "pos");
+  return await ReconnectingSocket.connect(`${protocol}://${host}:${port}/`, "pos");
 })();
 
 // We need to render immediately because browsers are weird and will cache our data attributes
