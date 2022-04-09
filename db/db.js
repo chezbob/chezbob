@@ -21,4 +21,10 @@ if (!["production", "development"].includes(DEPLOYMENT_MODE)) {
   console.error("DEPLOYMENT_MODE must be either 'production' or 'development'");
 }
 
+export function user_info() {
+  return db("users")
+    .select(["users.id as id", "username", "balance"])
+    .join("balances", "balances.id", "=", "users.id");
+}
+
 export const db = knex(config[DEPLOYMENT_MODE]);

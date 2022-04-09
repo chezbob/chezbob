@@ -1,0 +1,32 @@
+#title {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 48px;
+  text-decoration: underline;
+}
+
+#content {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 36px;
+}
+
+tr,
+td {
+  width: 80%;
+  border: 1px solid;
+}
+
+.balance {
+  border: 1px solid;
+  text-align: center;
+}
+
+#message {
+  text-align: center;
+  font-size: 48px;
+}
