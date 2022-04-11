@@ -87,6 +87,7 @@ async function loop() {
     }
 
     for (const ev of evs.info) {
+      console.log("EVENT", ev);
       // If anything has gone wrong let's just start the scanner back up again
       // This service is basically stateless so this should be fine.
       if (ev.name === "DISABLED") {
@@ -117,6 +118,7 @@ async function loop() {
 
         // Request permission from POS to continue
         try {
+          console.log("ATTEMPTING DEPOSIT");
           await socket.request({
             header: {
               to: DESTINATION_IDENT,
@@ -126,11 +128,12 @@ async function loop() {
               cents: cents,
             },
           });
+          console.log("SUCCEDED DEPOSIT");
         } catch (e) {
           // If the POS fails to accept our request,
           // either explicitly or by timeout, we give
           // the user back their cash
-          console.log("Did not accept bill: ", e);
+          console.log("Did not accept bill: ", e, "Issuing rejection");
           await eSSP.command("REJECT_BANKNOTE");
         }
       }
