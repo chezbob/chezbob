@@ -292,7 +292,7 @@ export class LoggedIn extends Session {
     this.user.balance = deposit_success.body.balance;
 
     // Don't put rendering on the hotpath for accepting cash
-    setTimeout(() => this.render, 0);
+    setTimeout(() => this.render(), 0);
 
     return {
       header: {
