@@ -18,7 +18,7 @@ window.socket = await (async () => {
   const params = new URLSearchParams(window.location.search);
   const host = params.get("relay_host") ?? window.location.hostname;
   const port = params.get("relay_port") ?? "8080";
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws";
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
 
   return await ReconnectingSocket.connect(`${protocol}://${host}:${port}/`, "pos");
 })();
