@@ -78,6 +78,7 @@ eSSP.on("OPEN", async () => {
 // We use our own polling loop so we can issue "HOLD" events properly.
 async function loop() {
   while (true) {
+    console.log("POLLING...");
     let evs = await eSSP.command("POLL");
 
     // If there are no events, the info field is of type object.
@@ -98,6 +99,12 @@ async function loop() {
         // this. So lets just ignore them and break
         // instead.
         break;
+      }
+
+      // If a bill was rejected, we want to know why (for logging purposes)
+      if (ev.name === "NOTE_REJECTED") {
+        const reason = await eSSP.command("LAST_REJECT_CODE");
+        console.log("REJECTED_REASON: ", reason);
       }
 
       // The READ_NOTE event is fired several times for a single bill insertion.
