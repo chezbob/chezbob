@@ -78,7 +78,6 @@ eSSP.on("OPEN", async () => {
 // We use our own polling loop so we can issue "HOLD" events properly.
 async function loop() {
   while (true) {
-    console.log("POLLING...");
     let evs = await eSSP.command("POLL");
 
     // If there are no events, the info field is of type object.
@@ -145,6 +144,7 @@ async function loop() {
         }
       }
     }
+    console.log("POLLING");
   }
 }
 
