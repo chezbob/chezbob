@@ -1,6 +1,6 @@
 /*
-    debug_barcode creates a readline-based prompt to allow manual entry of
-    barcode values. This should only be used in development.
+    debug_cash creates a readline-based prompt to allow manual entry of
+    deposit values. This should only be used in development.
 */
 
 import { ReconnectingSocket } from "reconnecting-socket";

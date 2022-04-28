@@ -5,7 +5,7 @@
 
     Usage:
 
-        npm run msg -- [destination] [type] [body?]
+        node scripts/msg.js [destination] [type] [body?]
 
     Body is optional but it must be a valid JSON object string
 */

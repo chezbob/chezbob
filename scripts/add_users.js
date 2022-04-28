@@ -2,7 +2,7 @@
     The add_users script reads a list of emails (one per line) from stdin
     and creates users for all of them.
 
-    Common usage:   cat new_user.txt | npm run add_users
+    Common usage:   cat new_user.txt | node scripts/add_users.js
 
 
     The usernames of the generated users are pulled from the email:
