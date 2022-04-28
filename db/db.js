@@ -1,3 +1,13 @@
+/*
+  The db module provides a convenient way for services in chezbob to directly access the database.
+  Note, that any service which does so, must be co-located on the server with the database.
+
+  The db module selects which database to provide based on the DEPLOYMENT_MODE environment variable.
+
+  As more services interface with the database, this module serves as a convenient place to implement
+  shared functionality and common queries
+*/
+
 import knex from "knex";
 import config from "./knexfile.js";
 
