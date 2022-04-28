@@ -1,3 +1,7 @@
+/*
+    Web is chezbob's public internet presence.
+*/
+
 import express from "express";
 import { hybridServer } from "hybrid-http-server";
 

@@ -1,5 +1,5 @@
 {
-  "main": "relay.js",
+  "main": "relay-server.js",
   "type": "module",
   "dependencies": {
     "ws": "^8.2.3"
