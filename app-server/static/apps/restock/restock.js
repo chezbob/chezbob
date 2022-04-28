@@ -1,14 +1,20 @@
 import { ReconnectingSocket } from "/shared/reconnecting-socket.js";
 
+// Rather than using Modes to control the socket, we put it directly on the window
+// and set up handlers that invoke mode methods like `on_scan`. This keeps us from having
+// to thread the socket object through all mode transitions, and from having to add and remove
+// handlers to the socket on the fly.
 let socket = await (async () => {
   // Allow URL parameters to configure the location of the relay server.
-  // Default to ws://localhost:8080/
   const params = new URLSearchParams(window.location.search);
-  const host = params.get("relay_host") ?? "localhost";
-  const port = params.get("relay_port") ?? "8080";
+  const host = params.get("relay_host") ?? window.location.hostname;
+  const port = params.get("relay_port") ?? window.location.port;
+  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
 
-  // We claim to be POS so that we receive scan events
-  return await ReconnectingSocket.connect(`ws://${host}:${port}/`, "pos");
+  return await ReconnectingSocket.connect(
+    `${protocol}://${host}:${port}/`,
+    "pos"
+  );
 })();
 
 let buffer = "";
