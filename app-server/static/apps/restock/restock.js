@@ -12,8 +12,7 @@ let socket = await (async () => {
   const protocol = window.location.protocol === "https:" ? "wss" : "ws";
 
   return await ReconnectingSocket.connect(
-    `${protocol}://${host}:${port}/`,
-    "pos"
+    `${protocol}://${host}:${port}/`
   );
 })();
 
