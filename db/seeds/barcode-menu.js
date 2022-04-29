@@ -1,4 +1,4 @@
-import menu from "../../web/static/apps/pos/barcode-menu.js";
+import menu from "../../app-server/static/apps/pos/barcode-menu.js";
 
 export async function seed(knex) {
   for (let [_, data] of Object.entries(menu)) {
