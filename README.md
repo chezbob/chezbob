@@ -8,7 +8,7 @@ Run:
 - `npm run setup` (might take a bit, builds sqlite3)
 - `npm run debug` (make sure you have tmux installed)
 
-Open `http://localhost:8081/pos` in the browser.
+Open `http://localhost:8080/apps/pos` in the browser.
 You can manually input barcode values using the barcode panel.
 
 #### Architecture
