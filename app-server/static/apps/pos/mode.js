@@ -112,7 +112,7 @@ export class DefaultMode extends Mode {
     }
   }
 
-  async on_deposit() {
+  async on_deposit_preflight() {
     // Set the user visible error
     this.set_error("Must be logged in to deposit money");
 
@@ -271,6 +271,16 @@ export class LoggedIn extends Session {
     set_mode(mode);
   }
 
+  async on_deposit_preflight() {
+    this.bump_timeout();
+    return {
+      header: {
+        type: "deposit_preflight_success"
+      },
+      body: {}
+    };
+  }
+
   async on_deposit(deposit_money) {
     this.bump_timeout();
     const cents = deposit_money.body?.cents;
@@ -291,15 +301,7 @@ export class LoggedIn extends Session {
 
     this.user.balance = deposit_success.body.balance;
 
-    // Don't put rendering on the hotpath for accepting cash
-    setTimeout(() => this.render(), 0);
-
-    return {
-      header: {
-        type: "deposit_success",
-      },
-      body: {},
-    };
+    this.render();
   }
 
   manage_account() {

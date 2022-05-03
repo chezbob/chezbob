@@ -29,12 +29,20 @@ async function send(cents) {
     await socket.request({
       header: {
         to: DESTINATION_IDENT,
-        type: "cash_deposit",
+        type: "deposit_preflight",
+      },
+      body: {},
+    });
+
+    socket.send({
+      header: {
+        to: DESTINATION_IDENT,
+        type: "deposit",
       },
       body: {
         cents,
       },
-    });
+    })
     console.log("SUCCEDED DEPOSIT");
   } catch (e) {
     console.error(`Error processing deposit: `, e);
