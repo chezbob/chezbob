@@ -50,12 +50,16 @@ socket.on("refresh", () => {
   window.location.reload();
 });
 
-socket.handle("cash_deposit", async (cash_deposit) => {
-  if (!window.mode.on_deposit) {
+socket.handle("deposit_preflight", async (cash_deposit) => {
+  if (!window.mode.on_deposit_preflight) {
     throw new Error("POS in incorrect mode");
   }
 
-  return await window.mode.on_deposit(cash_deposit);
+  return await window.mode.on_deposit_preflight();
+});
+
+socket.on("deposit", async (cash_deposit) => {
+  await window.mode.on_deposit(cash_deposit);
 });
 
 //

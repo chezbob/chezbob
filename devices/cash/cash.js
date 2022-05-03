@@ -128,13 +128,15 @@ async function loop() {
           await socket.request({
             header: {
               to: DESTINATION_IDENT,
-              type: "cash_deposit",
+              type: "deposit_preflight",
             },
-            body: {
-              cents: cents,
-            },
+            body: {}
           });
-          console.log("SUCCEDED DEPOSIT");
+
+          // Now we know we're allowed to continue, so we'll pass through to the
+          // next iteration of the poll loop, which will attempt to accept the
+          // bill. The bill could still fail to accept (see issue#5).
+          console.log("PREFLIGHT PASSED");
         } catch (e) {
           // If the POS fails to accept our request,
           // either explicitly or by timeout, we give
@@ -143,6 +145,18 @@ async function loop() {
           await eSSP.command("REJECT_BANKNOTE");
         }
       }
+    }
+
+    if (ev.name === "CREDIT_NOTE") {
+      const cents = channels[ev.channel].value * 100;
+      // Fire away and hope whoever's listening knows what to do
+      socket.send({
+        header: {
+          to: DESTINATION_IDENT,
+          type: "deposit"
+        },
+        body: { cents }
+      })
     }
     console.log("POLLING");
   }
