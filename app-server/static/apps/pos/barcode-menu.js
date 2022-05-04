@@ -17,6 +17,10 @@ export default {
       defaultCents: 150,
       barcode: "845183001266",
     },
+    "Milk (150ml)": {
+      defaultCents: 45,
+      barcode: "190646630089",
+    },
   },
   "Small Snacks": {
     "Madeline Cookie": {
