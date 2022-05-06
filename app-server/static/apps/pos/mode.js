@@ -275,9 +275,9 @@ export class LoggedIn extends Session {
     this.bump_timeout();
     return {
       header: {
-        type: "deposit_preflight_success"
+        type: "deposit_preflight_success",
       },
-      body: {}
+      body: {},
     };
   }
 

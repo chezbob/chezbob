@@ -11,9 +11,7 @@ let socket = await (async () => {
   const port = params.get("relay_port") ?? window.location.port;
   const protocol = window.location.protocol === "https:" ? "wss" : "ws";
 
-  return await ReconnectingSocket.connect(
-    `${protocol}://${host}:${port}/`
-  );
+  return await ReconnectingSocket.connect(`${protocol}://${host}:${port}/`);
 })();
 
 let buffer = "";
