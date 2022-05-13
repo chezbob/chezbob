@@ -17,9 +17,9 @@ export default {
       defaultCents: 150,
       barcode: "845183001266",
     },
-    "Milk (150ml)": {
-      defaultCents: 45,
-      barcode: "190646630089",
+    "Oat Milk (150ml)": {
+      defaultCents: 61,
+      barcode: "813636022816",
     },
   },
   "Small Snacks": {
