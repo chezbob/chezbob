@@ -37,10 +37,9 @@ const api = express.Router();
  *           ]
  */
 api.get("/wos/users", async (req, res) => {
-  // first 10 users with a debt superior to $5
+  // first 10 users with a debt greater than $5
   let users = await user_info()
-    .where("balance", "<", -5)
-    .orWhere("balance", -5)
+    .where("balance", "<=", -500)
     .orderBy("balance")
     .limit(10);
   res.send(users);
