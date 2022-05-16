@@ -1,4 +1,4 @@
-import { ReconnectingSocket } from "/shared/reconnecting-socket.js";
+import { ReconnectingSocket } from "/js/reconnecting-socket.js";
 import "./session-timer.js";
 import { DefaultMode } from "./mode.js";
 

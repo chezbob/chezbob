@@ -1,4 +1,4 @@
-import { price_row, dollars } from "./money.js";
+import { price_row, dollars } from "../../../js/money.js";
 import menu from "./barcode-menu.js";
 
 // Determines how long the user has after any interaction before the session gets reset
