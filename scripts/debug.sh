@@ -1,7 +1,7 @@
 #!/bin/bash
 export DEBUG=true;
 export RELAY_SERVER='ws://localhost:8080/'
-tmux new-session -d -s chezbob "DEPLOYMENT_MODE='development' HTTP_PORT=8080 node app-server";
+tmux new-session -d -s chezbob "DEPLOYMENT_MODE='development' HTTP_PORT=8080 node web/internal.js";
 tmux split-window;
 tmux send "SERVICE_IDENT='barcode' DESTINATION_IDENT='pos' RELAY_SERVER=$RELAY_SERVER node scripts/debug_barcode" ENTER;
 tmux split-window;
