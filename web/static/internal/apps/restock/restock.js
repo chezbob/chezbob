@@ -1,4 +1,4 @@
-import { ReconnectingSocket } from "/shared/reconnecting-socket.js";
+import { ReconnectingSocket } from "/js/reconnecting-socket.js";
 
 // Rather than using Modes to control the socket, we put it directly on the window
 // and set up handlers that invoke mode methods like `on_scan`. This keeps us from having

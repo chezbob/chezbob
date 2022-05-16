@@ -1,10 +1,6 @@
-const REFRESH_INTERVAL = 60000; //ms
+import {dollars} from "../../js/money.js";
 
-function dollars(cents) {
-    let d = Math.abs(Math.trunc(cents / 100));
-    let c = Math.abs(cents) % 100;
-    return `${cents < 0 ? "-" : ""}${d}.${c < 10 ? "0" + c : c}`;
-}
+const REFRESH_INTERVAL = 60000; //ms
 
 async function display_wall() {
   let response = await fetch("/api/wos/users");
