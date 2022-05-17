@@ -9,6 +9,18 @@
   <body>
     <h1>Chez Bob Restock Utility</h1>
     <p>Scan an item to update its information</p>
+    <select id="no_barcode">
+      <option selected disabled>-- No Barcode Item --</option>
+      <script type="module">
+        import menu from "/internal/apps/pos/barcode-menu.js";
+
+        for (let [_, data] of Object.entries(menu)) {
+          for (let [name, details] of Object.entries(data)) {
+            document.getElementById("no_barcode").innerHTML += `<option value='${details.barcode}'>${name}</option>`;
+          }
+        }
+      </script>
+    </select>
     <form id="form"></form>
     <div id="error"></div>
     <script type="module" src="restock.js"></script>
