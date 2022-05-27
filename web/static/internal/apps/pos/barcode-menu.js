@@ -43,4 +43,10 @@ export default {
       barcode: "411337930531",
     },
   },
+  "Others": {
+    "Cutlery": {
+      defaultCents: 25,
+      barcode: "417645123481",
+    }
+  }
 };
