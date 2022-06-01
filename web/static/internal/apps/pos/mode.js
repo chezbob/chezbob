@@ -528,7 +528,7 @@ class ManageAccount extends LoggedIn {
   hint = `<button onclick=window.mode.goBack()>Go Back</button>`;
   content = `
         <button onclick="window.mode.setPassword()">Set Password</button>
-        <button onclick="window.mode.addCard()">Add Card</button>
+        <button onclick="window.mode.addCard()">Add NFC Login Card</button>
     `;
 
   setPassword() {
@@ -588,7 +588,7 @@ class SetPassword extends ManageAccount {
 
 export class AddCard extends ManageAccount {
   title = `Add Card`;
-  content = `Tap the card you wish to add to your account.`;
+  content = `Tap the card you wish to use to log in to your account (this card is not for payment, Chez Bob only accepts cash).`;
   hint = `<button onclick=window.mode.goBack()>Go Back</button>`;
 
   async on_scan(barcode) {
