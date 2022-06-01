@@ -62,6 +62,12 @@ socket.on("deposit", async (cash_deposit) => {
   await window.mode.on_deposit(cash_deposit);
 });
 
+socket.on('nfc_scan_error', () => {
+  window.mode.set_error("Error reading NFC card. Try again");
+  // Even though it's an error, it's an indication the user is actively using the system so bump the timeout
+  window.mode.bumpTimeout && window.mode.bumpTimeout();
+});
+
 //
 // IMPORTANT!
 //
