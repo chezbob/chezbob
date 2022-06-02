@@ -16,7 +16,9 @@
 
         for (let [_, data] of Object.entries(menu)) {
           for (let [name, details] of Object.entries(data)) {
-            document.getElementById("no_barcode").innerHTML += `<option value='${details.barcode}'>${name}</option>`;
+            document.getElementById(
+              "no_barcode"
+            ).innerHTML += `<option value='${details.barcode}'>${name}</option>`;
           }
         }
       </script>

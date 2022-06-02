@@ -10,7 +10,7 @@ const app = express();
 
 // Disallow access to the internal apps
 app.use("/internal", (req, res) => {
-    res.status(403).end('403 Forbidden');
+  res.status(403).end("403 Forbidden");
 });
 
 // Static file serving

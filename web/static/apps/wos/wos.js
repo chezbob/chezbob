@@ -1,4 +1,4 @@
-import {dollars} from "../../js/money.js";
+import { dollars } from "../../js/money.js";
 
 const REFRESH_INTERVAL = 60000; //ms
 

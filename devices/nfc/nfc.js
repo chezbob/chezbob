@@ -50,18 +50,21 @@ nfc.on("reader", (reader) => {
     ]);
 
     const barcode = await reader.transmit(packet, 40, 2);
-    console.log("NFC SCAN: " + barcode.toString("hex", 0, barcode.length - 1);
+    console.log("NFC SCAN: " + barcode.toString("hex", 0, barcode.length - 1));
 
     // Check command processing status indicates success
-    if (!barcode.subarray[-2].equals(Buffer.from('9000', 'hex'))) {
-      console.log("BAD NFC SCAN: " + barcode.toString("hex", 0, barcode.length - 1));
+    if (!barcode.subarray(-2).equals(Buffer.from("9000", "hex"))) {
+      console.log(
+        "BAD NFC SCAN: " + barcode.toString("hex", 0, barcode.length - 1)
+      );
       socket.send({
         header: {
           to: DESTINATION_IDENT,
           type: "nfc_scan_error",
         },
-        body: {}
+        body: {},
       });
+      return;
     }
 
     socket.send({

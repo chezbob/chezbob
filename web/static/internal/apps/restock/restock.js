@@ -162,4 +162,6 @@ function report(msg) {
 }
 
 document.getElementById("form").addEventListener("submit", submit);
-document.getElementById("no_barcode").addEventListener("input", (ev) => scan(ev.target.value));
+document
+  .getElementById("no_barcode")
+  .addEventListener("input", (ev) => scan(ev.target.value));
