@@ -13,6 +13,11 @@ import { hybridServer } from "hybrid-http-server";
 const app = express();
 const relay = new RelayServer();
 
+// Redirect to the internal landing page.
+app.get("/", (_, res) => {
+  res.redirect(302, "/internal/");
+});
+
 // Static file serving
 const __dirname = new URL(".", import.meta.url).pathname;
 app.use(express.static(__dirname + "/static"));
