@@ -21,7 +21,7 @@ let buffer = "";
 // This is super generous. If a fully barcode has not been read after 1 second, start over.
 let timeout;
 document.onkeydown = ({ key }) => {
-  if (key === "Enter" && buffer !== "") {
+  if (key === "Enter" && buffer !== "" && valid_upc(buffer)) { 
     scan(buffer);
     buffer = "";
   }
@@ -31,6 +31,24 @@ document.onkeydown = ({ key }) => {
     buffer += key;
     timeout = setTimeout(() => (buffer = ""), 1000);
   }
+};
+
+function valid_upc(upc) {
+    if (upc.length != 12) return false;
+    check = parseInt(upc[upc.length - 1]);
+    odd_sum = 0;
+    even_sum = 0;
+    for (let i = 0; i < upc.length - 1; i++) {
+        if (i % 2) {
+            even_sum += parseInt(upc[i]);
+        } else {
+            odd_sum += parseInt(upc[i]);
+        }
+    }
+    sum = (3 * odd_sum) + even_sum;
+                    
+    if ((sum + check) % 10 == 0) return true;     
+    return false;  
 };
 
 async function scan(upc) {
