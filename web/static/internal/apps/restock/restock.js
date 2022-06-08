@@ -21,7 +21,7 @@ let buffer = "";
 // This is super generous. If a fully barcode has not been read after 1 second, start over.
 let timeout;
 document.onkeydown = ({ key }) => {
-  if (key === "Enter" && buffer !== "" && valid_upc(buffer)) { 
+  if (key === "Enter" && buffer !== "") { 
     scan(buffer);
     buffer = "";
   }
@@ -35,9 +35,11 @@ document.onkeydown = ({ key }) => {
 
 function valid_upc(upc) {
     if (upc.length != 12) return false;
+    
     check = parseInt(upc[upc.length - 1]);
     odd_sum = 0;
     even_sum = 0;
+    
     for (let i = 0; i < upc.length - 1; i++) {
         if (i % 2) {
             even_sum += parseInt(upc[i]);
@@ -54,27 +56,29 @@ function valid_upc(upc) {
 async function scan(upc) {
   report("");
 
-  try {
-    let info = await socket.request({
-      header: {
-        to: "inventory",
-        type: "info_req",
-      },
-      body: {
-        barcode: upc,
-      },
-    });
-    switch (info.header.type) {
-      case "item_info":
-        render(info.body);
-        break;
+  if(valid_upc(upc)) {
+    try {
+        let info = await socket.request({
+            header: {
+                to: "inventory",
+                type: "info_req",
+            },
+            body: {
+                barcode: upc,
+            },
+        });
+        switch (info.header.type) {
+            case "item_info":
+                render(info.body);
+                break;
 
-      case "user_info":
-        report("Scanned user id");
-        break;
+            case "user_info":
+                report("Scanned user id");
+                break;
+        }
+    } catch (e) {
+        render({ barcode: upc });
     }
-  } catch (e) {
-    render({ barcode: upc });
   }
 }
 
