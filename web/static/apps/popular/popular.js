@@ -8,9 +8,7 @@ async function displayPopular() {
     let content = document.getElementById("content");
     try {
         let itemsData = await response.json();
-        console.log(itemsData);
         if (itemsData.length == 0) {
-            console.log("No item in the database");
             throw "No item in popular";
         }
         const tableContent = itemsData.map(({item_count, name}) => {
