@@ -21,7 +21,7 @@ let buffer = "";
 // This is super generous. If a fully barcode has not been read after 1 second, start over.
 let timeout;
 document.onkeydown = ({ key }) => {
-  if (key === "Enter" && buffer !== "") { 
+  if (key === "Enter" && buffer !== "") {
     scan(buffer);
     buffer = "";
   }
@@ -33,52 +33,61 @@ document.onkeydown = ({ key }) => {
   }
 };
 
+// Check whether a UPC(-A) is valid, as sometimes the barcode scanners will not process
+// all 12 digits of the code. This function checks whether
+// 3 * (sum of odd-indexed numbers) + (sum of even-indexed numbers) = 0 mod 10
+// (assuming the code is 1-indexed), according to the UPC-A check digit specification
+// https://en.wikipedia.org/wiki/Universal_Product_Code#Check_digit_calculation
 function valid_upc(upc) {
-    if (upc.length != 12) return false;
-    
-    check = parseInt(upc[upc.length - 1]);
-    odd_sum = 0;
-    even_sum = 0;
-    
-    for (let i = 0; i < upc.length - 1; i++) {
-        if (i % 2) {
-            even_sum += parseInt(upc[i]);
-        } else {
-            odd_sum += parseInt(upc[i]);
-        }
+  if (upc.length != 12) return false;
+
+  check = parseInt(upc[upc.length - 1]);
+  odd_sum = 0;
+  even_sum = 0;
+
+  for (let i = 0; i < upc.length - 1; i++) {
+    if (i % 2) {
+      even_sum += parseInt(upc[i]);
+    } else {
+      odd_sum += parseInt(upc[i]);
     }
-    sum = (3 * odd_sum) + even_sum;
-                    
-    if ((sum + check) % 10 == 0) return true;     
-    return false;  
-};
+  }
+  sum = 3 * odd_sum + even_sum;
+
+  return (sum + check) % 10 == 0;
+}
 
 async function scan(upc) {
+  // All commercial products should have valid UPC barcodes so a failure to validate
+  // is likely caused by the scanner reading the barcode improperly.
+  if (!valid_upc(upc)) {
+    report("Invalid UPC detected. Try again");
+    return;
+  }
+
   report("");
 
-  if(valid_upc(upc)) {
-    try {
-        let info = await socket.request({
-            header: {
-                to: "inventory",
-                type: "info_req",
-            },
-            body: {
-                barcode: upc,
-            },
-        });
-        switch (info.header.type) {
-            case "item_info":
-                render(info.body);
-                break;
+  try {
+    let info = await socket.request({
+      header: {
+        to: "inventory",
+        type: "info_req",
+      },
+      body: {
+        barcode: upc,
+      },
+    });
+    switch (info.header.type) {
+      case "item_info":
+        render(info.body);
+        break;
 
-            case "user_info":
-                report("Scanned user id");
-                break;
-        }
-    } catch (e) {
-        render({ barcode: upc });
+      case "user_info":
+        report("Scanned user id");
+        break;
     }
+  } catch (e) {
+    render({ barcode: upc });
   }
 }
 
