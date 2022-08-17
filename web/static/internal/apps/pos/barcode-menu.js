@@ -1,3 +1,5 @@
+import barcodes from "../../../js/known-barcodes.js";
+
 /*
   Some items in chezbob do not have barcodes and require an explicit UI to purchse
   The menu for these items is described structurally in this file, but the
@@ -7,46 +9,23 @@
   can properly be scanned.
 */
 
-export default {
-  "Coffee &amp; Drinks": {
-    "Cold Brew Coffee": {
-      defaultCents: 100,
-      barcode: "488348702402",
-    },
-    Espresso: {
-      defaultCents: 150,
-      barcode: "845183001266",
-    },
-    "Oat Milk (150ml)": {
-      defaultCents: 61,
-      barcode: "813636022816",
-    },
-  },
-  "Small Snacks": {
-    "Madeline Cookie": {
-      defaultCents: 100,
-      barcode: "697941861007",
-    },
-    "York Peppermint Pattie": {
-      defaultCents: 10,
-      barcode: "034000066421",
-    },
-  },
-  "Ice Cream": {
-    "Kirkland Ice Cream Bars": {
-      defaultCents: 100,
-      barcode: "482573882311",
-    },
-
-    "Nestle Ice Cream": {
-      defaultCents: 100,
-      barcode: "411337930531",
-    },
-  },
-  Others: {
-    Cutlery: {
-      defaultCents: 25,
-      barcode: "417645123481",
-    },
-  },
+const menu = {
+  "Coffee &amp; Drinks": ["Cold Brew Coffee", "Espresso", "Oat Milk (150ml)"],
+  "Small Snacks": ["Madeline Cookie", "York Peppermint Pattie"],
+  "Ice Cream": ["Kirkland Ice Cream Bars", "Nestle Ice Cream"],
+  Others: ["Cutlery"],
 };
+
+// Just do a little data validation to prevent dumb errors.
+// This happens at load time and requires no network access
+// so the impact is negligible. Just check that all items
+// exist in the known-barcodes list
+Object.values(menu)
+  .flat()
+  .forEach((item) => {
+    if (!(item in barcodes)) {
+      console.error("Menu contains unknown item", item);
+    }
+  });
+
+export default menu;

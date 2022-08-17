@@ -87,6 +87,7 @@ header button {
     inset 0 0 3px var(--line-color) !important;
 }
 
+
 /* Rows of price-check and purchase */
 .price-row {
   display: flex;

@@ -1,7 +1,29 @@
-#screen {
-  width: 100%;
-  height: 100%;
+header {
   display: grid;
-  place-items: center;
-  font-size: 48px;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: space-between;
+  width: 100%;
+  height: 2.5em;
+  margin-bottom: 1em;
+  align-items: center;
+  justify-items: center;
+}
+
+#terminal {
+  display: flex;
+  flex-direction: column;
+}
+
+#cup {
+  align-self: center;
+}
+
+#dollars {
+  font-size: 1.5em;
+}
+
+#cup {
+  max-height: 40vh;
+  position: relative;
+  left: 5%;
 }

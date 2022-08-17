@@ -1,5 +1,6 @@
 import { price_row, dollars } from "../../../js/money.js";
 import menu from "./barcode-menu.js";
+import barcodes from "../../../js/known-barcodes.js";
 
 // Determines how long the user has after any interaction before the session gets reset
 const SESSION_TIME = 30000;
@@ -168,10 +169,10 @@ const menu_content = Object.entries(menu)
     ([category, items]) =>
       `<h1>${category}</h1>
      <section>
-      ${Object.entries(items)
+      ${items
         .map(
-          ([item, details]) => `
-        <button data-barcode="${details.barcode}" onclick="window.mode.select_item(event)">${item}</button>
+          (item) => `
+        <button data-barcode="${barcodes[item].barcode}" onclick="window.mode.select_item(event)">${item}</button>
       `
         )
         .join("")}

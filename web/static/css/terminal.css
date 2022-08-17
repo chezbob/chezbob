@@ -114,3 +114,13 @@ input[type="password"]:focus {
   --line-color: var(--bob-color);
   outline: var(--line-color) 3px solid;
 }
+
+
+
+.svg-glow {
+  filter: 
+    drop-shadow(0 0 2px white);
+    /* drop-shadow(inset 0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5))
+    drop-shadow(inset -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3))
+    drop-shadow(inset 0 0 3px var(--line-color)) !important; */
+}

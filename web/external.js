@@ -20,7 +20,7 @@ app.use(express.static(__dirname + "/static"));
 // We need to serve the .well-known directory for LetsEncrypt renewals
 // We could have allowed all dotfiles on the previous middleware but
 // this feel safer
-app.use('/.well-known', express.static(__dirname + "/static/.well-known"));
+app.use("/.well-known", express.static(__dirname + "/static/.well-known"));
 
 // REST APIs
 const api = express.Router();

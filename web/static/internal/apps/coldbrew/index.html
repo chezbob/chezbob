@@ -18,8 +18,45 @@
     <div id="screen">
       <!-- slowly moving scanline -->
       <div class="scanline"></div>
-      <!-- the input and output -->
-      <div id="terminal">Cold brew</div>
+      <!-- the content -->
+      <div id="terminal">
+        <header>
+          Cold Brew
+          <div></div>
+        </header>
+
+        <svg
+          version="1.1"
+          viewBox="0 0 277.51 206.9"
+          style="overflow: visible"
+          id="cup"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:svg="http://www.w3.org/2000/svg">
+          <defs>
+            <mask id="cost" maskUnits="userSpaceOnUse" width="130%" height="110%">
+              <rect width="100%" height="100%" fill="white"/>
+              <text x="40%" y="50%" fill="black" font-size="1.25em">
+                <tspan text-anchor="middle">$0.57</tspan>
+                <tspan dy="1em" text-anchor="middle">/oz</tspan>
+              </text>
+            </mask>
+          </defs>
+          <svg class="svg-glow">
+            
+          <path
+            fill="#ffffff"
+            d="M 266.978,28.06 C 257.087,15.966 240.878,9.361 220.017,8.841 219.442,3.865 215.22,0 210.089,0 H 9.999 c -5.523,0 -10,4.478 -10,10 v 116 c 0,23.045 12.86,43.685 33.561,53.865 v 0.001 c -1.004,2.394 -1.513,4.928 -1.513,7.535 0,10.752 8.747,19.499 19.499,19.499 h 117 c 10.752,0 19.499,-8.747 19.499,-19.499 0,-2.607 -0.509,-5.144 -1.514,-7.536 17.71,-8.71 29.673,-25.076 32.763,-44.052 17.111,-3.789 31.613,-13.604 42.518,-28.944 10.125,-14.244 13.489,-28.244 13.841,-29.795 l 0.07,-0.333 C 279.812,56.529 276.87,40.15 266.981,28.06 Z m -20.614,42.489 c -0.256,1 -2.717,10.09 -9.008,18.94 -4.866,6.847 -10.583,11.714 -17.267,14.666 V 38.842 c 7.533,0.276 18.461,1.847 23.667,8.211 3.888,4.751 4.764,12.658 2.608,23.496 z"
+            id="path731" 
+            mask="url(#cost)"
+            />
+          </svg>
+        </svg>
+
+
+        - Tap your ID to sign in
+        <div style="align-self: center; margin-top: 1em;">or</div>
+        <button>Manual Log In</button>
+      </div>
     </div>
   </body>
 </html>

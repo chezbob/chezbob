@@ -205,6 +205,7 @@ inventory.handle("set_password", async (set_password) => {
 inventory.handle("purchase", async (purchase) => {
   const user_id = purchase.body?.user_id;
   const item_id = purchase.body?.item_id;
+  const count = purchase.body?.count;
 
   if (!user_id || !item_id) {
     return console.error("Invalid request: ", purchase);
@@ -231,7 +232,7 @@ inventory.handle("purchase", async (purchase) => {
   }
 
   // Then insert the transaction
-  await db("transactions").insert([{ user_id, item_id, cents: -cents }]);
+  await db("transactions").insert([{ user_id, item_id, cents: -cents, count }]);
 
   return {
     header: {
