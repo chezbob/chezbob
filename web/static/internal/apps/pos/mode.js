@@ -184,12 +184,14 @@ export class NoBarcodePriceCheck extends Session {
 
   content = menu_content;
 
-  hint = `
-      <button onclick="window.mode.back()" style="float: center">Back</button>
-    `;
-
   back() {
     set_mode(new DefaultMode());
+  }
+
+  get header() {
+    return `
+            <button class="glow right" onclick="window.mode.back()">Back</button>
+        `;
   }
 
   async select_item(event) {
@@ -364,11 +366,22 @@ export class Purchases extends LoggedIn {
 export class ManualPurchase extends Purchases {
   title = "Manual Purchase";
   content = menu_content;
-  get hint() {
+
+  get header() {
     return `
-      <button onclick="window.mode.back()" style="float: center">Back</button>
-    `;
-  }
+      <div id="balance" class="left header-value ${
+        this.user.balance > 0 ? "positive" : "negative"
+      }" data-value=${dollars(this.user.balance)}>
+      <div>Balance</div>
+      </div>
+
+      <div id="user" class="header-value"
+        data-value=${this.user.username}>
+      <div>Username</div>
+      </div>
+
+      <button class="glow right" onclick="window.mode.back()">Back</button>
+        `;
 
   back() {
     if (this.purchases.length === 0) {
