@@ -154,6 +154,10 @@ inventory.handle("login", async (attempt) => {
     if (hashed !== user.password_hash) {
       throw new Error("Invalid username/password");
     }
+  } else {
+    if (password !== null) {
+      throw new Error("Invalid username/password");
+    }
   }
 
   const balance = (await db("balances").where({ id: user.id }).limit(1))[0]
