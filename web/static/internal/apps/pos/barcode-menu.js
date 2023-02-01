@@ -23,7 +23,7 @@ export default {
     },
   },
   "Small Snacks": {
-    "Madeline Cookie": {
+    "Madeleine Cookie": {
       defaultCents: 100,
       barcode: "697941861007",
     },
