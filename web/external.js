@@ -2,12 +2,11 @@
     external is chezbob's public internet presence.
 */
 
-import { user_info } from "db";
+import { total_debt, user_info } from "db";
 import express from "express";
 import { hybridServer } from "hybrid-http-server";
 
 const app = express();
-
 // Disallow access to the internal apps
 app.use("/internal", (req, res) => {
   res.status(403).end("403 Forbidden");
@@ -48,6 +47,13 @@ api.get("/wos/users", async (req, res) => {
     .orderBy("balance")
     .limit(10);
   res.send(users);
+});
+
+api.get("/wos/totaldebt", async (req, res) => {
+  let debt = await total_debt();
+  // diving the debt by 100 to get the amount in dollars
+  debt.total_debt = debt.total_debt/100;
+  res.send(debt);
 });
 
 app.use("/api", api);

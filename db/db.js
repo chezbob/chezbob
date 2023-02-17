@@ -27,4 +27,11 @@ export function user_info() {
     .join("balances", "balances.id", "=", "users.id");
 }
 
+export function total_debt() {
+  return db("balances")
+    .where("balance", "<", 0)
+    .sum("balance as total_debt")
+    .first();
+}
+
 export const db = knex(config[DEPLOYMENT_MODE]);
