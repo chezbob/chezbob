@@ -32,11 +32,11 @@ header button {
 }
 
 #terminal {
-  align-items: center;
+  align-items: stretch;
   display: grid;
   grid-template:
     "header" auto
-    "face" 1fr
+    "face" minmax(0, 1fr)
     "error" auto
     "instructions" 30%
     "footer" 2em / 100%;
@@ -123,14 +123,13 @@ header button {
   display: flex;
   flex-direction: column;
   justify-self: stretch;
-  align-self: center;
+  align-self: stretch;
+  min-height: 0;
 }
 
 #content {
   --top-padding: 2em;
-  overflow: visible;
   padding: var(--top-padding) 1em 1em 1em;
-  flex-grow: 1;
 }
 
 /* Styling for the mouth with no data in it */
