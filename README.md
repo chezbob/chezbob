@@ -4,9 +4,10 @@ Install node v17 with npm. For development I recommend using nvm, but for
 deployment you should use official packages (since nvm just installs for the user)
 
 Docker:
+
 `docker run --rm -p 8080:8080 -it ttkarve/chezbob npm run debug`
 
-Run:
+Run manually:
 
 - `npm run setup` (might take a bit, builds sqlite3)
 - `npm run debug` (make sure you have tmux installed)
