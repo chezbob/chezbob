@@ -125,10 +125,12 @@ header button {
   justify-self: stretch;
   align-self: stretch;
   min-height: 0;
+  justify-content: center;
 }
 
 #content {
   --top-padding: 2em;
+  overflow: scroll;
   padding: var(--top-padding) 1em 1em 1em;
 }
 
