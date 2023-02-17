@@ -60,10 +60,13 @@ function valid_upc(upc) {
 async function scan(upc) {
   // All commercial products should have valid UPC barcodes so a failure to validate
   // is likely caused by the scanner reading the barcode improperly.
+  
+  /*
   if (!valid_upc(upc)) {
     report("Invalid UPC detected. Try again");
-    return;
+    return; // I don't this return is the right thing to do when a UPC fails
   }
+  */
 
   report("");
 
