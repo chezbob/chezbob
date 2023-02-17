@@ -147,7 +147,7 @@ header button {
 /* style for the title on Bob's mouth */
 #content::before {
   content: "";
-  position: absolute;
+  /* position: absolute; */
   align-self: center;
   transform: translateY(calc(-1.5em - var(--top-padding)));
   display: inline-block;
@@ -160,7 +160,7 @@ header button {
   padding: 0.25em 0.5em;
   text-align: center;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: visible;
 
   background: var(--chez-bg);
   color: var(--bob-color);
