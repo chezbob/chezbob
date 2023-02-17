@@ -43,7 +43,7 @@ async function send(cents) {
         cents,
       },
     });
-    console.log("SUCCEDED DEPOSIT");
+    console.log("SUCCEEDED DEPOSIT");
   } catch (e) {
     console.error(`Error processing deposit: `, e);
   }
