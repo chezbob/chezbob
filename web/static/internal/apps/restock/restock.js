@@ -47,9 +47,9 @@ function valid_upc(upc) {
 
   for (let i = 0; i < upc.length - 1; i++) {
     if (i % 2) {
-      even_sum += parseInt(upc[i]);
-    } else {
       odd_sum += parseInt(upc[i]);
+    } else {
+      even_sum += parseInt(upc[i]);
     }
   }
   sum = 3 * odd_sum + even_sum;
