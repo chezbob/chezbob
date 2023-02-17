@@ -62,7 +62,7 @@ async function scan(upc) {
   // is likely caused by the scanner reading the barcode improperly.
   
   
-  while (!valid_upc(upc)) {
+  if (!valid_upc(upc)) {
     report("Invalid UPC detected. Try again");
     //return; // I don't this return is the right thing to do when a UPC fails
   }
