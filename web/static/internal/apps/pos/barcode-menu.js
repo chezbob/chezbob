@@ -21,6 +21,10 @@ export default {
       defaultCents: 61,
       barcode: "813636022816",
     },
+    "Tea Bag": {
+      defaultCents: 11,
+      barcode: "000000000000",
+    },
   },
   "Small Snacks": {
     "Madeleine Cookie": {
