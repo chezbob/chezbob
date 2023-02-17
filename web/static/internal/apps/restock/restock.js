@@ -38,7 +38,7 @@ document.onkeydown = ({ key }) => {
 // 3 * (sum of odd-indexed numbers) + (sum of even-indexed numbers) = 0 mod 10
 // (assuming the code is 1-indexed), according to the UPC-A check digit specification
 // https://en.wikipedia.org/wiki/Universal_Product_Code#Check_digit_calculation
-function valid_upc(upc) {
+async function valid_upc(upc) {
   if (upc.length != 12) return false;
 
   check = parseInt(upc[upc.length - 1]);
@@ -64,7 +64,7 @@ async function scan(upc) {
   
   if (!valid_upc(upc)) {
     report("Invalid UPC detected. Try again");
-    //return; // I don't this return is the right thing to do when a UPC fails
+    return; 
   }
   
 
