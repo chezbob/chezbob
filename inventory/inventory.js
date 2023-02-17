@@ -155,7 +155,7 @@ inventory.handle("login", async (attempt) => {
       throw new Error("Invalid username/password");
     }
   } else {
-    if (password !== null) {
+    if (password !== "") {
       throw new Error("Invalid username/password");
     }
   }
