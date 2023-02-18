@@ -194,6 +194,23 @@ header button {
   font-size: 96px;
   min-width: 4em;
   margin-bottom: 80px;
+  transform-origin: 50% 75%;
+  animation-name: blinkeyes;
+  animation-duration: 300s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+@keyframes blinkeyes {
+	from {
+		transform: scaleY(1.0);
+	}
+	99.95% {
+		transform: scaleY(1.0);
+	}
+	to {
+		transform: scaleY(0.1);
+	}
 }
 
 .eye:first-child {
