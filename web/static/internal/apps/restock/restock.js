@@ -38,6 +38,8 @@ document.onkeydown = ({ key }) => {
 // 3 * (sum of odd-indexed numbers) + (sum of even-indexed numbers) = 0 mod 10
 // (assuming the code is 1-indexed), according to the UPC-A check digit specification
 // https://en.wikipedia.org/wiki/Universal_Product_Code#Check_digit_calculation
+//
+// Not in use right now
 function valid_upc(upc) {
   if (upc.length != 12) return false;
 
@@ -58,12 +60,6 @@ function valid_upc(upc) {
 }
 
 async function scan(upc) {
-  // All commercial products should have valid UPC barcodes so a failure to validate
-  // is likely caused by the scanner reading the barcode improperly.
-  if (!valid_upc(upc)) {
-    report("Invalid UPC detected. Try again");
-    return;
-  }
 
   report("");
 
