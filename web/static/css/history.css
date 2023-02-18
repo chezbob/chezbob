@@ -1,9 +1,14 @@
+#history-content {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
 .longtext {
   font-size: 0.5em;
 }
 
 h4 {
-  margin-top: 0.25em;
+  margin-top: 1em;
   font-size: 0.7em;
-  font-style: underline;
+  text-decoration: underline;
 }
