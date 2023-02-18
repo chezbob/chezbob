@@ -3,12 +3,17 @@
   margin-right: 0.5em;
 }
 
-.longtext {
-  font-size: 0.5em;
+#history-content p, ul {
+  font-size: 0.7em;
+}
+
+/* mama mia */
+.italian {
+  font-style: italic;
 }
 
 h4 {
   margin-top: 1em;
-  font-size: 0.7em;
+  font-size: 1em;
   text-decoration: underline;
 }
