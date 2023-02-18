@@ -12,6 +12,15 @@
   font-style: italic;
 }
 
+.underline {
+  text-decoration: underline;
+}
+
+.strike {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.1em;
+}
+
 h4 {
   margin-top: 1em;
   font-size: 1em;
