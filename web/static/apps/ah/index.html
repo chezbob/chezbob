@@ -6,26 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/reset.css" />
     <link rel="stylesheet" href="/css/terminal.css" />
-    <link rel="stylesheet" href="apps/wos/wos.css" />
-    <title>Chez Bob</title>
+    <link rel="stylesheet" href="/css/history.css" />
+    <link rel="stylesheet" href="/apps/wos/wos.css" />
+    <title>Chez Bob - Alternate History</title>
   </head>
 
   <body>
     <div id="screen">
       <!-- the input and output -->
       <div id="terminal">
-        <header id="title">Chez Bob</header>
+        <header id="title">Chez Bob's History (real)</header>
         <br />
-        <div id="content">
-            <p>Welcome to Chez Bob!</p>
-            <br />
-            <p><a href="apps/wos">Wall of Shame</a></p>
-            <p><a href="apps/popular">What's Popular This Month</a></p>
-            <p><a href="history.html">Chez Bob's History</a></p>
-            <p id="alt-hist"></p>
+        <div id="history-content">
+            <h4 id="real-history-header"></h4>
+            <p id="real-history-text"></p>
         </div>
       </div>
     </div>
-    <script src="apps/ah/ah-index.js"></script>
+    <script src="ah-page.js"></script>
   </body>
 </html>
