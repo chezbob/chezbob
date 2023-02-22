@@ -253,6 +253,7 @@ inventory.handle("purchase", async (purchase) => {
 // known items in chezbob. It functions as an "upsert", so if the item_info
 // comes with an id, we'll update the record, otherwise we'll create a new one.
 inventory.handle("update_info", async (item_info) => {
+  console.log(item_info);
   // If an id is not provided, we need to insert
   let id = item_info.body.id;
   if (id === null) {
