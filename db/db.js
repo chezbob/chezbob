@@ -27,6 +27,13 @@ export function user_info() {
     .join("balances", "balances.id", "=", "users.id");
 }
 
+export function total_debt() {
+  return db("balances")
+    .where("balance", "<", 0)
+    .sum("balance as total_debt")
+    .first();
+}
+
 export function item_purchase_info({isoDateFrom, isoDateTo}) {
   // the isoDates must be a string in the format of YYYY-MM-DD
   // if no dates are provided, the query will return over all transactions
