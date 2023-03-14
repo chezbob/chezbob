@@ -1,37 +1,15 @@
-#title {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    place-items: center;
-    font-size: 48px;
-    text-decoration: underline;
+/* revert the "width: 80%" set by the WOS CSS to the default */
+td {
+  width: 100%;
 }
-
-#content {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    place-items: center;
-    font-size: 36px;
-}
-
 tr,
 td {
-    border: 1px solid;
-    padding-left: 30px;
-    padding-right: 30px;
+  border: 1px solid;
+  padding-left: 30px;
+  padding-right: 30px;
 }
+
 table td:nth-child(1) {
-    width: 10%;
-    text-align: end;
-}
-
-.balance {
-    border: 1px solid;
-    text-align: center;
-}
-
-#message {
-    text-align: center;
-    font-size: 48px;
+  width: 10%;
+  text-align: end;
 }
