@@ -10,6 +10,6 @@ tmux split-window;
 tmux send "DEPLOYMENT_MODE='development' RELAY_SERVER=$RELAY_SERVER node inventory" ENTER;
 tmux select-layout main-vertical;
 tmux set -g mouse on;
-tmux set remain-on-exit on
+tmux set remain-on-exit on;
 tmux a;
 

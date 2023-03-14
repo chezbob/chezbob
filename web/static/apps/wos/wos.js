@@ -26,14 +26,30 @@ async function display_wall() {
       `</table>`;
     content.innerHTML = table;
   } catch (e) {
-    content.innerHTML = `<div id="message">No one on the Wall Of Shame
+    content.innerHTML = `<div id="message">No one's on the Wall of Shame.
                             <br>
                             You should still pay your debts! </div>`;
   }
 }
 
+async function display_debt() {
+  let response = await fetch("/api/wos/totaldebt");
+  let debt_element = document.getElementById("debt");
+  try {
+    let debt = await response.json();
+    console.log(debt)
+    debt_element.innerHTML = `Total Debt: $${debt.total_debt}`;
+  } catch (e) {
+    content.innerHTML = `<div id="message">Total debt can't be displayed today!
+    <br>
+    You should still pay your debts! </div>`;
+  }
+}
+
 // display wall info when loading the page
 display_wall();
+display_debt();
 
 // refresh the wall
 setInterval(display_wall, REFRESH_INTERVAL); //ms
+setInterval(display_debt, REFRESH_INTERVAL); //ms

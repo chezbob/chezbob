@@ -2,12 +2,11 @@
     external is chezbob's public internet presence.
 */
 
-import { user_info } from "db";
+import { item_purchase_info, total_debt, user_info } from "db";
 import express from "express";
 import { hybridServer } from "hybrid-http-server";
 
 const app = express();
-
 // Disallow access to the internal apps
 app.use("/internal", (req, res) => {
   res.status(403).end("403 Forbidden");
@@ -48,6 +47,43 @@ api.get("/wos/users", async (req, res) => {
     .orderBy("balance")
     .limit(10);
   res.send(users);
+});
+
+
+api.get("/wos/totaldebt", async (req, res) => {
+  let debt = await total_debt();
+  // diving the debt by 100 to get the amount in dollars
+  debt.total_debt = debt.total_debt/100;
+  res.send(debt);
+});
+
+/**
+ * GET /popular?from=YYYY-MM-DD&to=YYYY-MM-DD:
+ *  [
+ *    {item_count: int, name: string},
+ *    ...
+ *    <up to 20 items>
+ * ]
+ */
+api.get("/popular", async (req, res) => {
+  // the accepts a `from` and `to` argument, each in YYYY-MM-DD format.
+  const reqFrom = req.query.from;
+  const reqTo = req.query.to;
+  console.log("external.js", reqFrom, reqTo);
+  // Check the format of the dates
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (
+    (reqFrom && !dateRegex.test(reqFrom)) ||
+    (reqTo && !dateRegex.test(reqTo))
+  ) {
+    res.status(400).send("Invalid date format, must be YYYY-MM-DD.");
+    return;
+  }
+  let items = await item_purchase_info({
+    isoDateFrom: reqFrom,
+    isoDateTo: reqTo,
+  });
+  res.send(items);
 });
 
 app.use("/api", api);
