@@ -26,7 +26,7 @@ async function display_wall() {
       `</table>`;
     content.innerHTML = table;
   } catch (e) {
-    content.innerHTML = `<div id="message">No one on the Wall Of Shame
+    content.innerHTML = `<div id="message">No one's on the Wall of Shame.
                             <br>
                             You should still pay your debts! </div>`;
   }

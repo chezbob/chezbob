@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/reset.css" />
     <link rel="stylesheet" href="/css/terminal.css" />
-    <link rel="stylesheet" href="./wos.css" />
-
-    <title>Chez Bob - Wall of Shame</title>
+    <link rel="stylesheet" href="/css/history.css" />
+    <link rel="stylesheet" href="/apps/wos/wos.css" />
+    <title>Chez Bob - Alternate History</title>
   </head>
 
   <body>
@@ -17,12 +17,14 @@
       <div class="scanline"></div>
       <!-- the input and output -->
       <div id="terminal">
-        <header id="title">Wall of Shame</header>
+        <header id="title">Chez Bob's History (real)</header>
         <br />
-        <div class="glow" id="content"></div>
-        <div class="glow" id="debt"></div>
+        <div id="history-content">
+          <h4 id="real-history-header"></h4>
+          <p id="real-history-text"></p>
+        </div>
       </div>
     </div>
-    <script type="module" src="./wos.js"></script>
+    <script src="ah-page.js"></script>
   </body>
 </html>

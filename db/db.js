@@ -34,4 +34,23 @@ export function total_debt() {
     .first();
 }
 
+export function item_purchase_info({isoDateFrom, isoDateTo}) {
+  // the isoDates must be a string in the format of YYYY-MM-DD
+  // if no dates are provided, the query will return over all transactions
+  let partialQuery = db("transactions as t")
+    .count('t.item_id', { as: "item_count" })
+    .select(["i.name"])
+    .join("inventory as i", "i.id", "=", "t.item_id");
+  if (isoDateFrom) {
+    partialQuery = partialQuery.where("t.created_at", ">=", isoDateFrom);
+  }
+  if (isoDateTo) {
+    partialQuery = partialQuery.where("t.created_at", "<=", isoDateTo);
+  }
+  return partialQuery
+    .groupBy("t.item_id")
+    .orderBy("item_count", "desc")
+    .limit(20);
+}
+
 export const db = knex(config[DEPLOYMENT_MODE]);
