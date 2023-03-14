@@ -55,7 +55,7 @@ api.get("/wos/totaldebt", async (req, res) => {
   // diving the debt by 100 to get the amount in dollars
   debt.total_debt = debt.total_debt/100;
   res.send(debt);
-
+});
 
 /**
  * GET /popular?from=YYYY-MM-DD&to=YYYY-MM-DD:
