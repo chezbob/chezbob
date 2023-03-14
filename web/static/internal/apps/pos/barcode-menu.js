@@ -23,10 +23,22 @@ export default {
     },
     "Tea Bag": {
       defaultCents: 11,
-      barcode: "000000000000",
+      barcode: "077652685053",
     },
   },
-  "Small Snacks": {
+  "Small Snacks": { 
+    "Mott's Fruit Snacks": {
+      defaultCents: 17,
+      barcode: "016000477278",
+    },
+    "Fruit by the Foot": {
+      defaultCents: 38,
+      barcode: "016000178847",
+    },
+    "Instant Oatmeal Packet": {
+      defaultCents: 35,
+      barcode: "030000569757",
+    },
     "Madeleine Cookie": {
       defaultCents: 100,
       barcode: "697941861007",
