@@ -7,7 +7,8 @@
   line-height: 1.2em;
 }
 
-#history-content p, ul {
+#history-content p,
+ul {
   font-size: 0.7em;
 }
 
@@ -38,5 +39,5 @@ h4 {
 
 /* make it short so it doesn't look too gross */
 audio {
-    height: 1.5em;
+  height: 1.5em;
 }
