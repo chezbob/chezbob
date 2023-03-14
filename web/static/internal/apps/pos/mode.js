@@ -16,6 +16,7 @@ class Mode {
   // title;
   // content;
   // hint;
+  // pinScrollToBottom
 
   // The render function is the only routine that updates the DOM. This means our UI is a function
   // from mode to UI.
@@ -41,6 +42,9 @@ class Mode {
     const new_content = this.content;
     if (content.innerHTML != new_content) {
       content.innerHTML = new_content ?? "";
+      if (this.pinScrollToBottom) {
+        content.scrollTop = content.scrollHeight;
+      }
     }
 
     // Set hint
@@ -320,6 +324,7 @@ export class LoggedIn extends Session {
 export class Purchases extends LoggedIn {
   purchases;
   title = "Purchases";
+  pinScrollToBottom = true;
 
   constructor(user, purchases) {
     super(user);
@@ -327,7 +332,7 @@ export class Purchases extends LoggedIn {
   }
 
   get content() {
-    return this.purchases.map(price_row).join("") + this.totals();
+    return this.purchases.map(price_row).join("") + this.totals() + "<div id='scrollAnchor'></div>";
   }
 
   async purchase(item_info) {
