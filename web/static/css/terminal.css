@@ -114,3 +114,14 @@ input[type="password"]:focus {
   --line-color: var(--bob-color);
   outline: var(--line-color) 3px solid;
 }
+
+/* The default dark-purple "visited" color is hard to read on the black
+ * background; also, I think not making these links change color when visited
+ * vs. unvisited makes sense, since their content is continuously updating. */
+a:visited, a:link {
+  color: #59a9eb;
+}
+
+a:hover {
+  color: #ae59eb;
+}
