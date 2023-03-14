@@ -1,7 +1,9 @@
 #history-content {
-  margin-left: 0.5em;
-  margin-right: 0.5em;
-  margin-bottom: 0.5em;
+  /* shoutouts to dylan lukes */
+  max-width: 40em;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.2em;
 }
 
 #history-content p, ul {
@@ -24,6 +26,11 @@
 
 h4 {
   margin-top: 1em;
+  /* compensate for line height adjustment -- prevents underlines here from
+   * getting too close to the lines below them and looking ugly. kind of a
+   * gross hack.
+   */
+  margin-bottom: 0.3em;
   font-size: 1em;
   text-decoration: underline;
 }
