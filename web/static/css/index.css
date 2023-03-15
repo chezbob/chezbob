@@ -1,0 +1,14 @@
+/* Adapted from the "#content" selector in the WOS CSS and from
+ * "#history-content" in the history CSS. */
+#index-content {
+  max-width: 40em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1em;
+  text-align: center;
+  font-size: 36px;
+}
+
+.app-link {
+  margin-bottom: 0.6em;
+}

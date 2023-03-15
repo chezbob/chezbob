@@ -1,10 +1,26 @@
-#history-content {
-  margin-left: 0.5em;
-  margin-right: 0.5em;
-  margin-bottom: 0.5em;
+/* If we don't add padding here, then (as of writing) what happens is that --
+ * on small screens -- the #history-content hits the side of the screen, which
+ * looks gross (this is the issue that we fixed on *large* screens by adding
+ * the max-width property to #history-content below). The way to handle this
+ * is, according to the wisdom of https://stackoverflow.com/a/38774794, adding
+ * padding to the exterior container of #history-content.
+ */
+#terminal {
+  padding-left: 0.4em;
+  padding-right: 0.4em;
 }
 
-#history-content p, ul {
+#history-content {
+  /* shoutouts to dylan */
+  max-width: 40em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1em;
+  line-height: 1.2em;
+}
+
+#history-content p,
+ul {
   font-size: 0.7em;
 }
 
@@ -24,11 +40,16 @@
 
 h4 {
   margin-top: 1em;
+  /* compensate for line height adjustment -- prevents underlines here from
+   * getting too close to the lines below them and looking ugly. kind of a
+   * gross hack.
+   */
+  margin-bottom: 0.3em;
   font-size: 1em;
   text-decoration: underline;
 }
 
 /* make it short so it doesn't look too gross */
 audio {
-    height: 1.5em;
+  height: 1.5em;
 }
