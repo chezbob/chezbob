@@ -126,3 +126,12 @@ a:link {
 a:hover {
   color: #ae59eb;
 }
+
+/* Adapted from what was originally the "#title" selector in the WOS CSS */
+.main-title {
+  text-align: center;
+  font-size: 48px;
+  text-decoration: underline;
+  margin-left: 1em;
+  margin-right: 1em;
+}

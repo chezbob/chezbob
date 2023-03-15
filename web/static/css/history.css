@@ -1,5 +1,17 @@
+/* If we don't add padding here, then (as of writing) what happens is that --
+ * on small screens -- the #history-content hits the side of the screen, which
+ * looks gross (this is the issue that we fixed on *large* screens by adding
+ * the max-width property to #history-content below). The way to handle this
+ * is, according to the wisdom of https://stackoverflow.com/a/38774794, adding
+ * padding to the exterior container of #history-content.
+ */
+#terminal {
+  padding-left: 0.4em;
+  padding-right: 0.4em;
+}
+
 #history-content {
-  /* shoutouts to dylan lukes */
+  /* shoutouts to dylan */
   max-width: 40em;
   margin-left: auto;
   margin-right: auto;
