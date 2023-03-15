@@ -48,15 +48,14 @@ export default {
       barcode: "034000066421",
     },
   },
-  "Ice Cream": {
-    "Kirkland Ice Cream Bars": {
+  "Freezer": {
+    "Drumstick": {
       defaultCents: 100,
-      barcode: "482573882311",
+      barcode: "072554870262",
     },
-
-    "Nestle Ice Cream": {
-      defaultCents: 100,
-      barcode: "411337930531",
+    "Klondike Bar": {
+      defaultCents: 80,
+      barcode: "075856001105",
     },
   },
   Others: {
