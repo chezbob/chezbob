@@ -1,8 +1,8 @@
 /*
-    The add_transaction script reads a list of pairs of emails + item_ids
-    (one per line) from stdin and creates transactions for all of them.
+    The refund script reads a list of pairs of emails + item_ids
+    (one per line) from stdin and creates refunds for all of them.
 
-    Common usage:   cat transactions.txt | node scripts/add_transactions.js
+    Common usage:   cat transactions.txt | node scripts/refund.js
 
     In this example, the transactions.txt file should have each line look
     like this:
@@ -11,7 +11,7 @@
       xyz@ucsd.edu,420
 
     to add transactions where the user associated with email abc@ucsd.edu
-    purchased the item with ID 1234, and so on.
+    wants a refund for the item with ID 1234, and so on.
 
 */
 
@@ -54,7 +54,7 @@ rl.on("close", async () => {
 
     const id = id_[0]["id"] + 1;
     const user_id = user_id_[0]["id"];
-    const cents = 0 - cents_[0]["cents"];
+    const cents = cents_[0]["cents"];
     const item_id = parseInt(entry.item_id);
 
     const full_entry = { id, user_id, cents, item_id };
