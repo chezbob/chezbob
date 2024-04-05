@@ -3,7 +3,11 @@
 Install node v17 with npm. For development I recommend using nvm, but for
 deployment you should use official packages (since nvm just installs for the user)
 
-Run:
+Docker:
+
+`docker run --rm -p 8080:8080 -it ttkarve/chezbob npm run debug`
+
+Run manually:
 
 - `npm run setup` (might take a bit, builds sqlite3)
 - `npm run debug` (make sure you have tmux installed)
@@ -35,6 +39,7 @@ to the `pos` by sending a message to the relay server that looks like so:
     }
 }
 ```
+
 
 The relay server inspects the `header` and forwards the message on to the `pos`.
 

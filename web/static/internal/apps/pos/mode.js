@@ -407,7 +407,7 @@ class ManualLogin extends DefaultMode {
 
   content = `
         <form onsubmit="window.mode.attemptLogin(event)" style="align-self: center">
-            <input type="text" placeholder="username" name="username" class="glow"><br><br>
+            <input type="text" placeholder="username" name="username" class="glow" autocomplete="off"><br><br>
             <input type="password" placeholder="password" name="password" class="glow"><br><br>
             <button type="submit">Sign In</button>
             <button onclick="window.mode.cancel()" style="float: right">Cancel</button>
