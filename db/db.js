@@ -34,6 +34,13 @@ export function total_debt() {
     .first();
 }
 
+export function total_assets() {
+  return db("balances")
+    .where("balance", ">", 0)
+    .sum("balance as total_assets")
+    .first();
+}
+
 export function total_balance() {
   return db("balances")
     .sum("balance as total_balance")
