@@ -108,7 +108,7 @@ function render(obj) {
             <input required type="number" name="bulk_count" value=""/>
             <br />
             <label for="bulk_cost">Bulk Cost: </label> 
-            <input required type="text" pattern="\\d+\.\\d\\d" name="bulk_cost" value=""/>
+            <input required type="number" pattern="\\d+\.\\d\\d" name="bulk_cost" value=""/>
             <br />
             <label for="bulk_cost">Tax?: </label> 
             <input type="checkbox" name="tax" />
@@ -163,6 +163,12 @@ async function submit(ev) {
   document.getElementById("fields").disabled = true;
 
   let form = form_values();
+
+  // prevent unreasonable prices such as 1 (trillion) cent items
+  if(form.bulk_count > 500 || form.bulk_cost > 200){
+    report("Unreasonable bulk cost/count. Aborting submission");
+    return;
+  }
 
   try {
     await socket.request({

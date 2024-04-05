@@ -2,7 +2,7 @@
     external is chezbob's public internet presence.
 */
 
-import { item_purchase_info, total_debt, user_info } from "db";
+import { item_purchase_info, total_debt, total_balance, total_assets, user_info } from "db";
 import express from "express";
 import { hybridServer } from "hybrid-http-server";
 
@@ -49,11 +49,24 @@ api.get("/wos/users", async (req, res) => {
   res.send(users);
 });
 
-
 api.get("/wos/totaldebt", async (req, res) => {
   let debt = await total_debt();
   // diving the debt by 100 to get the amount in dollars
   debt.total_debt = debt.total_debt/100;
+  res.send(debt);
+});
+
+api.get("/wos/totalassets", async (req, res) => {
+  let debt = await total_debt();
+  // diving the debt by 100 to get the amount in dollars
+  debt.total_assets = debt.total_assets/100;
+  res.send(debt);
+});
+
+api.get("/wos/totalbalance", async (req, res) => {
+  let debt = await total_balance();
+  // diving the debt by 100 to get the amount in dollars
+  debt.total_balance = debt.total_balance/100;
   res.send(debt);
 });
 
