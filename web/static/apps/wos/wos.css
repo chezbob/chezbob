@@ -22,7 +22,7 @@ td {
   font-size: 48px;
 }
 
-#debt {
+#debt, #balance, #assets {
   text-align: center;
   font-size: 24px;
 }
