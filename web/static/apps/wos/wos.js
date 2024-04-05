@@ -38,18 +38,30 @@ async function display_debt() {
   try {
     let debt = await response.json();
     console.log(debt)
-    debt_element.innerHTML = `Total Debt: $${debt.total_debt}`;
+    debt_element.innerHTML = `Total Debt: $${0 - debt.total_debt}`;
   } catch (e) {
-    content.innerHTML = `<div id="message">Total debt can't be displayed today!
-    <br>
-    You should still pay your debts! </div>`;
+    debt_element.innerHTML = `<div id="message">Total debt can't be displayed today!</div>`;
+  }
+}
+
+async function display_balance() {
+  let response = await fetch("/api/wos/totalbalance");
+  let balance_element = document.getElementById("balance");
+  try {
+    let debt = await response.json();
+    console.log(debt)
+    balance_element.innerHTML = `Total Balance: $${debt.total_balance}`;
+  } catch (e) {
+    balance_element.innerHTML = `<div id="message">Total balance can't be displayed today!</div>`;
   }
 }
 
 // display wall info when loading the page
 display_wall();
 display_debt();
+display_balance();
 
 // refresh the wall
 setInterval(display_wall, REFRESH_INTERVAL); //ms
 setInterval(display_debt, REFRESH_INTERVAL); //ms
+setInterval(display_balance, REFRESH_INTERVAL); //ms
