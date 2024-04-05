@@ -35,6 +35,10 @@ function pokeEye(eyeEvent) {
   // To make it easy to clear the old timeout, we store each eye's most recent
   // timeout ID in the eye's "poketimeoutid" data attribute.
   var prevTimeoutID = eyeSpan.dataset.poketimeoutid;
+  // The default values of these IDs are empty strings (""), which have lengths
+  // of zero. Note that, although the timeout IDs returned by setTimeout() are
+  // numbers, all HTML data attributes are strings -- so we can always assume
+  // that prevTimeoutID will be a string, and will thus have a defined length.
   if (prevTimeoutID.length > 0) {
     clearTimeout(prevTimeoutID);
   }
