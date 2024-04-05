@@ -1,7 +1,7 @@
 // non-module code used for the POS user interface
 
 // in milliseconds
-const TIME_SPENT_XED_OUT = 300;
+const TIME_SPENT_XED_OUT = 1000;
 
 // The default O character is U+2B24
 const EYE_O = "&#11044;";
