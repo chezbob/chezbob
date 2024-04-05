@@ -197,7 +197,7 @@ header button {
   margin-bottom: 80px;
   transform-origin: 50% 75%;
   animation-name: blinkeyes;
-  animation-duration: 300s;
+  animation-duration: 60s;
   animation-direction: alternate;
   animation-iteration-count: infinite;
 }
@@ -206,7 +206,7 @@ header button {
 	from {
 		transform: scaleY(1.0);
 	}
-	99.95% {
+	98% {
 		transform: scaleY(1.0);
 	}
 	to {
