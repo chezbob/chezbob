@@ -188,6 +188,21 @@ header button {
   font-size: 48px;
 }
 
+/* Blinking notes: The animation-duration is actually half of the total
+ * amount of time taken between blinks.
+ *
+ * - When you refresh the POS page, there will be DURATION seconds until the
+ *   first blink.
+ * - Then there will be another DURATION seconds, which is begun by
+ *   the eyes "un-blinking" (returning to normal). This is due, I think, to the
+ *   animation-direction being set to "alternate".
+ * - Then there will be another DURATION seconds, at the end of which the eyes
+ *   blink.
+ *
+ * So the animation-duration being 30 seconds implies that each state (about to
+ * blink, or recovering from un-blinking) takes 30 seconds -- but the total
+ * time between consecutive blinks is ~60 seconds.
+ */
 #eyes {
   text-align: center;
   color: var(--bob-color);
@@ -197,7 +212,7 @@ header button {
   margin-bottom: 80px;
   transform-origin: 50% 75%;
   animation-name: blinkeyes;
-  animation-duration: 60s;
+  animation-duration: 30s;
   animation-direction: alternate;
   animation-iteration-count: infinite;
 }
@@ -206,7 +221,7 @@ header button {
 	from {
 		transform: scaleY(1.0);
 	}
-	98% {
+	99% {
 		transform: scaleY(1.0);
 	}
 	to {
