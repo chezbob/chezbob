@@ -57,17 +57,17 @@ api.get("/wos/totaldebt", async (req, res) => {
 });
 
 api.get("/wos/totalassets", async (req, res) => {
-  let debt = await total_debt();
+  let assets = await total_assets();
   // diving the debt by 100 to get the amount in dollars
-  debt.total_assets = debt.total_assets/100;
-  res.send(debt);
+  assets.total_assets = assets.total_assets/100;
+  res.send(assets);
 });
 
 api.get("/wos/totalbalance", async (req, res) => {
-  let debt = await total_balance();
+  let bal = await total_balance();
   // diving the debt by 100 to get the amount in dollars
-  debt.total_balance = debt.total_balance/100;
-  res.send(debt);
+  bal.total_balance = bal.total_balance/100;
+  res.send(bal);
 });
 
 /**
