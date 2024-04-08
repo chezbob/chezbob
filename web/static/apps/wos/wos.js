@@ -46,13 +46,13 @@ async function display_debt() {
 
 async function display_assets() {
   let response = await fetch("/api/wos/totalassets");
-  let debt_element = document.getElementById("assets");
+  let asset_element = document.getElementById("assets");
   try {
     let debt = await response.json();
     console.log(debt)
-    debt_element.innerHTML = `Total Assets: $${debt.total_assets}`;
+    asset_element.innerHTML = `Total Assets: $${debt.total_assets}`;
   } catch (e) {
-    debt_element.innerHTML = `<div id="message">Total assets can't be displayed today!</div>`;
+    asset_element.innerHTML = `<div id="message">Total assets can't be displayed today!</div>`;
   }
 }
 
