@@ -188,48 +188,10 @@ header button {
   font-size: 48px;
 }
 
-/* Blinking notes: The animation-duration is actually half of the total
- * amount of time taken between blinks.
- *
- * - When you refresh the POS page, there will be DURATION seconds until the
- *   first blink.
- * - Then there will be another DURATION seconds, which is begun by
- *   the eyes "un-blinking" (returning to normal). This is due, I think, to the
- *   animation-direction being set to "alternate".
- * - Then there will be another DURATION seconds, at the end of which the eyes
- *   blink.
- *
- * So the animation-duration being 30 seconds implies that each state (about to
- * blink, or recovering from un-blinking) takes 30 seconds -- but the total
- * time between consecutive blinks is ~60 seconds.
- */
-#eyes {
-  text-align: center;
-  color: var(--bob-color);
-  transition: color 200ms linear;
-  font-size: 96px;
-  min-width: 4em;
-  margin-bottom: 80px;
-  transform-origin: 50% 75%;
-  animation-name: blinkeyes;
-  animation-duration: 30s;
-  animation-direction: alternate;
-  animation-iteration-count: infinite;
-}
-
-@keyframes blinkeyes {
-	from {
-		transform: scaleY(1.0);
-	}
-	99% {
-		transform: scaleY(1.0);
-	}
-	to {
-		transform: scaleY(0.1);
-	}
-}
-
-/* By default (going by the #screen font-family orders in terminal.css), the
+/************
+ * FONT NOTES
+ ************
+ * By default (going by the #screen font-family orders in terminal.css), the
  * initial eye characters (U+2B24 -- corresponding to the circles) are of the
  * family "FreeMono". These circle characters (U+2B24) are not supported in the
  * first-choice family ("Press Start 2P"), so the next best option is FreeMono.
@@ -261,9 +223,53 @@ header button {
  * make poking look janky again if the monospace font doesn't support U+2B24 or
  * has differently-sized characters for some reason, but this problem probably
  * won't ever come up.
+ *
+ * ^^^ Yeah, all of that text was with regards to the single line setting the
+ * font-family of this div. CSS is hard :(
+ *
+ ****************
+ * BLINKING NOTES
+ ****************
+ * The animation-duration is actually half of the total
+ * amount of time taken between blinks.
+ *
+ * - When you refresh the POS page, there will be DURATION seconds until the
+ *   first blink.
+ * - Then there will be another DURATION seconds, which is begun by
+ *   the eyes "un-blinking" (returning to normal). This is due, I think, to the
+ *   animation-direction being set to "alternate".
+ * - Then there will be another DURATION seconds, at the end of which the eyes
+ *   blink.
+ *
+ * So the animation-duration being 30 seconds implies that each state (about to
+ * blink, or recovering from un-blinking) takes 30 seconds -- but the total
+ * time between consecutive blinks is ~60 seconds.
  */
-.eye {
+#eyes {
   font-family: "FreeMono", monospace;
+  text-align: center;
+  color: var(--bob-color);
+  transition: color 200ms linear;
+  font-size: 96px;
+  min-width: 4em;
+  margin-bottom: 80px;
+  transform-origin: 50% 75%;
+  animation-name: blinkeyes;
+  animation-duration: 30s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+}
+
+@keyframes blinkeyes {
+	from {
+		transform: scaleY(1.0);
+	}
+	99% {
+		transform: scaleY(1.0);
+	}
+	to {
+		transform: scaleY(0.1);
+	}
 }
 
 /* An annoying thing about the default eye circle character (U+2B24) is that
