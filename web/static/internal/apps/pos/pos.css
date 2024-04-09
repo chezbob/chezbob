@@ -234,7 +234,7 @@ header button {
  * family "FreeMono". These circle characters (U+2B24) are not supported in the
  * first-choice family ("Press Start 2P"), so the next best option is FreeMono.
  *
- * In order to make sure that a poked eye has the same dimensions as an unpoked
+ * In order to make sure that a poked eye has the same width as an unpoked
  * eye, we force both eyes to first try to use the FreeMono font family. If we
  * don't do this, then if we poke an eye it could change to a different font
  * family based on what character we use to represent a poked eye and which font
@@ -249,9 +249,9 @@ header button {
  * the poked-eye character is also supported by this font family. (This is why
  * we changed the "X" character from U+2718 to just "X", since FreeMono doesn't
  * support U+2718. The backup font family used for U+2718 had the same
- * dimensions on my laptop but slightly different dimensions on the kiosk,
- * resulting in poking looking janky on the kiosk. If you're still reading
- * this comment like three paragraphs in, I am so sorry.)
+ * width on my laptop but a slightly different width on the kiosk, resulting
+ * in poking looking janky on the kiosk. If you're still reading this comment
+ * like three paragraphs in, I am so sorry.)
  *
  * FreeMono is part of the GNU FreeFont package, I think, and GNU FreeFont is
  * packaged with all modern (?) Ubuntu versions -- so FreeMono should always be
