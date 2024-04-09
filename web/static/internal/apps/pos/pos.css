@@ -266,6 +266,20 @@ header button {
   font-family: "FreeMono", monospace;
 }
 
+/* An annoying thing about the default eye circle character (U+2B24) is that
+ * it is slightly vertically higher up than an "X" character, even when located
+ * in the same <div>. If you're an insane person who cares about this like me,
+ * the problem can be fixed by adding negative space to the top of poked eye
+ * characters: this hack is from https://stackoverflow.com/a/7612378. (I played
+ * around with negative space values and found that -2px looked best here.)
+ * Thankfully -- as far as I can tell, this doesn't impact the layout of the
+ * rest of the POS interface, regardless of if 0, 1, or 2 eyes are poked.
+ */
+.pokedeye {
+  position: relative;
+  top: -2px;
+}
+
 .eye:first-child {
   margin-right: 0.5em;
 }

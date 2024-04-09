@@ -12,10 +12,12 @@ const EYE_X = "X";
 
 function openEye(eyeSpan) {
   eyeSpan.innerHTML = EYE_O;
+  eyeSpan.classList.remove("pokedeye");
 }
 
 function closeEye(eyeSpan) {
   eyeSpan.innerHTML = EYE_X;
+  eyeSpan.classList.add("pokedeye");
 }
 
 function pokeEye(eyeEvent) {
