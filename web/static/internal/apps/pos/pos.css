@@ -244,12 +244,16 @@ header button {
  *
  * Setting both eyes to use "FreeMono" fixes the problem, so long as the
  * unpoked and poked eye characters alike are supported by this font family.
+ * (And so long as FreeMono is available on the system running the POS -- but
+ * this shouldn't be an issue, since I think GNU FreeFont is packaged with
+ * all modern? Ubuntu versions.)
  *
  * (The old poked-eye character of U+2718 isn't supported by Press Start 2P or
- * FreeMono, so it would wind up as a "FreeSerif" font family -- and on my
+ * FreeMono, so it would wind up as a "FreeSerif" font family -- on my
  * computer this had the same width as a circle in FreeMono, but on the kiosk
- * it had a slightly different width which looked gross. Using a simple "X"
- * character fixes the problem.)
+ * it had a slightly different width which made poking look janky. Using a
+ * simple "X" character fixes the problem, since "X" is ofc supported by
+ * FreeMono.)
  */
 .eye {
   font-family: "FreeMono";
