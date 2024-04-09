@@ -229,6 +229,32 @@ header button {
 	}
 }
 
+/* By default (going by the #screen font-family orders in terminal.css), the
+ * initial eye characters (U+2B24 -- corresponding to the circles) are of the
+ * family "FreeMono". These circle characters (U+2B24) are not supported in the
+ * first-choice family ("Press Start 2P"), so the next best option is FreeMono.
+ *
+ * In order to make sure that a poked eye has the same dimensions as an unpoked
+ * eye, we force both eyes to use the FreeMono font family. If we don't do
+ * this, then if we poke an eye it could change to a different font family
+ * based on what character we use to represent a poked eye and which font
+ * families support it. Since different font families use different character
+ * sizes, this would make the eye-poking look janky -- e.g. poking the left
+ * eye could adjust the position of the right eye.
+ *
+ * Setting both eyes to use "FreeMono" fixes the problem, so long as the
+ * unpoked and poked eye characters alike are supported by this font family.
+ *
+ * (The old poked-eye character of U+2718 isn't supported by Press Start 2P or
+ * FreeMono, so it would wind up as a "FreeSerif" font family -- and on my
+ * computer this had the same width as a circle in FreeMono, but on the kiosk
+ * it had a slightly different width which looked gross. Using a simple "X"
+ * character fixes the problem.)
+ */
+.eye {
+  font-family: "FreeMono";
+}
+
 .eye:first-child {
   margin-right: 0.5em;
 }
