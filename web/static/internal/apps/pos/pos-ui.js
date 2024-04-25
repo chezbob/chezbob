@@ -6,17 +6,18 @@ const TIME_SPENT_XED_OUT = 1000;
 // The default O character is U+2B24
 const EYE_O = "&#11044;";
 
-// I looked at a lot of X characters until I found something of roughly? the
-// same dimensions as the default O character; the current X character is
-// U+2718. For reference, other good X options include 2716 and 2717.
-const EYE_X = "&#10008;";
+// It's important to pick a character that is supported by the FreeMono font;
+// see the comment above the .eye selector in pos.css for gratuitous details
+const EYE_X = "X";
 
 function openEye(eyeSpan) {
   eyeSpan.innerHTML = EYE_O;
+  eyeSpan.classList.remove("pokedeye");
 }
 
 function closeEye(eyeSpan) {
   eyeSpan.innerHTML = EYE_X;
+  eyeSpan.classList.add("pokedeye");
 }
 
 function pokeEye(eyeEvent) {

@@ -55,6 +55,10 @@ body {
   pointer-events: none;
 }
 
+/* Using "pointer-events: none;" here prevents the scanline from "stealing
+ * clicks" from UI items beneath it (e.g. the login button, or poking the POS
+ * face's eyes (lol)). From https://stackoverflow.com/a/32211028.
+ */
 .scanline {
   width: 100%;
   height: 100px;
@@ -69,6 +73,7 @@ body {
   position: absolute;
   bottom: 100%;
   animation: scanline 10s linear infinite;
+  pointer-events: none;
 }
 
 @keyframes scanline {
