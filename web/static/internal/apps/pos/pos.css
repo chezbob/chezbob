@@ -188,7 +188,49 @@ header button {
   font-size: 48px;
 }
 
-/* Blinking notes: The animation-duration is actually half of the total
+/************
+ * FONT NOTES
+ ************
+ * By default (going by the #screen font-family orders in terminal.css), the
+ * initial eye characters (U+2B24 -- corresponding to the circles) are of the
+ * family "FreeMono". These circle characters (U+2B24) are not supported in the
+ * first-choice family ("Press Start 2P"), so the next best option is FreeMono.
+ *
+ * In order to make sure that a poked eye has the same width as an unpoked
+ * eye, we force both eyes to first try to use the FreeMono font family. If we
+ * don't do this, then if we poke an eye it could change to a different font
+ * family based on what character we use to represent a poked eye and which font
+ * families support it. Since different font families use different character
+ * sizes, this would make the eye-poking look janky -- e.g. poking the left
+ * eye could lead to the new left eye character being slightly thinner or wider
+ * than the default eye character, which would adjust the position of the right
+ * eye.
+ *
+ * Since "FreeMono" supports the default eye circle character (U+2B24), setting
+ * it as our "first choice" font family here fixes the problem -- so long as
+ * the poked-eye character is also supported by this font family. (This is why
+ * we changed the "X" character from U+2718 to just "X", since FreeMono doesn't
+ * support U+2718. The backup font family used for U+2718 had the same
+ * width on my laptop but a slightly different width on the kiosk, resulting
+ * in poking looking janky on the kiosk. If you're still reading this comment
+ * like three paragraphs in, I am so sorry.)
+ *
+ * FreeMono is part of the GNU FreeFont package, I think, and GNU FreeFont is
+ * packaged with all modern (?) Ubuntu versions -- so FreeMono should always be
+ * available on the kiosk, provided we don't decide to like port over the kiosk
+ * system to Windows or something. In the event that FreeMono isn't available,
+ * we'll just default to whatever monospace font is available -- this might
+ * make poking look janky again if the monospace font doesn't support U+2B24 or
+ * has differently-sized characters for some reason, but this problem probably
+ * won't ever come up.
+ *
+ * ^^^ Yeah, all of that text was with regards to the single line setting the
+ * font-family of this div. CSS is hard :(
+ *
+ ****************
+ * BLINKING NOTES
+ ****************
+ * The animation-duration is actually half of the total
  * amount of time taken between blinks.
  *
  * - When you refresh the POS page, there will be DURATION seconds until the
@@ -204,6 +246,7 @@ header button {
  * time between consecutive blinks is ~60 seconds.
  */
 #eyes {
+  font-family: "FreeMono", monospace;
   text-align: center;
   color: var(--bob-color);
   transition: color 200ms linear;
@@ -227,6 +270,21 @@ header button {
 	to {
 		transform: scaleY(0.1);
 	}
+}
+
+/* An annoying thing about the default eye circle character (U+2B24) is that
+ * it is slightly vertically higher up than an "X" character, even when located
+ * in the same <div>. (At least this is the case for the FreeMono font family.)
+ * If, like me, you are an insane person who cares about this for some reason,
+ * the problem can be fixed by adding negative space to the top of poked eye
+ * characters: this hack is from https://stackoverflow.com/a/7612378. (I played
+ * around with negative space values and found that -2px looked best here.)
+ * Thankfully -- as far as I can tell, this doesn't impact the layout of the
+ * rest of the POS interface, regardless of if 0, 1, or 2 eyes are poked.
+ */
+.pokedeye {
+  position: relative;
+  top: -2px;
 }
 
 .eye:first-child {
