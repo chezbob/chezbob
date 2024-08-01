@@ -12,6 +12,7 @@ import { hybridServer } from "hybrid-http-server";
 
 const app = express();
 const relay = new RelayServer();
+const api = express.Router();
 
 // Redirect to the internal landing page.
 app.get("/", (_, res) => {
@@ -22,5 +23,14 @@ app.get("/", (_, res) => {
 const __dirname = new URL(".", import.meta.url).pathname;
 app.use(express.static(__dirname + "/static"));
 
-let server = hybridServer(app);
-server.on("upgrade", (...args) => relay.handleUpgrade(...args));
+app.get("/addusers", async (req, res) => {
+    const reqUsers = req.query.emails.split(',');
+    console.log(reqUsers);
+});
+
+app.use("/api", api);
+
+hybridServer(app);
+
+//let server = hybridServer(app);
+//server.on("upgrade", (...args) => relay.handleUpgrade(...args));
