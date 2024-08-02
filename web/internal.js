@@ -23,14 +23,14 @@ app.get("/", (_, res) => {
 const __dirname = new URL(".", import.meta.url).pathname;
 app.use(express.static(__dirname + "/static"));
 
-app.get("/addusers", async (req, res) => {
+api.get("/addusers", async (req, res) => {
     const reqUsers = req.query.emails.split(',');
-    console.log(reqUsers);
+    console.log(reqUsers); // TODO for some reason this log doesn't show up?
+    // TODO actually send real data
+    res.send('{"test": "test"}');
 });
 
 app.use("/api", api);
 
-hybridServer(app);
-
-//let server = hybridServer(app);
-//server.on("upgrade", (...args) => relay.handleUpgrade(...args));
+let server = hybridServer(app);
+server.on("upgrade", (...args) => relay.handleUpgrade(...args));

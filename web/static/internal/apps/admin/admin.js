@@ -4,8 +4,7 @@ async function addUsers(ev) {
  
     // TODO get + format emails
     var emails = document.getElementById('emails').value;
-    //let response = await fetch("/api/addusers?emails=" + emails);
-    let response = await fetch("/api/wos/totaldebt");
+    let response = await fetch("/api/addusers?emails=" + emails);
     let content = document.getElementById("content");    
 
     try {
