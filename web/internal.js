@@ -6,6 +6,7 @@
     within chezbob to communicate with each other.
 */
 
+import { create_user } from "db"; 
 import express from "express";
 import RelayServer from "relay-server";
 import { hybridServer } from "hybrid-http-server";
@@ -25,9 +26,20 @@ app.use(express.static(__dirname + "/static"));
 
 api.get("/addusers", async (req, res) => {
     const reqUsers = req.query.emails.split(',');
-    console.log(reqUsers); // TODO for some reason this log doesn't show up?
-    // TODO actually send real data
-    res.send('{"test": "test"}');
+   
+    var conflicts = [];
+    var added = [];  
+
+    for (var u of reqUsers) {
+        console.log(u);
+        let id = await create_user(u);
+        if (id == -1) {
+            conflicts.push(u);
+        } else {
+            added.push(u);
+        }
+    }
+    res.send('{"added": ' + added.toString() + ', "conflicts": ' + conflicts.toString() + '}');
 });
 
 app.use("/api", api);
