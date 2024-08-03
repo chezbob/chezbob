@@ -66,6 +66,20 @@ export function item_purchase_info({isoDateFrom, isoDateTo}) {
     .limit(20);
 }
 
+export function get_user_by_email(email) {
+    const split = email.split("@");
+    if (split.length !== 2) {
+        console.error(`Invalid email: '${email}'`);
+        return;
+    }
+    const username = split[0];
+    
+    return db("users")
+        .select(["username", "email"])
+        .where("username", username)
+        .orWhere("email", email);
+}
+
 export function create_user(email) {
     const split = email.split("@");
     if (split.length !== 2) {
@@ -74,18 +88,22 @@ export function create_user(email) {
     }
     const username = split[0];
  
-    const conflict = db("users")
-//        .select(["username", "email"])
-        .where("username", username)
-        .orWhere("email", email)
-        .first();
-   
-    console.log("Conflict " + conflict); 
-    //if (conflict) {
-    //    return -1;
-    //}
+    return db("users")
+        .insert({email: email, username: username});
+}
 
-    return db("users").insert({email: email, username: username});
+export function reset_password_by_id(id) {
+    return db("users")
+        .where("id", id)
+        .update({
+            password_hash: "",
+            password_salt: ""
+        }, ['id', 'username']);
+}
+
+export function search_inventory(query) {
+    return db("inventory")
+        .whereLike("name", `%${query}%`);
 }
 
 export const db = knex(config[DEPLOYMENT_MODE]);

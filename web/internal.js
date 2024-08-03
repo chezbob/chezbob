@@ -6,7 +6,7 @@
     within chezbob to communicate with each other.
 */
 
-import { create_user } from "db"; 
+import { get_user_by_email, create_user, search_inventory, reset_password_by_id } from "db"; // TODO order these
 import express from "express";
 import RelayServer from "relay-server";
 import { hybridServer } from "hybrid-http-server";
@@ -27,19 +27,34 @@ app.use(express.static(__dirname + "/static"));
 api.get("/addusers", async (req, res) => {
     const reqUsers = req.query.emails.split(',');
    
-    var conflicts = [];
-    var added = [];  
+    var conflictsArr = [];
+    var addedArr = [];  
 
     for (var u of reqUsers) {
-        console.log(u);
-        let id = await create_user(u);
-        if (id == -1) {
-            conflicts.push(u);
+        let confUser = await get_user_by_email(u);
+        if (confUser.length > 0) {
+            conflictsArr.push(u);
         } else {
-            added.push(u);
+            let id = await create_user(u);
+            addedArr.push(u);
         }
     }
-    res.send('{"added": ' + added.toString() + ', "conflicts": ' + conflicts.toString() + '}');
+    res.json({added: addedArr, conflicts: conflictsArr});
+});
+
+api.get("/resetpassword", async (req, res) => {
+    const email = req.query.email;
+   
+    // TODO separate query to get id from email
+    let retval = await reset_password_by_id(email);
+    res.json({returned: retval});
+});
+
+api.get("/searchinventory", async (req, res) => {
+    const query = req.query.query;
+   
+    let searchResults = await search_inventory(query);
+    res.send(searchResults);
 });
 
 app.use("/api", api);
