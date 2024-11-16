@@ -268,9 +268,11 @@ header button {
 }
 
 #content.rainbow::before {
-  /* apply the rainbow animation the title on the mouth, also. we can't add
-   * classes to "pseudoelements" like ::before, but it is sufficient to hackily
-   * just add the elements from .rainbow to #content.rainbow::before
+  /* Apply the rainbow animation to the title on the mouth (#content::before).
+   * Ideally, we'd just add the .rainbow class to #content::before, but we
+   * can't add classes to "pseudoelements" like ::before. As a hacky workaround
+   * we can just add everything in .rainbow to #content::before when #content
+   * has the .rainbow class. (there is probs a more elegant way to do this tho)
    */
   animation-name: rainbowanim;
   animation-duration: 20s;
