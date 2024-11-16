@@ -281,51 +281,51 @@ header button {
 }
 
 @keyframes rainbowanim {
-    /* "color" is for the eyes; "border-color" is for the mouth;
-     * "--line-color" is for the box shadow glow on the mouth.
-     */
-	from {
-        color: var(--chez-blue);
-        border-color: var(--chez-blue);
-        --line-color: var(--chez-blue);
-	}
-	20% {
-        color: var(--chez-purple);
-        border-color: var(--chez-purple);
-        --line-color: var(--chez-purple);
-	}
-	40% {
-        color: var(--chez-red);
-        border-color: var(--chez-red);
-        --line-color: var(--chez-red);
-	}
-	60% {
-        color: var(--chez-yellow);
-        border-color: var(--chez-yellow);
-        --line-color: var(--chez-yellow);
-	}
-	80% {
-        color: var(--chez-green);
-        border-color: var(--chez-green);
-        --line-color: var(--chez-green);
-	}
-	to {
-        color: var(--chez-blue);
-        border-color: var(--chez-blue);
-        --line-color: var(--chez-blue);
-	}
+  /* "color" is for the eyes; "border-color" is for the mouth;
+   * "--line-color" is for the box shadow glow on the mouth.
+   */
+  from {
+    color: var(--chez-blue);
+    border-color: var(--chez-blue);
+    --line-color: var(--chez-blue);
+  }
+  20% {
+    color: var(--chez-purple);
+    border-color: var(--chez-purple);
+    --line-color: var(--chez-purple);
+  }
+  40% {
+    color: var(--chez-red);
+    border-color: var(--chez-red);
+    --line-color: var(--chez-red);
+  }
+  60% {
+    color: var(--chez-yellow);
+    border-color: var(--chez-yellow);
+    --line-color: var(--chez-yellow);
+  }
+  80% {
+    color: var(--chez-green);
+    border-color: var(--chez-green);
+    --line-color: var(--chez-green);
+  }
+  to {
+    color: var(--chez-blue);
+    border-color: var(--chez-blue);
+    --line-color: var(--chez-blue);
+  }
 }
 
 @keyframes blinkeyes {
-	from {
-		transform: scaleY(1.0);
-	}
-	99% {
-		transform: scaleY(1.0);
-	}
-	to {
-		transform: scaleY(0.1);
-	}
+  from {
+    transform: scaleY(1.0);
+  }
+  99% {
+    transform: scaleY(1.0);
+  }
+  to {
+    transform: scaleY(0.1);
+  }
 }
 
 /* An annoying thing about the default eye circle character (U+2B24) is that
