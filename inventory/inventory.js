@@ -301,7 +301,6 @@ inventory.handle("view_transactions", async (request) => {
     .leftJoin("inventory", "transactions.item_id", "inventory.id")
     .select(["inventory.name", "transactions.cents", "transactions.created_at"])
     .where({ user_id });
-  console.log(transactions);
   return {
     header: {
       type: "transaction_history",
