@@ -657,6 +657,10 @@ class ViewTransactions extends ManageAccount {
     currency: "USD",
     signDisplay: "exceptZero",
   });
+  static #dateFormat = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
 
   title = `View Transactions`;
   hint = `
@@ -677,7 +681,9 @@ class ViewTransactions extends ManageAccount {
                   ${name ?? ""}
                 </div>
                 <div class="dots"></div>
-                <div class="price-cost">${created_at}</div>
+                <div class="price-cost">${ViewTransactions.#dateFormat.format(
+                  new Date(created_at)
+                )}</div>
               </div>
             `
           )
