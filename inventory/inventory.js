@@ -290,3 +290,28 @@ inventory.handle("update_info", async (item_info) => {
     body: {},
   };
 });
+
+inventory.handle("view_transactions", async (request) => {
+  const { body: { user_id } = {} } = request;
+  if (!user_id) {
+    return console.error("Invalid request: ", request);
+  }
+  const transactions = await db("transactions")
+    // left join preserves null item_id
+    .leftJoin("inventory", "transactions.item_id", "inventory.id")
+    .select(["inventory.name", "transactions.cents", "transactions.created_at"])
+    .where({ user_id });
+  console.log(transactions);
+  return {
+    header: {
+      type: "transaction_history",
+    },
+    body: {
+      transactions: transactions.map(({ name, cents, created_at }) => ({
+        name,
+        cents,
+        created_at,
+      })),
+    },
+  };
+});
