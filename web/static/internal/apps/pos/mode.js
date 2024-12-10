@@ -347,7 +347,11 @@ export class Purchases extends LoggedIn {
   }
 
   get content() {
-    return this.purchases.map(price_row).join("") + this.totals() + "<div id='scrollAnchor'></div>";
+    return (
+      this.purchases.map(price_row).join("") +
+      this.totals() +
+      "<div id='scrollAnchor'></div>"
+    );
   }
 
   async purchase(item_info) {
@@ -549,6 +553,7 @@ class ManageAccount extends LoggedIn {
   content = `
         <button onclick="window.mode.setPassword()">Set Password</button>
         <button onclick="window.mode.addCard()">Add NFC Login Card</button>
+        <button onclick="window.mode.viewTransactions()">View Transactions</button>
     `;
 
   setPassword() {
@@ -557,6 +562,21 @@ class ManageAccount extends LoggedIn {
 
   addCard() {
     set_mode(new AddCard(this.user));
+  }
+
+  async viewTransactions() {
+    const {
+      body: { transactions },
+    } = await socket.request({
+      header: {
+        to: "inventory",
+        type: "view_transactions",
+      },
+      body: {
+        user_id: this.user.id,
+      },
+    });
+    set_mode(new ViewTransactions(this.user, transactions));
   }
 
   goBack() {
@@ -643,5 +663,41 @@ class CardAdded extends ManageAccount {
 
   done() {
     set_mode(new LoggedIn(this.user));
+  }
+}
+
+class ViewTransactions extends ManageAccount {
+  static #currencyFormat = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    signDisplay: "exceptZero",
+  });
+
+  title = `View Transactions`;
+  hint = `
+        <button onclick="window.mode.goBack()">Go Back</button>
+    `;
+
+  constructor(user, transactions) {
+    super(user);
+    this.content = `
+      <div>
+        ${transactions
+          .toReversed()
+          .map(
+            ({ name, cents, created_at }) => `
+              <div class="price-row">
+                <div class="price-name">
+                  ${ViewTransactions.#currencyFormat.format(cents / 100)}
+                  ${name ?? ""}
+                </div>
+                <div class="dots"></div>
+                <div class="price-cost">${created_at}</div>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+    `;
   }
 }
