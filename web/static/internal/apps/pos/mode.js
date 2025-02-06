@@ -339,7 +339,7 @@ export class LoggedIn extends Session {
 export class Purchases extends LoggedIn {
   purchases;
   title = "Purchases";
-  pinScrollToBottom = true;
+  pinScrollToBottom = false;
 
   constructor(user, purchases) {
     super(user);
