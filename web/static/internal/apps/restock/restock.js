@@ -104,13 +104,13 @@ function render(obj) {
               obj?.name ?? ""
             }"/>
             <br />
-            <label for="bulk_cost">Bulk Count: </label> 
+            <label for="bulk_count">Bulk Count: </label> 
             <input required type="number" name="bulk_count" value=""/>
             <br />
             <label for="bulk_cost">Bulk Cost: </label> 
             <input required type="number" pattern="\\d+\.\\d\\d" name="bulk_cost" value=""/>
             <br />
-            <label for="bulk_cost">Tax?: </label> 
+            <label for="tax">Tax?: </label> 
             <input type="checkbox" name="tax" />
             <br />
 
