@@ -716,14 +716,13 @@ class ViewTransactions extends ManageAccount {
 
 class BoardGame extends Session {
   static dateFormat = new Intl.DateTimeFormat("en-US", {
-    dateStyle: "short",
+    dateStyle: "medium",
     timeStyle: "short",
   });
 
   game;
   title = `Board Game`;
   get content() {
-    console.log(this.game);
     return `
       <div class="price-row">
         <span class="price-name">
@@ -778,6 +777,8 @@ class BoardGameCheckout extends LoggedIn {
       ${
         this.game.status === "check_out" && this.game.user_id === this.user.id
           ? `<button onclick="window.mode.setStatus('check_in')">Check In</button>`
+          : this.game.status === "check_out"
+          ? `<button onclick="window.mode.setStatus('check_out')">Check Out Again</button>`
           : `<button onclick="window.mode.setStatus('check_out')">Check Out</button>`
       }
     `;
