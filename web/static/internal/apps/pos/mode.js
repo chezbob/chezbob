@@ -60,6 +60,21 @@ class Mode {
     if (error.innerHTML != new_error) {
       error.innerHTML = new_error;
     }
+
+    // during June, and/or from 6-7 am/pm, use rainbow colors
+    var currDate = new Date();
+    var inJune = currDate.getMonth() === 5;
+    var hr = currDate.getHours();
+    var eles = document.querySelectorAll(".eye, #content, #content::before")
+    if (inJune || hr === 6 || hr === 18) {
+      eles.forEach(function (e) {
+          e.classList.add("rainbow");
+      });
+    } else {
+      eles.forEach(function (e) {
+          e.classList.remove("rainbow");
+      });
+    }
   }
 
   /**
