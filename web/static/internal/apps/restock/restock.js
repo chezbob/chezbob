@@ -60,7 +60,6 @@ function valid_upc(upc) {
 }
 
 async function scan(upc) {
-
   report("");
 
   try {
@@ -81,6 +80,10 @@ async function scan(upc) {
       case "user_info":
         report("Scanned user id");
         break;
+
+      case "game_info":
+        report("Scanned board game id (TODO)");
+        break;
     }
   } catch (e) {
     render({ barcode: upc });
@@ -92,25 +95,25 @@ function render(obj) {
             <fieldset name="fields" id="fields" oninput="display_cost()">
             <input type="hidden" name="id" value="${obj?.id ?? ""}"/>
             <br />
-            <label for="barcode">Barcode: </label> 
+            <label for="barcode">Barcode: </label>
             <input disabled type="text" name="barcode" value="${
               obj?.barcode ?? ""
             }"/> ${
     obj.cents !== undefined ? `Current Cost: ${dollars(obj.cents)}` : ""
   }
             <br />
-            <label for="name">Name: </label> 
+            <label for="name">Name: </label>
             <input required minlength=1 title="Cannot be empty" type="text" name="name" value="${
               obj?.name ?? ""
             }"/>
             <br />
-            <label for="bulk_count">Bulk Count: </label> 
+            <label for="bulk_count">Bulk Count: </label>
             <input required type="number" name="bulk_count" value=""/>
             <br />
-            <label for="bulk_cost">Bulk Cost: </label> 
+            <label for="bulk_cost">Bulk Cost: </label>
             <input required type="number" pattern="\\d+\.\\d\\d" name="bulk_cost" value=""/>
             <br />
-            <label for="tax">Tax?: </label> 
+            <label for="tax">Tax?: </label>
             <input type="checkbox" name="tax" />
             <br />
 
@@ -165,7 +168,7 @@ async function submit(ev) {
   let form = form_values();
 
   // prevent unreasonable prices such as 1 (trillion) cent items
-  if(form.bulk_count > 500 || form.bulk_cost > 200){
+  if (form.bulk_count > 500 || form.bulk_cost > 200) {
     report("Unreasonable bulk cost/count. Aborting submission");
     return;
   }

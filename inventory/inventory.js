@@ -30,7 +30,7 @@ inventory.handle("info_req", async (msg) => {
   let response_to = msg.header.id;
   let barcode = msg.body.barcode;
 
-  // To keep things simple, let's just do two queries. Remember, chez bob has an
+  // To keep things simple, let's just do three queries. Remember, chez bob has an
   // incredibly low QPS and is hosted on a single network so it's okay to be a little
   // wasteful in the name of being clear.
 
@@ -63,6 +63,22 @@ inventory.handle("info_req", async (msg) => {
         type: "user_info",
       },
       body: users[0],
+    };
+  }
+
+  // Neither item nor user, perhaps a board game?
+  let games = db("game_inventory")
+    .join("barcodes", "barcodes.game_id", "=", "game_inventory.id")
+    .select(["game_inventory.id as id", "name", "barcode"])
+    .where({ barcode })
+    .limit(1);
+
+  if (games.length === 1) {
+    return {
+      header: {
+        type: "game_info",
+      },
+      body: games[0],
     };
   }
 

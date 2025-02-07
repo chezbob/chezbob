@@ -65,14 +65,14 @@ class Mode {
     var currDate = new Date();
     var inJune = currDate.getMonth() === 5;
     var hr = currDate.getHours();
-    var eles = document.querySelectorAll(".eye, #content, #content::before")
+    var eles = document.querySelectorAll(".eye, #content, #content::before");
     if (inJune || hr === 6 || hr === 18) {
       eles.forEach(function (e) {
-          e.classList.add("rainbow");
+        e.classList.add("rainbow");
       });
     } else {
       eles.forEach(function (e) {
-          e.classList.remove("rainbow");
+        e.classList.remove("rainbow");
       });
     }
   }
@@ -127,6 +127,9 @@ export class DefaultMode extends Mode {
         break;
       case "user_info":
         set_mode(new LoggedIn(info.body));
+        break;
+      case "game_info":
+        // TODO: show board game info to logged out user
         break;
     }
   }
@@ -280,6 +283,9 @@ export class LoggedIn extends Session {
         break;
       case "user_info":
         this.set_error("Already signed in");
+        break;
+      case "game_info":
+        // TODO: prompt user to check in/out
         break;
     }
   }
