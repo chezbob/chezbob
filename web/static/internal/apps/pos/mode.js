@@ -673,8 +673,11 @@ class ViewTransactions extends ManageAccount {
     signDisplay: "exceptZero",
   });
   static #dateFormat = new Intl.DateTimeFormat("en-US", {
-    dateStyle: "short",
-    timeStyle: "short",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   });
 
   title = `View Transactions`;
@@ -696,9 +699,9 @@ class ViewTransactions extends ManageAccount {
                   ${name ?? ""}
                 </div>
                 <div class="dots"></div>
-                <div class="price-cost">${ViewTransactions.#dateFormat.format(
-                  new Date(created_at)
-                )}</div>
+                <div class="price-cost">${ViewTransactions.#dateFormat
+                  .format(new Date(created_at))
+                  .replace(",", "")}</div>
               </div>
             `
           )
