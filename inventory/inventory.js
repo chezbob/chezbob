@@ -67,9 +67,9 @@ inventory.handle("info_req", async (msg) => {
   }
 
   // Neither item nor user, perhaps a board game?
-  let games = db("game_inventory")
-    .join("barcodes", "barcodes.game_id", "=", "game_inventory.id")
-    .select(["game_inventory.id as id", "name", "barcode"])
+  let games = db("board_game_inventory")
+    .join("barcodes", "barcodes.game_id", "=", "board_game_inventory.id")
+    .select(["board_game_inventory.id as id", "name", "barcode"])
     .where({ barcode })
     .limit(1);
 
