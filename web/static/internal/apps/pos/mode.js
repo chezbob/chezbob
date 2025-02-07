@@ -129,7 +129,7 @@ export class DefaultMode extends Mode {
         set_mode(new LoggedIn(info.body));
         break;
       case "game_info":
-        // TODO: show board game info to logged out user
+        set_mode(new BoardGame(info.body));
         break;
     }
   }
@@ -285,7 +285,7 @@ export class LoggedIn extends Session {
         this.set_error("Already signed in");
         break;
       case "game_info":
-        // TODO: prompt user to check in/out
+        set_mode(new BoardGameCheckout(this.user, info.body));
         break;
     }
   }
@@ -711,5 +711,101 @@ class ViewTransactions extends ManageAccount {
           .join("")}
       </div>
     `;
+  }
+}
+
+class BoardGame extends Session {
+  static dateFormat = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+
+  game;
+  title = `Board Game`;
+  get content() {
+    console.log(this.game);
+    return `
+      <div class="price-row">
+        <span class="price-name">
+          ${this.game.name}
+        </span>
+        <span class="dots"></span>
+        <span class="price-cost">
+          ${this.game.status === "check_out" ? "OUT" : "IN"}
+        </span>
+      </div>
+      <p>
+      ${
+        this.game.status === "check_out" && this.game.created_at
+          ? `This game has been checked out since ${BoardGame.dateFormat.format(
+              new Date(this.game.created_at.replace(" ", "T") + "Z")
+            )}. `
+          : ""
+      }
+      Log in to check out board games.
+      </p>
+    `;
+  }
+
+  constructor(game) {
+    super();
+    this.game = game;
+  }
+}
+
+class BoardGameCheckout extends LoggedIn {
+  game;
+  title = `Board Game`;
+  hint = `<button onclick=window.mode.goBack()>Go Back</button>`;
+  get content() {
+    return `
+      <div class="price-row">
+        <span class="price-name">
+          ${this.game.name}
+        </span>
+        <span class="dots"></span>
+        <span class="price-cost">
+          ${this.game.status === "check_out" ? "OUT" : "IN"}
+        </span>
+      </div>
+      ${
+        this.game.status === "check_out" && this.game.created_at
+          ? `<p>This game has been checked out since ${BoardGame.dateFormat.format(
+              new Date(this.game.created_at.replace(" ", "T") + "Z")
+            )}.</p>`
+          : ""
+      }
+      ${
+        this.game.status === "check_out" && this.game.user_id === this.user.id
+          ? `<button onclick="window.mode.setStatus('check_in')">Check In</button>`
+          : `<button onclick="window.mode.setStatus('check_out')">Check Out</button>`
+      }
+    `;
+  }
+
+  constructor(user, game) {
+    super(user);
+    this.game = game;
+  }
+
+  goBack() {
+    set_mode(new LoggedIn(this.user));
+  }
+
+  async setStatus(status) {
+    await socket.request({
+      header: {
+        to: "inventory",
+        type: "game_status",
+      },
+      body: {
+        user_id: this.user.id,
+        game_id: this.game.id,
+        status,
+      },
+    });
+    this.game.status = status;
+    this.game.created_at = new Date().toISOString().replace("Z", "");
+    this.render();
   }
 }

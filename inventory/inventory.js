@@ -21,7 +21,7 @@ function user_info() {
 }
 
 // `info_req` is a request for information about a barcode or nfc code
-// The inventory service will return either a `user_info` or an `item_info`
+// The inventory service will return either a `user_info`, an `item_info`, or a `game_info`
 // object so callers should handle both cases. If it is neither,
 // expect an `item_not_found` error.
 inventory.handle("info_req", async (msg) => {
@@ -67,10 +67,25 @@ inventory.handle("info_req", async (msg) => {
   }
 
   // Neither item nor user, perhaps a board game?
-  let games = db("board_game_inventory")
+  let games = await db("board_game_inventory")
     .join("barcodes", "barcodes.game_id", "=", "board_game_inventory.id")
-    .select(["board_game_inventory.id as id", "name", "barcode"])
+    .leftJoin(
+      "board_game_transactions",
+      "board_game_transactions.item_id",
+      "=",
+      "board_game_inventory.id"
+    )
+    .leftJoin("users", "users.id", "=", "board_game_transactions.user_id")
+    .select([
+      "board_game_inventory.id as id",
+      "name",
+      "barcode",
+      db.raw("COALESCE(board_game_transactions.status, 'check_in') as status"),
+      db.raw("board_game_transactions.created_at"),
+      "users.id as user_id",
+    ])
     .where({ barcode })
+    .orderBy("board_game_transactions.created_at", "desc")
     .limit(1);
 
   if (games.length === 1) {
@@ -87,6 +102,32 @@ inventory.handle("info_req", async (msg) => {
       type: "item_not_found",
     },
     error: "Unknown barcode",
+  };
+});
+
+inventory.handle("game_status", async (msg) => {
+  const user_id = msg.body?.user_id;
+  const game_id = msg.body?.game_id;
+  const status = msg.body?.status;
+
+  if (
+    typeof user_id !== "number" ||
+    typeof game_id !== "number" ||
+    (status !== "check_in" && status !== "check_out")
+  ) {
+    throw new Error(" Invalid game_status request: ", msg);
+  }
+
+  // Then insert the transaction
+  await db("board_game_transactions").insert([
+    { user_id, item_id: game_id, status },
+  ]);
+
+  return {
+    header: {
+      type: "game_status_success",
+    },
+    body: {},
   };
 });
 

@@ -17,7 +17,7 @@ export async function seed(knex) {
   await knex("barcodes").insert({ item_id: redbull_id, barcode: "0000" });
   await knex("barcodes").insert({ user_id, barcode: "1111" });
 
-  let [coup_id, monopoly_id] = await knex("game_inventory").insert([
+  let [coup_id, monopoly_id] = await knex("board_game_inventory").insert([
     { name: "Coup" },
     { name: "Monopoly" },
   ]);
