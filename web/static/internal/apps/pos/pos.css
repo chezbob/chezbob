@@ -99,8 +99,14 @@ header button {
   white-space: nowrap;
 }
 
-.dots {
+.price-row > .price-name {
   flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dots {
+  flex: 1 0 0;
   overflow: hidden;
   text-overflow: "";
 }
@@ -261,15 +267,15 @@ header button {
 }
 
 @keyframes blinkeyes {
-	from {
-		transform: scaleY(1.0);
-	}
-	99% {
-		transform: scaleY(1.0);
-	}
-	to {
-		transform: scaleY(0.1);
-	}
+  from {
+    transform: scaleY(1);
+  }
+  99% {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0.1);
+  }
 }
 
 /* An annoying thing about the default eye circle character (U+2B24) is that
