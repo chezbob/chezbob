@@ -741,7 +741,7 @@ class BoardGame extends Session {
             )}. `
           : ""
       }
-      Log in to check out board games.
+      Log in to check in/out board games.
       </p>
     `;
   }
