@@ -99,8 +99,14 @@ header button {
   white-space: nowrap;
 }
 
-.dots {
+.price-row > .price-name {
   flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dots {
+  flex: 1 0 0;
   overflow: hidden;
   text-overflow: "";
 }

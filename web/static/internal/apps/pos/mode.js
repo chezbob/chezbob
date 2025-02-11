@@ -65,14 +65,14 @@ class Mode {
     var currDate = new Date();
     var inJune = currDate.getMonth() === 5;
     var hr = currDate.getHours();
-    var eles = document.querySelectorAll(".eye, #content, #content::before")
+    var eles = document.querySelectorAll(".eye, #content, #content::before");
     if (inJune || hr === 6 || hr === 18) {
       eles.forEach(function (e) {
-          e.classList.add("rainbow");
+        e.classList.add("rainbow");
       });
     } else {
       eles.forEach(function (e) {
-          e.classList.remove("rainbow");
+        e.classList.remove("rainbow");
       });
     }
   }
@@ -673,8 +673,11 @@ class ViewTransactions extends ManageAccount {
     signDisplay: "exceptZero",
   });
   static #dateFormat = new Intl.DateTimeFormat("en-US", {
-    dateStyle: "short",
-    timeStyle: "short",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   });
 
   title = `View Transactions`;
@@ -696,9 +699,9 @@ class ViewTransactions extends ManageAccount {
                   ${name ?? ""}
                 </div>
                 <div class="dots"></div>
-                <div class="price-cost">${ViewTransactions.#dateFormat.format(
-                  new Date(created_at)
-                )}</div>
+                <div class="price-cost">${ViewTransactions.#dateFormat
+                  .format(new Date(created_at.replace(" ", "T") + "Z"))
+                  .replace(",", "")}</div>
               </div>
             `
           )
