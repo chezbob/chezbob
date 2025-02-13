@@ -14,6 +14,7 @@ Run manually:
 
 Open `http://localhost:8080/internal/apps/pos` in the browser.
 You can manually input barcode values using the barcode panel.
+You can manually log in with username `bob` (no password).
 
 #### Architecture
 
@@ -39,7 +40,6 @@ to the `pos` by sending a message to the relay server that looks like so:
     }
 }
 ```
-
 
 The relay server inspects the `header` and forwards the message on to the `pos`.
 
