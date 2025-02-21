@@ -11,8 +11,8 @@ for b, g in enumerate(games):
     code = str(b + 1).zfill(6)
 
     options = dict(
-        module_width=0.2,
-        module_height=10,
+        module_width=0.22,
+        module_height=11,
         quiet_zone=0.5,
         background="white",
         foreground="black",
@@ -35,11 +35,10 @@ for b, g in enumerate(games):
     tmp = Image.open(f'tmp/tmp.png', 'r')
 
     img_w, img_h = tmp.size
-    offset = ((width - img_w) // 2, 20)
+    offset = ((width - img_w) // 2, 10)
     image.paste(tmp, offset)
    
-    print(code) 
-    text_loc = (35, height - 35)
+    text_loc = (35, height - 30)
     draw.text(text_loc, f"{g} ({code})", color)
 
     image.save(f"tmp/barcode_{code}.png")
