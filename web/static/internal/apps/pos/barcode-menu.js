@@ -13,7 +13,7 @@ export default {
       defaultCents: 100,
       barcode: "488348702402",
     },
-    Espresso: {
+    "Espresso": {
       defaultCents: 150,
       barcode: "845183001266",
     },
