@@ -31,6 +31,10 @@ export default {
       defaultCents: 17,
       barcode: "016000477278",
     },
+    "Gushers": {
+      defaultCents: 50,
+      barcode: "1016094",
+    },
     "Fruit by the Foot": {
       defaultCents: 38,
       barcode: "016000178847",
