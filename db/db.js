@@ -27,6 +27,34 @@ export function user_info() {
     .join("balances", "balances.id", "=", "users.id");
 }
 
+export function user_info_on_date(date) {
+  
+  var balances = db('transactions')
+    .join('users', 'transactions.user_id', '=', 'users.id')
+    .select('users.username')
+    .sum('transactions.cents as balance')
+    .where('transactions.created_at', '<', date)
+    .orWhere('transactions.created_at', null)
+    .groupBy('transactions.user_id')
+    .orderBy('balance', 'asc');
+
+  return balances;
+}
+
+export function user_info_on_date_for_user(date, username) {
+
+  var balances = db('transactions')
+    .join('users', 'transactions.user_id', 'users.id')
+    .sum('transactions.cents as balance')
+    .where('users.username', username)
+    .andWhere(function() {
+      this.where('transactions.created_at', null).orWhere('transactions.created_at', '<', date);
+    })
+    .first(); 
+
+  return balances;
+}
+
 export function total_debt() {
   return db("balances")
     .where("balance", "<", 0)
