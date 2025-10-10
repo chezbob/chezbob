@@ -388,6 +388,8 @@ export class Purchases extends LoggedIn {
 export class ManualPurchase extends Purchases {
   title = "Manual Purchase";
   content = menu_content;
+  pinScrollToBottom = false;
+
   get hint() {
     return `
       <button onclick="window.mode.back()" style="float: center">Back</button>
