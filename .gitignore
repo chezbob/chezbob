@@ -1,4 +1,4 @@
 node_modules
 *.sqlite3
 .*
-emails.txt
+*tmp/
