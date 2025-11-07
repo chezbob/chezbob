@@ -10,6 +10,7 @@ html {
   --chez-blue: aqua;
   --chez-bg: #222222;
   --chez-green: lime;
+  --chez-yellow: rgb(255, 255, 73);
   --chez-purple: rgb(255, 73, 255);
   --chez-red: rgb(255, 70, 101);
   --bob-color: var(--chez-blue);

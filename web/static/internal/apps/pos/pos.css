@@ -99,8 +99,14 @@ header button {
   white-space: nowrap;
 }
 
-.dots {
+.price-row > .price-name {
   flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dots {
+  flex: 1 0 0;
   overflow: hidden;
   text-overflow: "";
 }
@@ -260,16 +266,72 @@ header button {
   animation-iteration-count: infinite;
 }
 
+.rainbow {
+  animation-name: rainbowanim;
+  animation-duration: 20s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+}
+
+#content.rainbow::before {
+  /* Apply the rainbow animation to the title on the mouth (#content::before).
+   * Ideally, we'd just add the .rainbow class to #content::before, but we
+   * can't add classes to "pseudoelements" like ::before. As a hacky workaround
+   * we can just add everything in .rainbow to #content::before when #content
+   * has the .rainbow class. (there is probs a more elegant way to do this tho)
+   */
+  animation-name: rainbowanim;
+  animation-duration: 20s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+}
+
+@keyframes rainbowanim {
+  /* "color" is for the eyes; "border-color" is for the mouth;
+   * "--line-color" is for the box shadow glow on the mouth.
+   */
+  from {
+    color: var(--chez-blue);
+    border-color: var(--chez-blue);
+    --line-color: var(--chez-blue);
+  }
+  20% {
+    color: var(--chez-purple);
+    border-color: var(--chez-purple);
+    --line-color: var(--chez-purple);
+  }
+  40% {
+    color: var(--chez-red);
+    border-color: var(--chez-red);
+    --line-color: var(--chez-red);
+  }
+  60% {
+    color: var(--chez-yellow);
+    border-color: var(--chez-yellow);
+    --line-color: var(--chez-yellow);
+  }
+  80% {
+    color: var(--chez-green);
+    border-color: var(--chez-green);
+    --line-color: var(--chez-green);
+  }
+  to {
+    color: var(--chez-blue);
+    border-color: var(--chez-blue);
+    --line-color: var(--chez-blue);
+  }
+}
+
 @keyframes blinkeyes {
-	from {
-		transform: scaleY(1.0);
-	}
-	99% {
-		transform: scaleY(1.0);
-	}
-	to {
-		transform: scaleY(0.1);
-	}
+  from {
+    transform: scaleY(1.0);
+  }
+  99% {
+    transform: scaleY(1.0);
+  }
+  to {
+    transform: scaleY(0.1);
+  }
 }
 
 /* An annoying thing about the default eye circle character (U+2B24) is that
