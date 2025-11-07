@@ -97,6 +97,8 @@ export class DefaultMode extends Mode {
       <br>
       - Scan an item to price-check
       <br>
+      - Please contact chezbob@cs.ucsd.edu to have an account created for you
+      <br>
       <div style="align-self: center; margin-top: 1em;">or</div>
       <button style="align-self: center" onclick="window.mode.manualLogin()">Manual Login</button>
       <button style="align-self: center" onclick="window.mode.noBarcodePriceCheck()">No Barcode Price Check</button>
@@ -423,6 +425,8 @@ class ManualLogin extends DefaultMode {
       - Tap your ID to sign in
       <br>
       - Scan an item to price-check
+      <br>
+      - Please contact chezbob@cs.ucsd.edu to have an account created for you
     `;
   }
 
