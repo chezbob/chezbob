@@ -20,23 +20,20 @@ class Mode {
 
   // The render function is the only routine that updates the DOM. This means our UI is a function
   // from mode to UI.
-  render() {
+ render() {
     if (window.mode != this) {
       return;
     }
     // Set color
     document.body.style.setProperty("--bob-color", this.color);
-
     // Set Header
     document.getElementsByTagName("header")[0].innerHTML = this.header;
-
     // Set title
     if (this.title === null) {
       delete document.getElementById("content").dataset.title;
     } else {
       document.getElementById("content").dataset.title = this.title;
     }
-
     // Set content
     const content = document.getElementById("content");
     const new_content = this.content;
@@ -46,20 +43,21 @@ class Mode {
         content.scrollTop = content.scrollHeight;
       }
     }
-
     // Set hint
     const hint = document.getElementById("hint");
     const new_hint = this.hint;
     if (hint.innerHTML != new_hint) {
       hint.innerHTML = new_hint;
     }
-
     // Set error
     const error = document.getElementById("error");
     const new_error = this.error || "&nbsp;";
     if (error.innerHTML != new_error) {
       error.innerHTML = new_error;
     }
+
+    // Add scroll indicators
+    this.updateScrollIndicators();
 
     // during June, and/or from 6-7 am/pm, use rainbow colors
     var currDate = new Date();
@@ -77,6 +75,50 @@ class Mode {
     }
   }
 
+  updateScrollIndicators() {
+    const content = document.getElementById("content");
+    const isScrollable = content.scrollHeight > content.clientHeight;
+    const isAtTop = content.scrollTop === 0;
+    const isAtBottom = content.scrollTop + content.clientHeight >= content.scrollHeight - 1;
+
+    // Create or get scroll indicators
+    let topArrow = document.getElementById("scroll-top-arrow");
+    let bottomArrow = document.getElementById("scroll-bottom-arrow");
+
+    if (isScrollable) {
+      // Create top arrow if it doesn't exist
+      if (!topArrow) {
+        topArrow = document.createElement("div");
+        topArrow.id = "scroll-top-arrow";
+        topArrow.className = "scroll-arrow scroll-arrow-top";
+        topArrow.innerHTML = "▲";
+        content.parentElement.appendChild(topArrow);
+      }
+
+      // Create bottom arrow if it doesn't exist
+      if (!bottomArrow) {
+        bottomArrow = document.createElement("div");
+        bottomArrow.id = "scroll-bottom-arrow";
+        bottomArrow.className = "scroll-arrow scroll-arrow-bottom";
+        bottomArrow.innerHTML = "▼";
+        content.parentElement.appendChild(bottomArrow);
+      }
+
+      // Show/hide arrows based on scroll position
+      topArrow.style.display = isAtTop ? "none" : "block";
+      bottomArrow.style.display = isAtBottom ? "none" : "block";
+
+      // Add scroll listener if not already added
+      if (!content.dataset.scrollListenerAdded) {
+        content.addEventListener("scroll", () => this.updateScrollIndicators());
+        content.dataset.scrollListenerAdded = "true";
+      }
+    } else {
+      // Remove arrows if content is not scrollable
+      if (topArrow) topArrow.style.display = "none";
+      if (bottomArrow) bottomArrow.style.display = "none";
+    }
+  }
   /**
    * Be sure to use set_error for error messages so that the text and timeout are kept in sync
    * @param {string} txt
