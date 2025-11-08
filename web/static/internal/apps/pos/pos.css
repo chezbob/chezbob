@@ -387,3 +387,37 @@ section {
   flex-direction: column;
   padding-left: 1em;
 }
+
+#face {
+  position: relative;
+}
+
+.scroll-arrow {
+  position: absolute;
+  right: 10px;
+  font-size: 32px;
+  color: var(--bob-color, #666);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.scroll-arrow-top {
+  top: 5px;
+  animation: bounceUp 1.5s ease-in-out infinite;
+}
+
+.scroll-arrow-bottom {
+  top: 40px;
+  animation: bounceDown 1.5s ease-in-out infinite;
+}
+
+@keyframes bounceUp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
