@@ -324,10 +324,10 @@ header button {
 
 @keyframes blinkeyes {
   from {
-    transform: scaleY(1.0);
+    transform: scaleY(1);
   }
   99% {
-    transform: scaleY(1.0);
+    transform: scaleY(1);
   }
   to {
     transform: scaleY(0.1);

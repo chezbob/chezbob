@@ -10,14 +10,20 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // Transaction section
   const transactionEmailInput = document.getElementById("transaction-email");
-  const transactionItemsDropdown = document.getElementById("transaction-items-dropdown");
+  const transactionItemsDropdown = document.getElementById(
+    "transaction-items-dropdown"
+  );
   const transactionList = document.getElementById("transaction-list");
   const addTransactionBtn = document.getElementById("add-transaction-btn");
-  const submitTransactionsBtn = document.getElementById("submit-transactions-btn");
+  const submitTransactionsBtn = document.getElementById(
+    "submit-transactions-btn"
+  );
 
   // Refund section
   const refundEmailInput = document.getElementById("refund-email");
-  const refundTransactionsDropdown = document.getElementById("refund-transactions-dropdown");
+  const refundTransactionsDropdown = document.getElementById(
+    "refund-transactions-dropdown"
+  );
   const refundItemsDropdown = document.getElementById("refund-items-dropdown");
   const refundList = document.getElementById("refund-list");
   const addRefundBtn = document.getElementById("add-refund-btn");
@@ -44,13 +50,14 @@ window.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       console.log(data);
 
-      transactionItemsDropdown.innerHTML = '<option value="">Select item</option>';
+      transactionItemsDropdown.innerHTML =
+        '<option value="">Select item</option>';
       refundItemsDropdown.innerHTML = '<option value="">Select item</option>';
 
       // Sort alphabetically by name
       data.sort((a, b) => a.name.localeCompare(b.name));
 
-      data.forEach(item => {
+      data.forEach((item) => {
         const option1 = document.createElement("option");
         option1.value = item.id;
         option1.textContent = item.name;
@@ -63,8 +70,10 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     } catch (err) {
       console.error("Failed to load items:", err);
-      transactionItemsDropdown.innerHTML = '<option value="">Failed to load items</option>';
-      refundItemsDropdown.innerHTML = '<option value="">Failed to load items</option>';
+      transactionItemsDropdown.innerHTML =
+        '<option value="">Failed to load items</option>';
+      refundItemsDropdown.innerHTML =
+        '<option value="">Failed to load items</option>';
     }
   }
 
@@ -74,8 +83,8 @@ window.addEventListener("DOMContentLoaded", () => {
   function getLines(textarea) {
     return textarea.value
       .split("\n")
-      .map(l => l.trim())
-      .filter(l => l.length > 0);
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
   }
 
   function renderTransactions() {
@@ -135,12 +144,15 @@ window.addEventListener("DOMContentLoaded", () => {
     if (!email) return;
 
     try {
-      const res = await fetch(`/api/user-transactions?email=${encodeURIComponent(email)}`);
+      const res = await fetch(
+        `/api/user-transactions?email=${encodeURIComponent(email)}`
+      );
       const data = await res.json();
       console.log(data);
 
-      refundTransactionsDropdown.innerHTML = '<option value="">Select recent transaction</option>';
-      data.transactions.slice(0, 5).forEach(t => {
+      refundTransactionsDropdown.innerHTML =
+        '<option value="">Select recent transaction</option>';
+      data.transactions.slice(0, 5).forEach((t) => {
         const option = document.createElement("option");
         option.value = t.id;
         option.textContent = t.name;
@@ -159,7 +171,8 @@ window.addEventListener("DOMContentLoaded", () => {
   function addTransactionHandler() {
     const email = transactionEmailInput.value.trim();
     const itemId = transactionItemsDropdown.value;
-    const itemName = transactionItemsDropdown.selectedOptions[0]?.textContent || "";
+    const itemName =
+      transactionItemsDropdown.selectedOptions[0]?.textContent || "";
 
     if (!email || !itemId) {
       alert("Please enter an email and select an item.");
@@ -203,17 +216,22 @@ window.addEventListener("DOMContentLoaded", () => {
   async function submitTransactionsHandler() {
     if (!transactions.length) return;
 
-    const payload = transactions.map(t => ({ email: t.email, item_id: t.itemId }));
+    const payload = transactions.map((t) => ({
+      email: t.email,
+      item_id: t.itemId,
+    }));
 
     try {
       const res = await fetch("/api/add-transactions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transactions: payload })
+        body: JSON.stringify({ transactions: payload }),
       });
       const data = await res.json();
       console.log(data);
-      resultDiv.textContent = `Inserted: ${data.inserted}, Failed: ${data.failed?.length || 0}, Invalid: ${data.invalidFormat?.length || 0}`;
+      resultDiv.textContent = `Inserted: ${data.inserted}, Failed: ${
+        data.failed?.length || 0
+      }, Invalid: ${data.invalidFormat?.length || 0}`;
       transactions = [];
       renderTransactions();
     } catch (err) {
@@ -224,17 +242,22 @@ window.addEventListener("DOMContentLoaded", () => {
   async function submitRefundsHandler() {
     if (!pendingRefunds.length) return;
 
-    const payload = pendingRefunds.map(r => ({ email: r.email, item_id: r.id }));
+    const payload = pendingRefunds.map((r) => ({
+      email: r.email,
+      item_id: r.id,
+    }));
 
     try {
       const res = await fetch("/api/refunds", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refunds: payload })
+        body: JSON.stringify({ refunds: payload }),
       });
       const data = await res.json();
       console.log(data);
-      resultDiv.textContent = `Refunded: ${data.inserted}, Failed: ${data.failed?.length || 0}, Invalid: ${data.invalidFormat?.length || 0}`;
+      resultDiv.textContent = `Refunded: ${data.inserted}, Failed: ${
+        data.failed?.length || 0
+      }, Invalid: ${data.invalidFormat?.length || 0}`;
       pendingRefunds = [];
       renderRefunds();
     } catch (err) {
@@ -250,12 +273,14 @@ window.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("/api/add-users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emails })
+        body: JSON.stringify({ emails }),
       });
       const data = await res.json();
       console.log(data);
-      resultDiv.textContent = `Inserted: ${data.inserted}, Conflicts: ${data.conflicts?.length || 0}, Invalid: ${data.invalid?.length || 0}`;
-      userEmailsTextarea.value = ""
+      resultDiv.textContent = `Inserted: ${data.inserted}, Conflicts: ${
+        data.conflicts?.length || 0
+      }, Invalid: ${data.invalid?.length || 0}`;
+      userEmailsTextarea.value = "";
     } catch (err) {
       console.error("Failed to create users:", err);
     }
@@ -269,16 +294,17 @@ window.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("/api/reset-passwords", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emails })
+        body: JSON.stringify({ emails }),
       });
       const data = await res.json();
       console.log(data);
-      resultDiv.textContent = `Reset: ${data.reset}, Not Found: ${data.notFound?.length || 0}, Invalid: ${data.invalid?.length || 0}`;
-      resetEmailsTextarea.value = ""
+      resultDiv.textContent = `Reset: ${data.reset}, Not Found: ${
+        data.notFound?.length || 0
+      }, Invalid: ${data.invalid?.length || 0}`;
+      resetEmailsTextarea.value = "";
     } catch (err) {
       console.error("Failed to reset passwords:", err);
     }
-
   }
 
   // ----------------------
@@ -294,4 +320,3 @@ window.addEventListener("DOMContentLoaded", () => {
   addRefundBtn.addEventListener("click", addRefundHandler);
   submitRefundsBtn.addEventListener("click", submitRefundsHandler);
 });
-

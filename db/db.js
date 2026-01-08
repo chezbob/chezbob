@@ -28,29 +28,31 @@ export function user_info() {
 }
 
 export function user_info_on_date(date) {
-  
-  var balances = db('transactions')
-    .join('users', 'transactions.user_id', '=', 'users.id')
-    .select('users.username')
-    .sum('transactions.cents as balance')
-    .where('transactions.created_at', '<', date)
-    .orWhere('transactions.created_at', null)
-    .groupBy('transactions.user_id')
-    .orderBy('balance', 'asc');
+  var balances = db("transactions")
+    .join("users", "transactions.user_id", "=", "users.id")
+    .select("users.username")
+    .sum("transactions.cents as balance")
+    .where("transactions.created_at", "<", date)
+    .orWhere("transactions.created_at", null)
+    .groupBy("transactions.user_id")
+    .orderBy("balance", "asc");
 
   return balances;
 }
 
 export function user_info_on_date_for_user(date, username) {
-
-  var balances = db('transactions')
-    .join('users', 'transactions.user_id', 'users.id')
-    .sum('transactions.cents as balance')
-    .where('users.username', username)
-    .andWhere(function() {
-      this.where('transactions.created_at', null).orWhere('transactions.created_at', '<', date);
+  var balances = db("transactions")
+    .join("users", "transactions.user_id", "users.id")
+    .sum("transactions.cents as balance")
+    .where("users.username", username)
+    .andWhere(function () {
+      this.where("transactions.created_at", null).orWhere(
+        "transactions.created_at",
+        "<",
+        date
+      );
     })
-    .first(); 
+    .first();
 
   return balances;
 }
@@ -70,16 +72,14 @@ export function total_assets() {
 }
 
 export function total_balance() {
-  return db("balances")
-    .sum("balance as total_balance")
-    .first();
+  return db("balances").sum("balance as total_balance").first();
 }
 
-export function item_purchase_info({isoDateFrom, isoDateTo}) {
+export function item_purchase_info({ isoDateFrom, isoDateTo }) {
   // the isoDates must be a string in the format of YYYY-MM-DD
   // if no dates are provided, the query will return over all transactions
   let partialQuery = db("transactions as t")
-    .count('t.item_id', { as: "item_count" })
+    .count("t.item_id", { as: "item_count" })
     .select(["i.name"])
     .join("inventory as i", "i.id", "=", "t.item_id");
   if (isoDateFrom) {

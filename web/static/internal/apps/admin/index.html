@@ -1,79 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chez Bob - Admin Panel</title>
-  <link rel="stylesheet" href="./admin.css" />
-</head>
-<body>
-  <div id="admin-panel">
-    <header class="admin-header">Chez Bob - Admin Panel</header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chez Bob - Admin Panel</title>
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body>
+    <div id="admin-panel">
+      <header class="admin-header">Chez Bob - Admin Panel</header>
 
-    <!-- Create Users Section -->
-    <div class="panel-section">
-      <h3>Create Users</h3>
-      <textarea id="user-emails" rows="5" placeholder="one email per line"></textarea>
-      <button id="create-users-btn">Create Users</button>
+      <!-- Create Users Section -->
+      <div class="panel-section">
+        <h3>Create Users</h3>
+        <textarea
+          id="user-emails"
+          rows="5"
+          placeholder="one email per line"
+        ></textarea>
+        <button id="create-users-btn">Create Users</button>
+      </div>
+
+      <!-- Add Transactions Section -->
+      <div class="panel-section">
+        <h3>Add Transactions</h3>
+        <div id="transaction-form">
+          <input type="email" id="transaction-email" placeholder="user email" />
+          <select id="transaction-items-dropdown">
+            <option value="">Loading items...</option>
+          </select>
+          <button id="add-transaction-btn">Add</button>
+        </div>
+        <button id="submit-transactions-btn" style="margin-top: 0.5em">
+          Submit All Transactions
+        </button>
+        <ul
+          id="transaction-list"
+          style="margin-top: 1em; list-style: none; padding-left: 0"
+        >
+          <!-- dynamically added transactions appear here -->
+        </ul>
+      </div>
+      <!-- Reset Passwords Section -->
+      <div class="panel-section">
+        <h3>Reset Passwords</h3>
+        <textarea
+          id="reset-emails"
+          rows="5"
+          placeholder="one email per line"
+        ></textarea>
+        <button id="reset-passwords-btn">Reset Passwords</button>
+      </div>
+
+      <!-- Refund Transactions Section -->
+      <div class="panel-section">
+        <h3>Refund Transactions</h3>
+
+        <!-- User email input -->
+        <input type="email" id="refund-email" placeholder="user email" />
+
+        <!-- Last 5 transactions dropdown -->
+        <select id="refund-transactions-dropdown">
+          <option value="">Select recent transaction</option>
+        </select>
+
+        <!-- All items dropdown -->
+        <select id="refund-items-dropdown">
+          <option value="">Select item</option>
+        </select>
+
+        <!-- Add refund entry -->
+        <button id="add-refund-btn">Add Refund</button>
+
+        <!-- Pending refunds list -->
+        <ul
+          id="refund-list"
+          style="margin-top: 1em; list-style: none; padding-left: 0"
+        >
+          <!-- dynamically added refund entries appear here -->
+        </ul>
+
+        <!-- Submit all refunds -->
+        <button id="submit-refunds-btn" style="margin-top: 0.5em">
+          Submit Refunds
+        </button>
+      </div>
+      <!-- Action Results -->
+      <div id="action-result"></div>
     </div>
 
-    <!-- Add Transactions Section -->
-    <div class="panel-section">
-  <h3>Add Transactions</h3>
-  <div id="transaction-form">
-    <input type="email" id="transaction-email" placeholder="user email" />
-    <select id="transaction-items-dropdown">
-      <option value="">Loading items...</option>
-    </select>
-    <button id="add-transaction-btn">Add</button>
-  </div>
-  <button id="submit-transactions-btn" style="margin-top:0.5em;">Submit All Transactions</button>
-  <ul id="transaction-list" style="margin-top: 1em; list-style: none; padding-left: 0;">
-    <!-- dynamically added transactions appear here -->
-  </ul>
-    </div>
-    <!-- Reset Passwords Section -->
-    <div class="panel-section">
-      <h3>Reset Passwords</h3>
-      <textarea id="reset-emails" rows="5" placeholder="one email per line"></textarea>
-      <button id="reset-passwords-btn">Reset Passwords</button>
-    </div>
-
-    <!-- Refund Transactions Section -->
-   <div class="panel-section">
-  <h3>Refund Transactions</h3>
-
-  <!-- User email input -->
-  <input type="email" id="refund-email" placeholder="user email" />
-
-  <!-- Last 5 transactions dropdown -->
-  <select id="refund-transactions-dropdown">
-    <option value="">Select recent transaction</option>
-  </select>
-
-  <!-- All items dropdown -->
-  <select id="refund-items-dropdown">
-    <option value="">Select item</option>
-  </select>
-
-  <!-- Add refund entry -->
-  <button id="add-refund-btn">Add Refund</button>
-
-  <!-- Pending refunds list -->
-  <ul id="refund-list" style="margin-top:1em; list-style:none; padding-left:0;">
-    <!-- dynamically added refund entries appear here -->
-  </ul>
-
-  <!-- Submit all refunds -->
-  <button id="submit-refunds-btn" style="margin-top:0.5em;">Submit Refunds</button>
-</div> 
-    <!-- Action Results -->
-    <div id="action-result"></div>
-  </div>
-
-  <!-- Admin JS logic -->
-  <script type="module" src="./admin.js"></script>
-</body>
+    <!-- Admin JS logic -->
+    <script type="module" src="./admin.js"></script>
+  </body>
 </html>
-

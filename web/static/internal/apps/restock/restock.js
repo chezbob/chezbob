@@ -60,7 +60,6 @@ function valid_upc(upc) {
 }
 
 async function scan(upc) {
-
   report("");
 
   try {
@@ -165,7 +164,7 @@ async function submit(ev) {
   let form = form_values();
 
   // prevent unreasonable prices such as 1 (trillion) cent items
-  if(form.bulk_count > 500 || form.bulk_cost > 200){
+  if (form.bulk_count > 500 || form.bulk_cost > 200) {
     report("Unreasonable bulk cost/count. Aborting submission");
     return;
   }

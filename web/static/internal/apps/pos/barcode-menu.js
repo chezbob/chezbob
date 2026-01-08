@@ -26,12 +26,12 @@ export default {
       barcode: "077652685053",
     },
   },
-  "Small Snacks": { 
+  "Small Snacks": {
     "Mott's Fruit Snacks": {
       defaultCents: 17,
       barcode: "016000477278",
     },
-    "Gushers": {
+    Gushers: {
       defaultCents: 50,
       barcode: "1016094",
     },
@@ -52,8 +52,8 @@ export default {
       barcode: "034000066421",
     },
   },
-  "Freezer": {
-    "Drumstick": {
+  Freezer: {
+    Drumstick: {
       defaultCents: 100,
       barcode: "072554870262",
     },

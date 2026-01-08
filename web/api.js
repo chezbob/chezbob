@@ -28,14 +28,21 @@ router.post("/add-users", async (req, res) => {
 
     const conflicts = await db("users")
       .select(["username", "email"])
-      .whereIn("username", processed.map(e => e.username))
-      .orWhereIn("email", processed.map(e => e.email));
+      .whereIn(
+        "username",
+        processed.map((e) => e.username)
+      )
+      .orWhereIn(
+        "email",
+        processed.map((e) => e.email)
+      );
 
-    const conflictingEmails = new Set(conflicts.map(c => c.email));
-    const conflictingUsernames = new Set(conflicts.map(c => c.username));
+    const conflictingEmails = new Set(conflicts.map((c) => c.email));
+    const conflictingUsernames = new Set(conflicts.map((c) => c.username));
 
     const valid = processed.filter(
-      e => !conflictingEmails.has(e.email) && !conflictingUsernames.has(e.username)
+      (e) =>
+        !conflictingEmails.has(e.email) && !conflictingUsernames.has(e.username)
     );
 
     if (valid.length > 0) {
@@ -44,8 +51,8 @@ router.post("/add-users", async (req, res) => {
 
     res.json({
       inserted: valid.length,
-      conflicts: conflicts.map(c => c.email),
-      invalid
+      conflicts: conflicts.map((c) => c.email),
+      invalid,
     });
   } catch (err) {
     console.error(err);
@@ -61,7 +68,14 @@ router.post("/add-transactions", async (req, res) => {
     const { transactions } = req.body;
 
     if (!Array.isArray(transactions) || transactions.length === 0) {
-      return res.status(400).json({ inserted: 0, failed: [], invalidFormat: [], error: "No transactions provided" });
+      return res
+        .status(400)
+        .json({
+          inserted: 0,
+          failed: [],
+          invalidFormat: [],
+          error: "No transactions provided",
+        });
     }
 
     const inserted = [];
@@ -79,7 +93,10 @@ router.post("/add-transactions", async (req, res) => {
           continue;
         }
 
-        const item = await db("inventory").select("cents").where({ id: item_id }).first();
+        const item = await db("inventory")
+          .select("cents")
+          .where({ id: item_id })
+          .first();
         if (!item) {
           failed.push({ email, item_id, error: "Item not found" });
           continue;
@@ -106,7 +123,9 @@ router.post("/add-transactions", async (req, res) => {
     res.json({ inserted: inserted.length, failed, invalidFormat });
   } catch (err) {
     console.error("Unexpected error in /add-transactions:", err);
-    res.status(500).json({ inserted: 0, failed: [], invalidFormat: [], error: err.message });
+    res
+      .status(500)
+      .json({ inserted: 0, failed: [], invalidFormat: [], error: err.message });
   }
 });
 
@@ -117,7 +136,14 @@ router.post("/reset-passwords", async (req, res) => {
   try {
     const emails = req.body.emails || [];
     if (!Array.isArray(emails) || emails.length === 0) {
-      return res.status(400).json({ reset: 0, notFound: [], invalid: [], error: "No emails provided" });
+      return res
+        .status(400)
+        .json({
+          reset: 0,
+          notFound: [],
+          invalid: [],
+          error: "No emails provided",
+        });
     }
 
     const BATCH_SIZE = 100;
@@ -125,25 +151,31 @@ router.post("/reset-passwords", async (req, res) => {
     const notFound = [];
     let resetCount = 0;
 
-    const validEmails = emails.map(e => e.trim()).filter(e => {
-      if (!e.includes("@")) {
-        invalid.push(e);
-        return false;
-      }
-      return true;
-    });
+    const validEmails = emails
+      .map((e) => e.trim())
+      .filter((e) => {
+        if (!e.includes("@")) {
+          invalid.push(e);
+          return false;
+        }
+        return true;
+      });
 
     for (let i = 0; i < validEmails.length; i += BATCH_SIZE) {
       const batch = validEmails.slice(i, i + BATCH_SIZE);
-      const existing = await db("users").select(["username", "email"]).whereIn("email", batch);
-      const existingEmails = new Set(existing.map(u => u.email));
-      const found = batch.filter(email => existingEmails.has(email));
-      const missing = batch.filter(email => !existingEmails.has(email));
+      const existing = await db("users")
+        .select(["username", "email"])
+        .whereIn("email", batch);
+      const existingEmails = new Set(existing.map((u) => u.email));
+      const found = batch.filter((email) => existingEmails.has(email));
+      const missing = batch.filter((email) => !existingEmails.has(email));
 
       notFound.push(...missing);
 
       if (found.length > 0) {
-        await db("users").whereIn("email", found).update({ password_hash: "", password_salt: "" });
+        await db("users")
+          .whereIn("email", found)
+          .update({ password_hash: "", password_salt: "" });
         resetCount += found.length;
       }
     }
@@ -151,7 +183,9 @@ router.post("/reset-passwords", async (req, res) => {
     res.json({ reset: resetCount, notFound, invalid });
   } catch (err) {
     console.error("Error resetting passwords:", err);
-    res.status(500).json({ reset: 0, notFound: [], invalid: [], error: err.message });
+    res
+      .status(500)
+      .json({ reset: 0, notFound: [], invalid: [], error: err.message });
   }
 });
 
@@ -160,7 +194,9 @@ router.post("/reset-passwords", async (req, res) => {
 // ----------------------
 router.get("/items", async (req, res) => {
   try {
-    const items = await db("inventory").select("id", "name").orderBy("name", "asc");
+    const items = await db("inventory")
+      .select("id", "name")
+      .orderBy("name", "asc");
     res.json(items);
   } catch (err) {
     console.error(err);
@@ -174,7 +210,8 @@ router.get("/items", async (req, res) => {
 router.post("/refunds", async (req, res) => {
   try {
     const refunds = req.body.refunds || [];
-    if (!Array.isArray(refunds) || refunds.length === 0) return res.status(400).json({ error: "No refunds provided" });
+    if (!Array.isArray(refunds) || refunds.length === 0)
+      return res.status(400).json({ error: "No refunds provided" });
 
     const processed = [];
     const invalidFormat = [];
@@ -195,9 +232,18 @@ router.post("/refunds", async (req, res) => {
 
     for (const entry of processed) {
       try {
-        const user = await db("users").select("id").where("email", entry.email).first();
-        const item = await db("inventory").select("cents").where("id", entry.item_id).first();
-        const last = await db("transactions").select("id").orderBy("id", "desc").first();
+        const user = await db("users")
+          .select("id")
+          .where("email", entry.email)
+          .first();
+        const item = await db("inventory")
+          .select("cents")
+          .where("id", entry.item_id)
+          .first();
+        const last = await db("transactions")
+          .select("id")
+          .orderBy("id", "desc")
+          .first();
 
         if (!user || !item) {
           failed.push(entry);
@@ -206,7 +252,12 @@ router.post("/refunds", async (req, res) => {
 
         const id = last ? last.id + 1 : 1;
         const cents = Math.abs(item.cents); // refund = positive
-        await db("transactions").insert({ id, user_id: user.id, item_id: entry.item_id, cents });
+        await db("transactions").insert({
+          id,
+          user_id: user.id,
+          item_id: entry.item_id,
+          cents,
+        });
         inserted++;
       } catch (err) {
         console.error(err);
@@ -252,4 +303,3 @@ router.get("/user-transactions", async (req, res) => {
 });
 
 export default router;
-
