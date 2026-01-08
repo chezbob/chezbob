@@ -40,7 +40,6 @@ to the `pos` by sending a message to the relay server that looks like so:
 }
 ```
 
-
 The relay server inspects the `header` and forwards the message on to the `pos`.
 
 When a service connects to the relay server, it picks a logical name (e.g.

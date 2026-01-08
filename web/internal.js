@@ -30,4 +30,3 @@ app.use("/api", apiRoutes);
 
 let server = hybridServer(app);
 server.on("upgrade", (...args) => relay.handleUpgrade(...args));
-

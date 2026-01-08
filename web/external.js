@@ -2,7 +2,13 @@
     external is chezbob's public internet presence.
 */
 
-import { item_purchase_info, total_debt, total_balance, total_assets, user_info } from "db";
+import {
+  item_purchase_info,
+  total_debt,
+  total_balance,
+  total_assets,
+  user_info,
+} from "db";
 import express from "express";
 import { hybridServer } from "hybrid-http-server";
 
@@ -19,7 +25,7 @@ app.use(express.static(__dirname + "/static"));
 // We need to serve the .well-known directory for LetsEncrypt renewals
 // We could have allowed all dotfiles on the previous middleware but
 // this feel safer
-app.use('/.well-known', express.static(__dirname + "/static/.well-known"));
+app.use("/.well-known", express.static(__dirname + "/static/.well-known"));
 
 // REST APIs
 const api = express.Router();
@@ -52,21 +58,21 @@ api.get("/wos/users", async (req, res) => {
 api.get("/wos/totaldebt", async (req, res) => {
   let debt = await total_debt();
   // diving the debt by 100 to get the amount in dollars
-  debt.total_debt = debt.total_debt/100;
+  debt.total_debt = debt.total_debt / 100;
   res.send(debt);
 });
 
 api.get("/wos/totalassets", async (req, res) => {
   let assets = await total_assets();
   // diving the debt by 100 to get the amount in dollars
-  assets.total_assets = assets.total_assets/100;
+  assets.total_assets = assets.total_assets / 100;
   res.send(assets);
 });
 
 api.get("/wos/totalbalance", async (req, res) => {
   let bal = await total_balance();
   // diving the debt by 100 to get the amount in dollars
-  bal.total_balance = bal.total_balance/100;
+  bal.total_balance = bal.total_balance / 100;
   res.send(bal);
 });
 

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 /* colors */
 :root {
@@ -103,4 +103,3 @@ button:active {
   color: var(--bob-color);
   text-shadow: 0 0 3px var(--bob-color), 0 0 5px var(--bob-color);
 }
-
