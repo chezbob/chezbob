@@ -38,7 +38,7 @@ async function display_debt() {
   try {
     let debt = await response.json();
     console.log(debt);
-    debt_element.innerHTML = `Total Debt: $${debt.total_debt}`;
+    debt_element.innerHTML = `Total Debt: ${dollars(debt.total_debt, true)}`;
   } catch (e) {
     debt_element.innerHTML = `<div id="message">Total debt can't be displayed today!</div>`;
   }

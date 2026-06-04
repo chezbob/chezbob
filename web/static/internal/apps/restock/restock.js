@@ -1,4 +1,5 @@
 import { ReconnectingSocket } from "/js/reconnecting-socket.js";
+import { dollars } from "/js/money.js";
 
 // Rather than using Modes to control the socket, we put it directly on the window
 // and set up handlers that invoke mode methods like `on_scan`. This keeps us from having
@@ -148,14 +149,8 @@ function calculate_cost_in_cents() {
 
 window.display_cost = () => {
   document.getElementById("cost").innerHTML =
-    "$" + dollars(calculate_cost_in_cents());
+    dollars(calculate_cost_in_cents(), true);
 };
-
-function dollars(cents) {
-  let d = Math.floor(cents / 100);
-  let c = Math.abs(cents) % 100;
-  return `${d}.${c < 10 ? "0" + c : c}`;
-}
 
 async function submit(ev) {
   ev.preventDefault();
