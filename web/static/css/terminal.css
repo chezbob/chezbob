@@ -27,6 +27,7 @@ body {
 
 #screen {
   overflow: auto;
+  position: relative;
   background: var(--chez-bg);
   font-family: "Press Start 2P", "FreeMono", monospace;
   color: white;
@@ -131,6 +132,29 @@ a:link {
 
 a:hover {
   color: #ae59eb;
+}
+
+body.accessible-font #screen {
+  font-family: "FreeMono", monospace;
+  text-shadow: none;
+}
+
+body.accessible-font .scanline {
+  display: none;
+}
+
+#font-toggle-btn {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  font-size: 14px;
+  margin: 0;
+  z-index: 10;
+  opacity: 0.8;
+}
+
+#font-toggle-btn:hover {
+  opacity: 1;
 }
 
 /* Adapted from what was originally the "#title" selector in the WOS CSS */
