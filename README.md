@@ -4,15 +4,17 @@ Install node v17 with npm. For development I recommend using nvm, but for
 deployment you should use official packages (since nvm just installs for the user)
 
 Docker:
-
-`docker run --rm -p 8080:8080 -it ttkarve/chezbob npm run debug`
+```sh
+docker build -t chezbob .
+docker run --rm -p 8080:8080 -p 8081:8081 -it chezbob npm run debug
+```
 
 Run manually:
 
 - `npm run setup` (might take a bit, builds sqlite3)
 - `npm run debug` (make sure you have tmux installed)
 
-Open `http://localhost:8080/internal/apps/pos` in the browser.
+Open `http://localhost:8080/internal/apps/pos` in the browser to view the internal page and `http://localhost:8081` to view the external, public facing page.
 You can manually input barcode values using the barcode panel.
 
 #### Architecture
