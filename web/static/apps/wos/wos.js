@@ -38,6 +38,7 @@ async function display_debt() {
   try {
     let debt = await response.json();
     console.log(debt);
+    debt.total_debt = debt.total_debt * 100;  // API internally already converts total debt from cents to dollars
     debt_element.innerHTML = `Total Debt: ${dollars(debt.total_debt, true)}`;
   } catch (e) {
     debt_element.innerHTML = `<div id="message">Total debt can't be displayed today!</div>`;

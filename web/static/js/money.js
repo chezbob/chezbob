@@ -12,6 +12,6 @@ export function price_row(item) {
 
 export function dollars(cents, show_dollar_sign = false) {
   let d = Math.abs(Math.trunc(cents / 100));
-  let c = Math.abs(cents) % 100;
+  let c = Math.abs(Math.round(cents)) % 100;
   return `${cents < 0 ? "-" : ""}${show_dollar_sign ? "$" : ""}${d}.${c < 10 ? "0" + c : c}`;
 }
