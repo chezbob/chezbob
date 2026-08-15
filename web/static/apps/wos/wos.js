@@ -2,8 +2,8 @@ import { dollars } from "../../js/money.js";
 
 const REFRESH_INTERVAL = 60000; //ms
 
-async function display_wall() {
-  let response = await fetch("/api/wos/users");
+async function display_wall(n = 10) {
+  let response = await fetch(`/api/wos/users?n=${n}`);
   let content = document.getElementById("content");
   try {
     let users_data = await response.json();
