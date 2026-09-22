@@ -30,9 +30,9 @@ app.use("/.well-known", express.static(__dirname + "/static/.well-known"));
 // REST APIs
 const api = express.Router();
 /**
- * /wos/users:
+ * /wos/users?n=N:
  *      get:
- *          list of 10 users with most debt and more than -5$ with the following format:
+ *          list of N (default 10) users with most debt and more than -5$ with the following format:
  *           [
  *             {
  *               "id": 2,
@@ -47,11 +47,15 @@ const api = express.Router();
  *           ]
  */
 api.get("/wos/users", async (req, res) => {
-  // first 10 users with a debt greater than $5
+  // first N users with a debt greater than $5
+  let n = parseInt(req.query.n, 10);
+  if (!Number.isInteger(n) || n <= 0) {
+    n = 10;
+  }
   let users = await user_info()
     .where("balance", "<=", -500)
     .orderBy("balance")
-    .limit(10);
+    .limit(n);
   res.send(users);
 });
 
