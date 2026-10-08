@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#172554">
+    <title>Chez Bob Admin</title>
+    <link rel="stylesheet" href="/admin.css?v=15">
+  </head>
+  <body>
+    <div class="admin-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="admin-brand" href="/dashboard" aria-label="Chez Bob admin home">
+          <img class="brand-mark" src="/chezbob-logo.png" alt="">
+          <span><strong>Chez Bob</strong><small>Administration</small></span>
+        </a>
+        <nav aria-label="Admin navigation">
+          <a href="/dashboard" data-route="dashboard"><span>⌂</span>Dashboard</a>
+          <a href="/transactions" data-route="transactions"><span>↔</span>Transactions</a>
+          <a href="/debt" data-route="debt"><span>↓</span>Wall of Shame</a>
+          <a href="/inventory" data-route="inventory"><span>▦</span>Inventory</a>
+          <a href="/volunteers" data-route="volunteers"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3"></circle><path d="M5.5 20v-2.5a6.5 6.5 0 0 1 13 0V20"></path></svg></span>Volunteers</a>
+          <a href="/users" data-route="users"><span>◎</span>Users</a>
+          <a href="/logs" data-route="logs"><span>≡</span>Logs</a>
+        </nav>
+        <a class="inventory-link" href="/item-scanner"><span>▣</span> Item scanner</a>
+      </aside>
+      <div class="admin-content">
+        <button class="menu-button" id="menu-button" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+        <main id="admin-main" tabindex="-1">
+          <div class="loading-state"><span class="spinner"></span>Loading…</div>
+        </main>
+      </div>
+    </div>
+    <div class="scrim" id="scrim"></div>
+    <script src="/vendor/chart-4.5.1.umd.min.js"></script>
+    <script src="/admin.js?v=25" defer></script>
+  </body>
+</html>
