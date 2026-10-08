@@ -2,29 +2,34 @@ import { dollars } from "../../js/money.js";
 
 const REFRESH_INTERVAL = 60000; //ms
 
-async function display_wall() {
-  let response = await fetch("/api/wos/users");
+async function display_wall(n = 20) {
+  let response = await fetch(`/api/wos/users?n=${n}`);
   let content = document.getElementById("content");
   try {
     let users_data = await response.json();
     if (users_data.length == 0) throw "No user in debt";
-    let table =
-      `<table>
-        <tr>
-          <th>Name</th>
-          <th>Debt($)</th>
-        </tr>` +
-      users_data
-        .map(
-          (users) =>
-            `<tr>
-                <td>${users.username}</td>
-                <td class="balance">${dollars(users.balance)}</td>
-                </tr>`
-        )
-        .join("") +
-      `</table>`;
-    content.innerHTML = table;
+    const USERS_PER_TABLE = 10;
+    let tables = "";
+    for (let i = 0; i < users_data.length; i += USERS_PER_TABLE) {
+      let chunk = users_data.slice(i, i + USERS_PER_TABLE);
+      tables +=
+        `<table>
+          <tr>
+            <th>Name</th>
+            <th>Debt($)</th>
+          </tr>` +
+        chunk
+          .map(
+            (users) =>
+              `<tr>
+                  <td>${users.username}</td>
+                  <td class="balance">${dollars(users.balance)}</td>
+                  </tr>`
+          )
+          .join("") +
+        `</table>`;
+    }
+    content.innerHTML = `<div id="wall-tables">${tables}</div>`;
   } catch (e) {
     content.innerHTML = `<div id="message">No one's on the Wall of Shame.
                             <br>
