@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0d6efd">
+    <title>Chez Bob · Product scanner</title>
+    <link rel="stylesheet" href="/styles.css?v=combined-options-1">
+  </head>
+  <body>
+    <header class="site-header">
+      <button class="brand brand-button" id="home-button" type="button" aria-label="Start a new scan">
+        <span>
+          <strong>Chez Bob Inventory</strong>
+        </span>
+      </button>
+      <div class="progress" aria-label="Intake progress">
+        <span class="progress-step active" id="capture-progress"><b>1</b> Capture</span>
+        <i></i>
+        <span class="progress-step" id="details-progress"><b>2</b> Details</span>
+      </div>
+      <span class="connection" id="connection-status">
+        <span class="connection-dot"></span>
+        Ready
+      </span>
+    </header>
+
+    <main>
+      <section class="page-view scan-view" id="scan-view">
+        <section class="scanner-shell" aria-labelledby="scanner-title">
+          <div class="scanner-topline">
+            <div>
+              <span class="live-indicator" id="live-indicator"><i></i> Camera off</span>
+              <h2 id="scanner-title">Barcode camera</h2>
+            </div>
+            <button class="text-button hidden" id="stop-button" type="button">Stop camera</button>
+          </div>
+
+          <div class="camera-stage" id="camera-stage">
+            <video id="camera-preview" playsinline muted aria-label="Camera preview"></video>
+            <div class="camera-placeholder" id="camera-placeholder">
+              <span class="scan-icon" aria-hidden="true"></span>
+              <strong>Camera is off</strong>
+              <span>Start the camera to scan a product.</span>
+            </div>
+            <div class="scan-frame hidden" id="scan-frame" aria-hidden="true">
+              <i></i><i></i><i></i><i></i>
+              <span></span>
+            </div>
+          </div>
+
+          <div class="scanner-actions">
+            <button class="button button-primary" id="camera-button" type="button">
+              <span aria-hidden="true">▣</span>
+              Start camera
+            </button>
+            <label class="button button-secondary" for="image-input">
+              <span aria-hidden="true">↥</span>
+              Upload image
+            </label>
+            <button class="button button-secondary" id="no-barcode-button" type="button">
+              No barcode
+            </button>
+            <input id="image-input" type="file" accept="image/*" capture="environment">
+          </div>
+
+          <div class="divider"><span>or enter manually</span></div>
+          <form class="manual-form" id="manual-form">
+            <label for="manual-barcode">Barcode number</label>
+            <div>
+              <input id="manual-barcode" name="barcode" type="text" inputmode="text" autocomplete="off" placeholder="e.g. 012345678905">
+              <button class="button button-dark" type="submit">Add code</button>
+            </div>
+          </form>
+          <p class="scanner-message" id="scanner-message" role="status" aria-live="polite"></p>
+        </section>
+      </section>
+
+      <section class="page-view details-view hidden" id="details-view">
+        <div class="details-header">
+          <div class="details-actions">
+            <button class="button button-secondary" id="scan-more-button" type="button">Scan another product</button>
+          </div>
+        </div>
+
+        <div class="product-forms" id="product-forms"></div>
+      </section>
+    </main>
+
+    <template id="product-form-template">
+      <form class="product-form-card">
+        <div class="product-form-heading">
+          <span class="form-number"></span>
+          <div>
+            <p class="product-barcode-label">Barcode</p>
+            <strong class="product-barcode"></strong>
+            <span class="product-barcode-format"></span>
+          </div>
+          <span class="record-status">Loading</span>
+        </div>
+
+        <div class="form-loading">Loading product details…</div>
+        <button class="text-button retry-lookup hidden" type="button">
+          Retry product lookup
+        </button>
+        <div class="form-fields hidden">
+          <label class="field product-name-field">
+            <span>Product name</span>
+            <input name="name" type="text" autocomplete="off" required placeholder="e.g. Coke Zero">
+          </label>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>Whole price</span>
+              <span class="input-with-prefix">
+                <b>$</b>
+                <input name="whole_price" type="number" inputmode="decimal" min="0" step="0.01" required placeholder="0.00">
+              </span>
+            </label>
+            <label class="field">
+              <span>Units in package</span>
+              <input name="count" type="number" inputmode="numeric" min="1" step="1" required value="1">
+            </label>
+          </div>
+
+          <div class="option-card">
+            <label class="option-toggle">
+              <span>
+                <strong>Taxable item</strong>
+                <small data-role="tax-description"></small>
+              </span>
+              <input name="taxable" type="checkbox">
+              <i aria-hidden="true"></i>
+            </label>
+
+            <label class="option-toggle">
+              <span>
+                <strong>CA Redemption Value (CRV)</strong>
+                <small data-role="crv-description"></small>
+              </span>
+              <input name="crv" type="checkbox">
+              <i aria-hidden="true"></i>
+            </label>
+          </div>
+
+          <div class="original-price hidden">
+            <span>Original Price</span>
+            <strong data-role="original-price">—</strong>
+          </div>
+
+          <div class="unit-price">
+            <span>
+              <small>Calculated unit price</small>
+              <strong data-role="unit-price">$0.00</strong>
+            </span>
+            <span data-role="tax-note">no tax</span>
+          </div>
+
+          <button class="button button-save" type="submit">Save product</button>
+          <p class="form-message" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </template>
+
+    <script src="/vendor/zxing-library-0.23.0-chezbob.min.js"></script>
+    <script src="/vendor/zxing-browser-0.2.1-chezbob.min.js"></script>
+    <script src="/config.js"></script>
+    <script src="/app.js?v=two-frame-ios-1" defer></script>
+  </body>
+</html>
