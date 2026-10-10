@@ -3,9 +3,9 @@ export async function seed(knex) {
     const number = String(i).padStart(2, "0");
 
     return {
-        email: `bob-${number}@chezbob.com`,
-        username: `bob-${number}`,
-        cents: -(500 + i),  // $5.00, $5.01, etc
+        email: `bob${number}@chezbob.com`,
+        username: number % 2 == 0 ? `bob${number}abcdefg` : `bob${number}`,  // Pad some usernames to test text overflow
+        cents: -(500 + i * 100),  // $5.00, $6.00, etc
     };
   });
 
