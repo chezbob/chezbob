@@ -6,28 +6,34 @@
   font-size: 36px;
 }
 
-#wall-tables {
-  width: 90%;
+#wall-of-shame {
+  width: 96%;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 50px;
+  gap: 2%;
   justify-content: center;
 }
 
-#wall-tables table {
-  flex: 1;
+table {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
-tr,
-td {
-  width: 80%;
+tr, td {
   border: 1px solid;
+}
+
+.username {
+  width: 100%;
+  max-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .balance {
-  border: 1px solid;
-  text-align: center;
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
 }
 
 #message {
