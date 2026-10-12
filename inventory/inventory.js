@@ -141,6 +141,7 @@ inventory.handle("login", async (attempt) => {
   }
 
   let users = await db("users").where({ username }).limit(1);
+  users
   if (users.length !== 1) {
     throw new Error("Invalid username/password");
   }
