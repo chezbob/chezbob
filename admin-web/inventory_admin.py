@@ -1,7 +1,6 @@
 from datetime import timedelta
-from pathlib import Path
 
-from flask import Blueprint, current_app, jsonify, request, send_from_directory
+from flask import Blueprint, current_app, jsonify, render_template, request
 
 from admin_common import (
     TRANSACTION_SELECT,
@@ -19,13 +18,12 @@ from errors import ValidationError
 
 
 inventory_admin_api = Blueprint("inventory_admin_api", __name__)
-STATIC_ROOT = Path(__file__).resolve().parent / "static"
 
 
 @inventory_admin_api.get("/inventory/items")
 @inventory_admin_api.get("/inventory/<int:_item_id>")
 def inventory_admin_page(_item_id: int | None = None):
-    return send_from_directory(STATIC_ROOT, "admin.html")
+    return render_template("admin.html")
 
 
 def item_dict(row) -> dict[str, object]:

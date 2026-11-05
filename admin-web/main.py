@@ -74,6 +74,10 @@ def create_app(
     def admin_javascript():
         return send_from_directory(STATIC_ROOT, "admin.js")
 
+    @app.get("/navigation.js")
+    def navigation_javascript():
+        return send_from_directory(STATIC_ROOT, "navigation.js")
+
     @app.get("/config.js")
     def browser_configuration():
         payload = json.dumps(settings.browser_settings(), separators=(",", ":"))

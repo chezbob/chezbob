@@ -1,18 +1,15 @@
-from pathlib import Path
-
-from flask import Blueprint, current_app, jsonify, send_from_directory
+from flask import Blueprint, current_app, jsonify, render_template
 
 from admin_common import page_payload, pagination_args
 from database import connect_database
 
 
 debt_api = Blueprint("debt_api", __name__)
-STATIC_ROOT = Path(__file__).resolve().parent / "static"
 
 
 @debt_api.get("/debt")
 def debt_page():
-    return send_from_directory(STATIC_ROOT, "admin.html")
+    return render_template("admin.html")
 
 
 @debt_api.get("/api/debts")

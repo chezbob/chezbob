@@ -3,21 +3,19 @@ from __future__ import annotations
 import csv
 import io
 import json
-from pathlib import Path
 
-from flask import Blueprint, Response, current_app, jsonify, send_from_directory
+from flask import Blueprint, Response, current_app, jsonify, render_template
 
 from admin_common import page_payload, pagination_args
 from database import connect_database
 
 
 logs_api = Blueprint("logs_api", __name__)
-STATIC_ROOT = Path(__file__).resolve().parent / "static"
 
 
 @logs_api.get("/logs")
 def logs_page():
-    return send_from_directory(STATIC_ROOT, "admin.html")
+    return render_template("admin.html")
 
 
 @logs_api.get("/api/logs")

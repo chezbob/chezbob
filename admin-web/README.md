@@ -8,10 +8,10 @@ An internal Flask admin panel backed by the SQLite database specified in
 - paginated transaction and debt reports;
 - rolling one-month popular-item and volunteer rankings with their exact date ranges;
 - date-filterable restock history;
-- searchable, balance-sortable, read-only user accounts, balances, funding activity, and history;
+- searchable, balance-sortable user accounts, balances, funding activity, and history, with confirmed password resets on individual user pages;
 - searchable inventory with price/last-purchase sorting and per-item purchase history;
-- an audit log for SSH user administration and inventory changes, exportable in full as CSV; and
-- the phone-friendly item scanner at `/item-scanner`.
+- an audit log for web password resets, SSH user administration, and inventory changes, exportable in full as CSV; and
+- the phone-friendly item scanner at `/item-scanner`, sharing the admin layout and Inventory navigation.
 
 Balance adjustments are normal transactions, so the existing `balances` view
 updates automatically. They are also linked to an `admin_adjustments` audit
@@ -28,7 +28,8 @@ Each system owns its page and API routes:
 - `popular_items.py` — monthly item rankings;
 - `volunteers.py` — restocker rankings;
 - `debt.py` — paginated debt reporting;
-- `users.py` — read-only user search, balances, and history;
+- `users.py` — user search, balances, history, and confirmed password resets;
+- `user_passwords.py` — the audited password reset shared by web and SSH administration;
 - `user-tools/user_management.py` — audited user mutation operations;
 - `user-tools/manage_users.py` — the interactive SSH administration entry point; and
 - `logs.py` — audit history.
@@ -36,13 +37,22 @@ Each system owns its page and API routes:
 Shared database/schema work is in `database.py`, and reusable admin query
 helpers are in `admin_common.py`. `main.py` is limited to application wiring,
 shared static assets and error handling, command-line configuration, and server
-startup.
+startup. Page templates in `templates/` share the admin layout and mobile
+navigation; scanner-specific styles and scripts stay separate from reporting.
+
+## Web password resets
+
+Open an individual user page and click **Reset password**. The confirmation
+names the user and asks whether to reset their password to empty. Cancelling
+leaves the password unchanged. Confirming clears both the password hash and
+salt, then displays the result on the page. The reset is recorded in `audit_logs`
+with actor `web-admin` and the request's client IP address.
 
 ## SSH user administration
 
-The web panel treats user records as read-only. SSH into the server and start
-the interactive utility for user creation, identity edits, blank-password
-resets, or balance adjustments:
+SSH into the server and start the interactive utility for user creation,
+identity edits, blank-password resets, or balance adjustments. User creation,
+identity edits, and balance adjustments remain SSH-only:
 
 ```bash
 python3 user-tools/manage_users.py
@@ -60,8 +70,10 @@ restore it from a database backup only if its historical allowlist is needed.
 
 ## Item scanner
 
-The scanner handles common barcodes (EAN-8, EAN-13, UPC-A, UPC-E, and QR Code),
-looks up the product, and creates or updates the inventory item.
+Open **Inventory → Item scanner**, or use the sidebar shortcut. The scanner
+shares the admin sidebar and mobile menu, handles common barcodes (EAN-8,
+EAN-13, UPC-A, UPC-E, and QR Code), looks up the product, and creates or updates
+the inventory item.
 
 The interface has two steps: capture the barcode, then review and save the
 product details. Existing products show their name and current unit price as

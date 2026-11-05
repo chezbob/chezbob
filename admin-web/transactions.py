@@ -1,6 +1,4 @@
-from pathlib import Path
-
-from flask import Blueprint, current_app, jsonify, send_from_directory
+from flask import Blueprint, current_app, jsonify, render_template
 
 from admin_common import (
     TRANSACTION_SELECT,
@@ -15,12 +13,11 @@ from database import connect_database
 
 
 transactions_api = Blueprint("transactions_api", __name__)
-STATIC_ROOT = Path(__file__).resolve().parent / "static"
 
 
 @transactions_api.get("/transactions")
 def transactions_page():
-    return send_from_directory(STATIC_ROOT, "admin.html")
+    return render_template("admin.html")
 
 
 @transactions_api.get("/api/transactions")

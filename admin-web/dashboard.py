@@ -1,19 +1,17 @@
 from datetime import date, timedelta
-from pathlib import Path
 
-from flask import Blueprint, current_app, jsonify, send_from_directory
+from flask import Blueprint, current_app, jsonify, render_template
 
 from admin_common import TRANSACTION_SELECT, rolling_month_window, transaction_dict
 from database import connect_database
 
 
 dashboard_api = Blueprint("dashboard_api", __name__)
-STATIC_ROOT = Path(__file__).resolve().parent / "static"
 
 
 @dashboard_api.get("/dashboard")
 def dashboard_page():
-    return send_from_directory(STATIC_ROOT, "admin.html")
+    return render_template("admin.html")
 
 
 @dashboard_api.get("/api/dashboard")
