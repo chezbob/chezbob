@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, jsonify, render_template
+from flask import Blueprint, current_app, jsonify, render_template, request
 
 from admin_common import page_payload, pagination_args
 from database import connect_database
@@ -15,17 +15,21 @@ def debt_page():
 @debt_api.get("/api/debts")
 def debts():
     page, page_size = pagination_args()
+    hide_inactive = request.args.get("hide_inactive") == "1"
+    # Total debt always covers everyone; hiding only affects the listed users.
+    listed = "NOT u.inactive" if hide_inactive else "1"
     with connect_database(current_app.config["DATABASE_PATH"]) as connection:
         summary = connection.execute(
-            """
-            SELECT COUNT(*) AS user_count,
-                   COALESCE(SUM(-balance), 0) AS total_debt_cents
-              FROM balances
-             WHERE balance < 0
+            f"""
+            SELECT COALESCE(SUM({listed}), 0) AS user_count,
+                   COALESCE(SUM(-b.balance), 0) AS total_debt_cents
+              FROM balances AS b
+              JOIN users AS u ON u.id = b.id
+             WHERE b.balance < 0
             """
         ).fetchone()
         rows = connection.execute(
-            """
+            f"""
             WITH running AS (
                 SELECT t.id, t.user_id, t.created_at,
                        SUM(t.cents) OVER (
@@ -59,7 +63,7 @@ def debts():
               JOIN users AS u ON u.id = b.id
               LEFT JOIN debt_dates AS d ON d.user_id = u.id
               LEFT JOIN payments AS p ON p.user_id = u.id
-             WHERE b.balance < 0
+             WHERE b.balance < 0 AND {listed}
              ORDER BY b.balance ASC, u.username COLLATE NOCASE
              LIMIT ? OFFSET ?
             """,

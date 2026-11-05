@@ -32,6 +32,14 @@ def ensure_schema(connection: sqlite3.Connection) -> None:
                 connection.execute(
                     f'ALTER TABLE inventory ADD COLUMN "{name}" {declaration}'
                 )
+        # Set by scripts/mark_inactive_users.js; also added by the knex migration.
+        user_columns = {
+            row["name"] for row in connection.execute("PRAGMA table_info(users)")
+        }
+        if "inactive" not in user_columns:
+            connection.execute(
+                "ALTER TABLE users ADD COLUMN inactive BOOLEAN NOT NULL DEFAULT 0"
+            )
         connection.execute(
             "UPDATE inventory SET whole_price_cents = cents WHERE whole_price_cents IS NULL"
         )

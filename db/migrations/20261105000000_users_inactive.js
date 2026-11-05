@@ -2,7 +2,9 @@
 // (users with no transactions in the past year).
 //
 // ADD COLUMN in sqlite doesn't rebuild the table, so the balances view is unaffected.
+// admin-web's ensure_schema also adds this column, so skip it if it's already there.
 export async function up(knex) {
+  if (await knex.schema.hasColumn("users", "inactive")) return;
   await knex.schema.alterTable("users", (table) => {
     table.boolean("inactive").notNullable().defaultTo(false);
   });
