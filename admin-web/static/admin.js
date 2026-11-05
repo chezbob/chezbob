@@ -283,17 +283,24 @@
   }
 
   async function debtPage() {
-    main.innerHTML = `${heading("Wall of Shame", "", '<div class="debt-total"><span>Total debt</span><strong id="total-debt">—</strong></div>')}<div id="results"><div class="panel loading-state"><span class="spinner"></span>Loading balances…</div></div>`;
+    main.innerHTML = `${heading("Wall of Shame", "", '<div class="debt-total"><span>Total debt</span><strong id="total-debt">—</strong></div>')}
+      <form class="filters" id="debt-filters"><label class="checkbox-filter"><input type="checkbox" name="hide_inactive" value="1"> Hide inactive users (no transactions in over a year)</label></form>
+      <div id="results"><div class="panel loading-state"><span class="spinner"></span>Loading balances…</div></div>`;
+    const form = document.querySelector("#debt-filters");
+    form.hide_inactive.checked = params.get("hide_inactive") === "1";
     const results = document.querySelector("#results");
     async function load(page = 1) {
       try {
-        const data = await api(`/api/debts?page=${page}&page_size=25`);
+        const hideInactive = form.hide_inactive.checked ? "1" : "";
+        setQuery({ hide_inactive: hideInactive });
+        const data = await api(`/api/debts?page=${page}&page_size=25${hideInactive ? "&hide_inactive=1" : ""}`);
         document.querySelector("#total-debt").textContent = money(data.total_debt_cents);
         const rows = data.items.map((item) => `<tr><td>${userLink(item)}</td><td><span class="money negative">${money(item.debt_cents)}</span></td><td>${dateTime(item.debt_started_at)}</td></tr>`);
         results.innerHTML = tablePanel(["User", "Amount", "Debt began"], rows, "No users currently have debt.");
         results.querySelector("[data-pagination]")?.append(pagination(data.pagination, load));
       } catch (error) { showError(error); }
     }
+    form.hide_inactive.addEventListener("change", () => load());
     load(Number(params.get("page")) || 1);
   }
 
