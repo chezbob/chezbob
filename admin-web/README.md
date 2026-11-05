@@ -100,13 +100,13 @@ Create a self-signed certificate for the computer running Chez Bob. Replace
 `192.168.1.3` with that computer's LAN IP address:
 
 ```bash
-mkdir -p test-files/certs
+mkdir -p certs
 openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 365 \
-  -keyout test-files/certs/chezbob-key.pem \
-  -out test-files/certs/chezbob-cert.pem \
+  -keyout certs/chezbob-key.pem \
+  -out certs/chezbob-cert.pem \
   -subj "/CN=Chez Bob Local Scanner" \
   -addext "subjectAltName=DNS:localhost,IP:127.0.0.1,IP:192.168.1.3"
-chmod 600 test-files/certs/chezbob-key.pem
+chmod 600 certs/chezbob-key.pem
 ```
 
 Start the server:
@@ -116,13 +116,19 @@ python3 main.py
 ```
 
 The server uses the database, certificate, private key, host, and HTTPS port
-specified in `config.py`. Open `https://localhost:8443` locally for the admin
-panel, or `https://localhost:8443/item-scanner` for scanning. From another device,
-use the computer's LAN address, such as `https://192.168.1.3:8443/item-scanner`.
+specified in `config.py`. Open `https://localhost:9443` locally for the admin
+panel, or `https://localhost:9443/item-scanner` for scanning. From another device,
+use the computer's LAN address, such as `https://192.168.1.3:9443/item-scanner`.
+
+If either TLS file is missing or unconfigured, the server automatically falls
+back to HTTP on port `8000` (`FALLBACK_HTTP_PORT` in `config.py`), including when
+`--port` or `CHEZBOB_PORT` specifies another HTTPS port. Open
+`http://localhost:8000` or `http://192.168.1.3:8000`; startup prints the actual
+address and protocol in use.
 
 Because the certificate is self-signed, each device must install and trust
-`test-files/certs/chezbob-cert.pem` before active camera scanning will work.
-Keep `test-files/certs/chezbob-key.pem` private. Regenerate the certificate if
+`certs/chezbob-cert.pem` before active camera scanning will work.
+Keep `certs/chezbob-key.pem` private. Regenerate the certificate if
 the server's LAN IP address changes or the certificate expires.
 
 Configuration defaults live in `config.py`. Environment variables and command

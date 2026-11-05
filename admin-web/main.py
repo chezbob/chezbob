@@ -172,18 +172,19 @@ def main() -> None:
     args = parse_args()
     if not args.database.is_file():
         raise SystemExit(f"Database does not exist: {args.database}")
-    if bool(args.cert) != bool(args.key):
-        raise SystemExit("--cert and --key must be supplied together.")
-    for label, path in (("Certificate", args.cert), ("Private key", args.key)):
-        if path and not path.is_file():
-            raise SystemExit(f"{label} does not exist: {path}")
-    scheme = "https" if args.cert else "http"
-    print(f"Chez Bob Admin: {scheme}://{args.host}:{args.port}")
+    ssl_context = None
+    port = settings.FALLBACK_HTTP_PORT
+    if args.cert and args.key and args.cert.is_file() and args.key.is_file():
+        ssl_context = (str(args.cert), str(args.key))
+        port = args.port
+    else:
+        print("TLS certificate or private key unavailable; falling back to HTTP.")
+    scheme = "https" if ssl_context else "http"
+    print(f"Chez Bob Admin: {scheme}://{args.host}:{port}")
     print(f"Database: {args.database.resolve()}")
-    ssl_context = (str(args.cert), str(args.key)) if args.cert else None
     create_app(args.database).run(
         host=args.host,
-        port=args.port,
+        port=port,
         ssl_context=ssl_context,
     )
 
