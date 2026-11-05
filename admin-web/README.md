@@ -10,8 +10,9 @@ An internal Flask admin panel backed by the SQLite database specified in
 - date-filterable restock history;
 - searchable, balance-sortable user accounts, balances, funding activity, and history, with confirmed password resets on individual user pages;
 - searchable inventory with price/last-purchase sorting and per-item purchase history;
+- Costco invoice PDF imports with reviewed inventory matches, package counts, and confirmed price updates;
 - an audit log for web password resets, SSH user administration, and inventory changes, exportable in full as CSV; and
-- the phone-friendly item scanner at `/item-scanner`, sharing the admin layout and Inventory navigation.
+- the phone-friendly item scanner at `/item-scanner`, with its own entry in the admin menu.
 
 Balance adjustments are normal transactions, so the existing `balances` view
 updates automatically. They are also linked to an `admin_adjustments` audit
@@ -24,6 +25,8 @@ Each system owns its page and API routes:
 
 - `inventory.py` — barcode lookup and product intake;
 - `inventory_admin.py` — searchable inventory reporting and item purchase history;
+- `costco_invoice.py` — invoice product, price, tax, and redemption-fee extraction;
+- `invoice_import.py` — inventory matching and confirmed invoice price updates;
 - `transactions.py` — complete transaction reporting;
 - `popular_items.py` — monthly item rankings;
 - `volunteers.py` — restocker rankings;
@@ -70,7 +73,7 @@ restore it from a database backup only if its historical allowlist is needed.
 
 ## Item scanner
 
-Open **Inventory → Item scanner**, or use the sidebar shortcut. The scanner
+Open **Item scanner** from the main menu. The scanner
 shares the admin sidebar and mobile menu, handles common barcodes (EAN-8,
 EAN-13, UPC-A, UPC-E, and QR Code), looks up the product, and creates or updates
 the inventory item.
@@ -87,6 +90,32 @@ manually, or add an item without a barcode.
 Both ZXing JavaScript bundles are pinned and served from `static/vendor`; the
 application makes no CDN requests. License and checksum details are in
 `static/vendor/README.md`.
+
+## Costco invoice imports
+
+Open **Inventory → Costco invoice** and upload a text-based Costco Business
+Delivery invoice PDF (up to 10 MB and 25 pages). Review the suggested inventory
+matches and **Units in package** for each line. A variety pack can update
+several existing inventory items. Leave unrelated lines unchecked.
+
+The importer uses the invoice's **Unit Price** for one package, before
+**Instant Savings**. Discounted line totals and discounts are excluded. Shipped
+quantities indicate the number of packages, not the number of individual units
+in a package. Package counts are inferred from descriptions such as `35 CT`
+and can be corrected before reviewing prices.
+
+Each **CA REDEMP VAL** row is attached to the preceding product, including
+across PDF pages. The exact fee per package is included once. Sales tax uses
+the configured rate and the invoice's tax/exemption flags for the product and
+redemption fee separately. Profit is applied after those costs, and the final
+unit price is rounded to the nearest cent.
+
+Click **Review price updates** to see current and proposed unit prices, then
+**Confirm updates** to save. Uploading and reviewing leave inventory unchanged.
+Confirmed updates preserve names and barcodes, remember Costco item matches,
+and create audit entries under `costco-invoice`. If inventory changes during a
+review, upload the invoice again to review the latest prices. Reviews expire
+after 24 hours; the application stores parsed product data, not the PDF itself.
 
 ## Run
 

@@ -1,0 +1,65 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Costco invoice · Chez Bob Admin{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="/costco.css?v=1">
+{% endblock %}
+
+{% block content %}
+<div id="costco-import" data-max-units="{{ max_unit_count }}">
+  <div class="page-heading"><h1>Inventory</h1></div>
+  <nav class="subnav" aria-label="Page sections">
+    <a href="/inventory">Popular</a>
+    <a href="/inventory/items">Items</a>
+    <a href="/inventory/costco" class="active" aria-current="page">Costco invoice</a>
+  </nav>
+  <section class="panel invoice-upload-panel">
+    <h2>Import a Costco invoice</h2>
+    <p>Match invoice products to existing inventory, review the new unit prices, then confirm your updates.</p>
+    <form id="invoice-upload" class="invoice-upload-form">
+      <div class="filter-field">
+        <label for="invoice-file">Invoice PDF</label>
+        <input id="invoice-file" name="invoice" type="file" accept=".pdf,application/pdf" required>
+      </div>
+      <button class="button button-primary" type="submit">Read invoice</button>
+    </form>
+    <p class="invoice-help">Uses package prices before discounts. Each CA redemption fee belongs to the preceding product, including across pages. PDFs up to 10 MB.</p>
+    <p class="form-message" id="upload-message" role="status" aria-live="polite"></p>
+  </section>
+
+  <section id="invoice-matching" class="hidden" aria-labelledby="match-heading">
+    <div class="invoice-section-heading"><h2 id="match-heading">Match inventory</h2><span id="invoice-label"></span></div>
+    <p class="invoice-help" id="invoice-pricing-note"></p>
+    <p class="invoice-help">Check the units in each package. You can match a variety pack to several inventory items; each receives the same unit price. Unchecked lines are skipped. Confirmed matches are remembered for future invoices.</p>
+    <div id="invoice-warnings" class="invoice-warnings hidden"></div>
+    <form id="invoice-match-form">
+      <div id="invoice-lines"></div>
+      <div class="invoice-review-bar panel">
+        <span id="invoice-selection-count"></span>
+        <button class="button button-primary" type="submit">Review price updates</button>
+        <p class="form-message" id="matching-message" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </section>
+
+  <section id="invoice-confirmation" class="panel invoice-confirmation hidden" aria-labelledby="confirm-heading">
+    <div class="invoice-section-heading"><h2 id="confirm-heading">Confirm price updates</h2><span id="confirmation-count"></span></div>
+    <p class="invoice-help">Only the inventory items below will change. Existing names and barcodes are preserved.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Inventory item</th><th>Invoice package</th><th>Current unit price</th><th>New unit price</th></tr></thead>
+      <tbody id="invoice-proposals"></tbody>
+    </table></div>
+    <div class="invoice-confirm-actions">
+      <button class="button button-secondary" id="back-to-matches" type="button">Back to matches</button>
+      <button class="button button-primary" id="confirm-invoice" type="button">Confirm updates</button>
+    </div>
+    <p class="form-message" id="confirmation-message" role="status" aria-live="polite"></p>
+    <button class="button button-secondary hidden" id="import-another" type="button">Import another invoice</button>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/costco.js?v=1" defer></script>
+{% endblock %}

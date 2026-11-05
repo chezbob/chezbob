@@ -31,13 +31,12 @@ a { color: inherit; }
 .admin-brand strong { font-size: 16px; }
 .admin-brand small { margin-top: 3px; color: #93c5fd; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
 .sidebar nav { display: grid; gap: 5px; }
-.sidebar nav a, .inventory-link { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 7px; color: #bfdbfe; font-size: 14px; font-weight: 550; text-decoration: none; }
-.sidebar nav a span, .inventory-link span { width: 19px; color: #93c5fd; text-align: center; }
+.sidebar nav a { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 7px; color: #bfdbfe; font-size: 14px; font-weight: 550; text-decoration: none; }
+.sidebar nav a span { width: 19px; color: #93c5fd; text-align: center; }
 .sidebar nav a span svg { width: 19px; height: 19px; display: block; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
-.sidebar nav a:hover, .inventory-link:hover { color: white; background: rgba(255,255,255,.08); }
+.sidebar nav a:hover { color: white; background: rgba(255,255,255,.08); }
 .sidebar nav a.active { color: white; background: var(--blue); box-shadow: 0 5px 14px rgba(15,23,42,.22); }
 .sidebar nav a.active span { color: white; }
-.inventory-link { margin-top: auto; border: 1px solid rgba(147,197,253,.2); }
 
 .admin-content { min-width: 0; }
 .menu-button { display: none; padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: white; box-shadow: 0 1px 3px rgba(15,23,42,.08); font-size: 20px; cursor: pointer; }

@@ -157,3 +157,24 @@ def ensure_schema(connection: sqlite3.Connection) -> None:
                 ON audit_logs(actor)
             """
         )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS costco_invoice_previews (
+                id TEXT PRIMARY KEY,
+                filename TEXT NOT NULL,
+                document_hash TEXT NOT NULL,
+                data TEXT NOT NULL,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                applied_at DATETIME
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS costco_inventory_matches (
+                sku TEXT NOT NULL,
+                item_id INTEGER NOT NULL REFERENCES inventory(id) ON DELETE CASCADE,
+                PRIMARY KEY (sku, item_id)
+            )
+            """
+        )

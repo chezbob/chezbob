@@ -18,6 +18,7 @@ from debt import debt_api
 from errors import ValidationError
 from inventory import inventory_api
 from inventory_admin import inventory_admin_api
+from invoice_import import invoice_import_api
 from logs import logs_api
 from popular_items import popular_items_api
 from transactions import transactions_api
@@ -50,6 +51,7 @@ def create_app(
 
     app.register_blueprint(inventory_api)
     app.register_blueprint(inventory_admin_api)
+    app.register_blueprint(invoice_import_api)
     app.register_blueprint(dashboard_api)
     app.register_blueprint(transactions_api)
     app.register_blueprint(popular_items_api)
@@ -77,6 +79,14 @@ def create_app(
     @app.get("/navigation.js")
     def navigation_javascript():
         return send_from_directory(STATIC_ROOT, "navigation.js")
+
+    @app.get("/costco.js")
+    def costco_javascript():
+        return send_from_directory(STATIC_ROOT, "costco.js")
+
+    @app.get("/costco.css")
+    def costco_stylesheet():
+        return send_from_directory(STATIC_ROOT, "costco.css")
 
     @app.get("/config.js")
     def browser_configuration():

@@ -52,7 +52,7 @@
   const inventorySubnav = (active) => subnav([
     { href: "/inventory", label: "Popular", active: active === "popular" },
     { href: "/inventory/items", label: "Items", active: active === "items" },
-    { href: "/item-scanner", label: "Item scanner", active: active === "scanner" },
+    { href: "/inventory/costco", label: "Costco invoice", active: active === "costco" },
   ]);
   const volunteerSubnav = (active) => subnav([
     { href: "/volunteers", label: "Rankings", active: active === "rankings" },
