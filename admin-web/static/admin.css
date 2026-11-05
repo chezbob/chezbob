@@ -60,6 +60,8 @@ a { color: inherit; }
 .filter-field { min-width: 150px; display: grid; flex: 1; gap: 6px; }
 .filter-field.search { flex: 2; min-width: 250px; }
 .filter-field label { color: #475569; font-size: 12px; font-weight: 650; }
+.checkbox-filter { display: flex; align-items: center; gap: 8px; color: #475569; font-size: 14px; cursor: pointer; }
+.checkbox-filter input { width: 18px; height: 18px; margin: 0; accent-color: var(--blue); }
 input, select, textarea { width: 100%; min-width: 0; max-width: 100%; min-height: 40px; padding: 8px 11px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; color: var(--ink); background: white; }
 input[type="date"] { display: block; inline-size: 100%; min-inline-size: 0; max-inline-size: 100%; }
 input:focus, select:focus, textarea:focus { border-color: #60a5fa; box-shadow: 0 0 0 3px #dbeafe; }

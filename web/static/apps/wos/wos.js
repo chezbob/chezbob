@@ -2,9 +2,14 @@ import { dollars } from "../../js/money.js";
 
 const REFRESH_INTERVAL = 60000; //ms
 const USERS_PER_TABLE = 10;
+// Open the page with ?hide_inactive=1 to leave inactive users off the wall
+const HIDE_INACTIVE =
+  new URLSearchParams(location.search).get("hide_inactive") === "1";
 
 async function display_wall(n = 20) {
-  let response = await fetch(`/api/wos/users?n=${n}`);
+  let response = await fetch(
+    `/api/wos/users?n=${n}${HIDE_INACTIVE ? "&hide_inactive=1" : ""}`
+  );
   let content = document.getElementById("content");
   try {
     let users_data = await response.json();

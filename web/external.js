@@ -30,9 +30,12 @@ app.use("/.well-known", express.static(__dirname + "/static/.well-known"));
 // REST APIs
 const api = express.Router();
 /**
- * /wos/users?n=N:
+ * /wos/users?n=N&hide_inactive=1:
  *      get:
- *          list of N (default 10) users with most debt and more than -5$ with the following format:
+ *          list of N (default 10) users with most debt and more than -5$.
+ *          With hide_inactive=1, users marked inactive (no transactions in
+ *          over a year, see scripts/mark_inactive_users.js) are left out.
+ *          Format:
  *           [
  *             {
  *               "id": 2,
@@ -52,10 +55,11 @@ api.get("/wos/users", async (req, res) => {
   if (!Number.isInteger(n) || n <= 0) {
     n = 10;
   }
-  let users = await user_info()
-    .where("balance", "<=", -500)
-    .orderBy("balance")
-    .limit(n);
+  let query = user_info().where("balance", "<=", -500);
+  if (req.query.hide_inactive === "1") {
+    query = query.where("users.inactive", false);
+  }
+  let users = await query.orderBy("balance").limit(n);
   res.send(users);
 });
 

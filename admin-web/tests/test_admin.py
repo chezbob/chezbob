@@ -352,6 +352,28 @@ class AdminApplicationTests(unittest.TestCase):
             )
         )
 
+    def test_debts_can_hide_inactive_users(self) -> None:
+        connection = sqlite3.connect(self.database)
+        connection.execute(
+            "INSERT INTO transactions (user_id, cents, item_id) VALUES (1, -1000, NULL)"
+        )
+        connection.commit()
+        connection.close()
+        everyone = self.client.get("/api/debts").get_json()
+        self.assertIn(1, [row["user_id"] for row in everyone["items"]])
+
+        connection = sqlite3.connect(self.database)
+        connection.execute("UPDATE users SET inactive = 1 WHERE id = 1")
+        connection.commit()
+        connection.close()
+        self.assertEqual(self.client.get("/api/debts").get_json(), everyone)
+        hidden = self.client.get("/api/debts?hide_inactive=1").get_json()
+        self.assertNotIn(1, [row["user_id"] for row in hidden["items"]])
+        self.assertEqual(
+            hidden["pagination"]["total"], everyone["pagination"]["total"] - 1
+        )
+        self.assertEqual(hidden["total_debt_cents"], everyone["total_debt_cents"])
+
     def test_debt_dates_and_restock_history(self) -> None:
         connection = sqlite3.connect(self.database)
         connection.execute("DELETE FROM transactions WHERE user_id = 1")
