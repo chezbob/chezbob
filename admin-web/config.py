@@ -23,12 +23,11 @@ MAX_REQUEST_BYTES = 64 * 1024
 # Development server defaults (environment variables and CLI flags override these)
 DEFAULT_HOST = "0.0.0.0"
 # DEFAULT_PORT = 8443
-DEFAULT_PORT = 8000
+DEFAULT_PORT = 9443
+FALLBACK_HTTP_PORT = 8000
 DEFAULT_DATABASE_PATH = ROOT / ".." / "db" / "data" / "prod.sqlite3"
-# DEFAULT_CERT_PATH = ROOT / "test-files" / "certs" / "chezbob-cert.pem"
-# DEFAULT_KEY_PATH = ROOT / "test-files" / "certs" / "chezbob-key.pem"
-DEFAULT_CERT_PATH = None
-DEFAULT_KEY_PATH = None
+DEFAULT_CERT_PATH = ROOT / "certs" / "chezbob-cert.pem"
+DEFAULT_KEY_PATH = ROOT / "certs" / "chezbob-key.pem"
 
 def browser_settings() -> dict[str, int | float]:
     """Return the subset of settings needed by the browser UI."""

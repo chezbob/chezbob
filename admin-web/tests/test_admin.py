@@ -381,6 +381,57 @@ class AdminApplicationTests(unittest.TestCase):
         self.assertEqual([row["username"] for row in ascending], ["alice", "bob"])
         self.assertEqual(self.client.get("/api/users?sort=invalid").status_code, 400)
 
+    def test_web_password_reset_requires_confirmation_and_is_audited(self) -> None:
+        with connect_database(self.database) as connection:
+            with connection:
+                connection.execute(
+                    "UPDATE users SET password_hash = 'old-hash', password_salt = 'old-salt'"
+                )
+        for payload in ({}, {"confirmed": False}, {"confirmed": "true"}, []):
+            response = self.client.post("/api/users/1/reset-password", json=payload)
+            self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            self.client.get("/api/users/1/reset-password").status_code, 405
+        )
+        self.assertEqual(
+            self.client.post(
+                "/api/users/1/reset-password", data={"confirmed": "true"}
+            ).status_code,
+            400,
+        )
+        with connect_database(self.database) as connection:
+            self.assertEqual(
+                connection.execute("SELECT password_hash FROM users WHERE id = 1").fetchone()[0],
+                "old-hash",
+            )
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM audit_logs").fetchone()[0], 0)
+
+        response = self.client.post(
+            "/api/users/1/reset-password", json={"confirmed": True},
+            environ_overrides={"REMOTE_ADDR": "192.0.2.10"},
+        )
+        self.assertEqual(response.status_code, 200)
+        with connect_database(self.database) as connection:
+            users = connection.execute(
+                "SELECT password_hash, password_salt FROM users ORDER BY id"
+            ).fetchall()
+            self.assertEqual(tuple(users[0]), ("", ""))
+            self.assertEqual(tuple(users[1]), ("old-hash", "old-salt"))
+        logs = self.client.get("/api/logs").get_json()["items"]
+        self.assertEqual(len(logs), 1)
+        self.assertEqual(logs[0]["action"], "user.password_reset")
+        self.assertEqual(logs[0]["actor"], "web-admin")
+        self.assertEqual(logs[0]["entity_id"], "1")
+        self.assertEqual(logs[0]["ip_address"], "192.0.2.10")
+        self.assertEqual(logs[0]["details"]["username"], "alice")
+        self.assertNotIn("old-hash", str(logs))
+        self.assertEqual(
+            self.client.post(
+                "/api/users/999/reset-password", json={"confirmed": True}
+            ).status_code,
+            404,
+        )
+
 
 
 if __name__ == "__main__":

@@ -52,6 +52,7 @@
   const inventorySubnav = (active) => subnav([
     { href: "/inventory", label: "Popular", active: active === "popular" },
     { href: "/inventory/items", label: "Items", active: active === "items" },
+    { href: "/item-scanner", label: "Item scanner", active: active === "scanner" },
   ]);
   const volunteerSubnav = (active) => subnav([
     { href: "/volunteers", label: "Rankings", active: active === "rankings" },
@@ -348,7 +349,7 @@
       const item = detail.item;
       main.innerHTML = `<button class="back-link" data-browser-back type="button">← Back</button>
         <div class="page-heading"><h1>${escapeHtml(item.name)}</h1></div>
-        <div class="stats-grid"><div class="stat-card"><small>Price</small><strong>${money(item.price_cents)}</strong></div><div class="stat-card"><small>Last Purchased</small><strong style="font-size:17px">${dateTime(item.last_purchased_at)}</strong></div><div class="stat-card"><small>Lifetime Sold</small><strong>${Number(item.purchase_count).toLocaleString()}</strong></div></div>
+        <div class="stats-grid"><div class="stat-card"><small>Price</small><strong>${money(item.price_cents)}</strong></div><div class="stat-card"><small>Last Purchased</small><strong class="stat-date">${dateTime(item.last_purchased_at)}</strong></div><div class="stat-card"><small>Lifetime Sold</small><strong>${Number(item.purchase_count).toLocaleString()}</strong></div></div>
         <form class="filters" id="purchase-filters"><div class="filter-field"><label for="start">Purchases from</label><input id="start" name="start" type="date" value="${escapeHtml(params.get("start") || "")}"></div><div class="filter-field"><label for="end">Through</label><input id="end" name="end" type="date" value="${escapeHtml(params.get("end") || "")}"></div><button class="button button-primary" type="submit">Apply dates</button></form>
         <section class="panel item-sales-panel"><div class="dashboard-panel-heading"><h2>Items sold over time</h2></div><div id="item-sales-chart"><div class="dashboard-empty"><span class="spinner"></span></div></div></section>
         <div id="purchase-history"><div class="panel loading-state"><span class="spinner"></span>Loading purchase history…</div></div>`;
@@ -405,12 +406,37 @@
       const detail = await api(`/api/users/${userId}`);
       const user = detail.user;
       main.innerHTML = `<button class="back-link" data-browser-back type="button">← Back</button>
-        <div class="page-heading"><div class="user-head"><span class="avatar">${escapeHtml(initials(user.username))}</span><div><h1>${escapeHtml(user.username)}</h1><p>${escapeHtml(user.email)}</p></div></div></div>
-        <div class="stats-grid"><div class="stat-card"><small>Current balance</small><strong id="current-balance" class="${user.balance < 0 ? "negative" : ""}">${money(user.balance)}</strong></div><div class="stat-card"><small>Last account charge</small><strong style="font-size:17px">${dateTime(user.last_charge_at)}</strong></div><div class="stat-card"><small>User ID</small><strong>#${user.id}</strong></div></div>
+        <div class="page-heading"><div class="user-head"><span class="avatar">${escapeHtml(initials(user.username))}</span><div><h1>${escapeHtml(user.username)}</h1><p>${escapeHtml(user.email)}</p></div></div><button class="button button-danger" id="reset-password" type="button">Reset password</button></div>
+        <p class="form-message account-message hidden" id="password-reset-message" role="status" aria-live="polite"></p>
+        <div class="stats-grid"><div class="stat-card"><small>Current balance</small><strong id="current-balance" class="${user.balance < 0 ? "negative" : ""}">${money(user.balance)}</strong></div><div class="stat-card"><small>Last account charge</small><strong class="stat-date">${dateTime(user.last_charge_at)}</strong></div><div class="stat-card"><small>User ID</small><strong>#${user.id}</strong></div></div>
         <form class="filters" id="history-filters"><div class="filter-field"><label for="start">Transactions from</label><input id="start" name="start" type="date" value="${escapeHtml(params.get("start") || "")}"></div><div class="filter-field"><label for="end">Through</label><input id="end" name="end" type="date" value="${escapeHtml(params.get("end") || "")}"></div><button class="button button-primary" type="submit">Apply dates</button></form>
         <div id="history"><div class="panel loading-state"><span class="spinner"></span>Loading transaction history…</div></div>`;
       const historyForm = document.querySelector("#history-filters");
       const history = document.querySelector("#history");
+      const resetButton = document.querySelector("#reset-password");
+      const resetMessage = document.querySelector("#password-reset-message");
+      resetButton.addEventListener("click", async () => {
+        if (!window.confirm(`Reset the password for ${user.username} <${user.email}> to empty?`)) return;
+        resetButton.disabled = true;
+        resetButton.textContent = "Resetting…";
+        resetMessage.className = "form-message account-message";
+        resetMessage.textContent = "Resetting password…";
+        try {
+          const result = await api(`/api/users/${userId}/reset-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ confirmed: true }),
+          });
+          resetMessage.classList.add("success");
+          resetMessage.textContent = result.message;
+        } catch (error) {
+          resetMessage.classList.add("error");
+          resetMessage.textContent = error.message;
+        } finally {
+          resetButton.disabled = false;
+          resetButton.textContent = "Reset password";
+        }
+      });
       async function loadHistory(page = 1) {
         try {
           const values = Object.fromEntries(new FormData(historyForm));
@@ -448,16 +474,10 @@
   const inventoryItems = path === "/inventory/items";
   const restockHistory = path === "/volunteers/history";
   const route = userMatch ? "users" : itemMatch || inventoryItems ? "inventory" : restockHistory ? "volunteers" : path.slice(1);
-  document.querySelector(`[data-route="${route}"]`)?.classList.add("active");
   const routes = { dashboard: dashboardPage, transactions: transactionsPage, volunteers: volunteersPage, debt: debtPage, users: usersPage, inventory: popularPage, logs: logsPage };
   if (userMatch) userDetailPage(userMatch[1]);
   else if (itemMatch) inventoryItemDetailPage(itemMatch[1]);
   else if (inventoryItems) inventoryItemsPage();
   else if (restockHistory) restockHistoryPage();
   else (routes[route] || dashboardPage)();
-
-  const menuButton = document.querySelector("#menu-button");
-  const closeMenu = () => { document.body.classList.remove("menu-open"); menuButton.setAttribute("aria-expanded", "false"); };
-  menuButton.addEventListener("click", () => { const open = document.body.classList.toggle("menu-open"); menuButton.setAttribute("aria-expanded", String(open)); });
-  document.querySelector("#scrim").addEventListener("click", closeMenu);
 })();

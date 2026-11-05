@@ -1,6 +1,4 @@
-from pathlib import Path
-
-from flask import Blueprint, current_app, jsonify, send_from_directory
+from flask import Blueprint, current_app, jsonify, render_template
 
 from admin_common import (
     TRANSACTION_SELECT,
@@ -14,13 +12,12 @@ from database import connect_database
 
 
 volunteers_api = Blueprint("volunteers_api", __name__)
-STATIC_ROOT = Path(__file__).resolve().parent / "static"
 
 
 @volunteers_api.get("/volunteers")
 @volunteers_api.get("/volunteers/history")
 def volunteers_page():
-    return send_from_directory(STATIC_ROOT, "admin.html")
+    return render_template("admin.html")
 
 
 @volunteers_api.get("/api/volunteers")

@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
-from pathlib import Path
 
-from flask import Blueprint, current_app, jsonify, request, send_from_directory
+from flask import Blueprint, current_app, jsonify, render_template, request
 
 import config as settings
 from audit import log_audit
@@ -13,13 +12,12 @@ from errors import ValidationError
 
 
 inventory_api = Blueprint("inventory_api", __name__)
-STATIC_ROOT = Path(__file__).resolve().parent / "static"
 
 
 @inventory_api.get("/item-scanner")
 @inventory_api.get("/item-scanner/")
 def inventory_page():
-    return send_from_directory(STATIC_ROOT, "index.html")
+    return render_template("item_scanner.html")
 
 
 @dataclass(frozen=True)

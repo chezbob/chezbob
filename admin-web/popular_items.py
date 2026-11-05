@@ -1,18 +1,15 @@
-from pathlib import Path
-
-from flask import Blueprint, current_app, jsonify, redirect, send_from_directory
+from flask import Blueprint, current_app, jsonify, redirect, render_template
 
 from admin_common import rolling_month_window
 from database import connect_database
 
 
 popular_items_api = Blueprint("popular_items_api", __name__)
-STATIC_ROOT = Path(__file__).resolve().parent / "static"
 
 
 @popular_items_api.get("/inventory")
 def popular_items_page():
-    return send_from_directory(STATIC_ROOT, "admin.html")
+    return render_template("admin.html")
 
 
 @popular_items_api.get("/popular-items")

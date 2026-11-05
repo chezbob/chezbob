@@ -69,7 +69,10 @@ a.button { min-height: 36px; padding: 6px 12px; font-size: 13px; text-decoration
 .button-primary { color: white; background: var(--blue); }
 .button-primary:hover { background: #1d4ed8; }
 .button-secondary { border-color: #cbd5e1; color: #334155; background: white; }
+.button-danger { border-color: #fecaca; color: var(--red); background: white; }
+.button-danger:hover { background: var(--red-soft); }
 .button:disabled { opacity: .5; cursor: not-allowed; }
+.form-message.account-message { margin: -12px 0 20px; }
 
 .table-scroll { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -101,6 +104,7 @@ tbody tr:hover { background: #fafcff; }
 .stat-card { padding: 18px; border: 1px solid var(--line); border-radius: 9px; background: white; }
 .stat-card small { color: var(--muted); font-size: 12px; font-weight: 620; }
 .stat-card strong { display: block; margin-top: 5px; font-size: 23px; letter-spacing: -.025em; }
+.stat-card strong.stat-date { font-size: 17px; }
 .stat-card strong.negative { color: var(--red); }
 .stat-card p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
 .dashboard-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 16px; }

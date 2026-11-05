@@ -1,6 +1,4 @@
-from pathlib import Path
-
-from flask import Blueprint, current_app, jsonify, request, send_from_directory
+from flask import Blueprint, current_app, jsonify, render_template, request
 
 from admin_common import (
     TRANSACTION_SELECT,
@@ -13,16 +11,16 @@ from admin_common import (
 )
 from database import connect_database
 from errors import ValidationError
+from user_passwords import reset_password
 
 
 users_api = Blueprint("users_api", __name__)
-STATIC_ROOT = Path(__file__).resolve().parent / "static"
 
 
 @users_api.get("/users")
 @users_api.get("/users/<int:_user_id>")
 def users_page(_user_id: int | None = None):
-    return send_from_directory(STATIC_ROOT, "admin.html")
+    return render_template("admin.html")
 
 
 @users_api.get("/api/users")
@@ -83,6 +81,20 @@ def user_detail(user_id: int):
     if row is None:
         return jsonify(error="User not found."), 404
     return jsonify(user=dict(row))
+
+
+@users_api.post("/api/users/<int:user_id>/reset-password")
+def user_password_reset(user_id: int):
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict) or payload.get("confirmed") is not True:
+        raise ValidationError("Confirm the password reset before continuing.")
+    with connect_database(current_app.config["DATABASE_PATH"]) as connection:
+        if connection.execute(
+            "SELECT 1 FROM users WHERE id = ?", (user_id,)
+        ).fetchone() is None:
+            return jsonify(error="User not found."), 404
+        reset_password(connection, user_id, "web-admin")
+    return jsonify(message="Password reset to empty.")
 
 
 @users_api.get("/api/users/<int:user_id>/transactions")
