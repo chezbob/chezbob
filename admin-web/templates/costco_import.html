@@ -3,7 +3,7 @@
 {% block title %}Costco invoice · Chez Bob Admin{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="/costco.css?v=1">
+<link rel="stylesheet" href="/costco.css?v=2">
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
   </nav>
   <section class="panel invoice-upload-panel">
     <h2>Import a Costco invoice</h2>
-    <p>Match invoice products to existing inventory, review the new unit prices, then confirm your updates.</p>
+    <p>See calculated unit prices, click an item to review its inventory matches, then confirm your updates.</p>
     <form id="invoice-upload" class="invoice-upload-form">
       <div class="filter-field">
         <label for="invoice-file">Invoice PDF</label>
@@ -28,19 +28,36 @@
     <p class="form-message" id="upload-message" role="status" aria-live="polite"></p>
   </section>
 
-  <section id="invoice-matching" class="hidden" aria-labelledby="match-heading">
-    <div class="invoice-section-heading"><h2 id="match-heading">Match inventory</h2><span id="invoice-label"></span></div>
-    <p class="invoice-help" id="invoice-pricing-note"></p>
-    <p class="invoice-help">Check the units in each package. You can match a variety pack to several inventory items; each receives the same unit price. Unchecked lines are skipped. Confirmed matches are remembered for future invoices.</p>
-    <div id="invoice-warnings" class="invoice-warnings hidden"></div>
-    <form id="invoice-match-form">
+  <section id="invoice-matching" class="hidden">
+    <div id="invoice-overview" aria-labelledby="match-heading">
+      <div class="invoice-section-heading"><h2 id="match-heading">Invoice items</h2><span id="invoice-label"></span></div>
+      <p class="invoice-help" id="invoice-pricing-note"></p>
+      <p class="invoice-help">Click an item to check its pack size and inventory matches. Check the lines you want to update.</p>
+      <div id="invoice-warnings" class="invoice-warnings hidden"></div>
+      <form id="invoice-match-form">
+        <div class="panel table-scroll"><table class="invoice-overview-table">
+          <thead><tr><th>Update</th><th>Invoice item</th><th class="invoice-pack-column">Package cost</th><th class="invoice-pack-column">Units</th><th>Calculated unit price</th><th class="invoice-match-column">Inventory match</th></tr></thead>
+          <tbody id="invoice-item-table"></tbody>
+        </table></div>
+        <div class="invoice-review-bar panel">
+          <span id="invoice-selection-count"></span>
+          <button class="button button-primary" type="submit">Review price updates</button>
+          <p class="form-message" id="matching-message" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+    <div id="invoice-item-details" class="hidden" aria-labelledby="item-detail-heading">
+      <button class="back-link" id="back-to-invoice" type="button">← Back to invoice</button>
+      <div class="invoice-section-heading"><h2 id="item-detail-heading">Review invoice item</h2><span id="invoice-item-position"></span></div>
+      <p class="invoice-help">Check the units in this package and choose its inventory matches. A variety pack can match several items at the same unit price.</p>
       <div id="invoice-lines"></div>
-      <div class="invoice-review-bar panel">
-        <span id="invoice-selection-count"></span>
-        <button class="button button-primary" type="submit">Review price updates</button>
-        <p class="form-message" id="matching-message" role="status" aria-live="polite"></p>
+      <div class="invoice-item-actions">
+        <button class="button button-secondary" id="previous-invoice-item" type="button">Previous item</button>
+        <button class="button button-secondary" id="next-invoice-item" type="button">Next item</button>
+        <button class="button button-primary" id="done-invoice-item" type="button">Done</button>
       </div>
-    </form>
+      <p class="form-message" id="item-message" role="status" aria-live="polite"></p>
+    </div>
   </section>
 
   <section id="invoice-confirmation" class="panel invoice-confirmation hidden" aria-labelledby="confirm-heading">
@@ -51,7 +68,7 @@
       <tbody id="invoice-proposals"></tbody>
     </table></div>
     <div class="invoice-confirm-actions">
-      <button class="button button-secondary" id="back-to-matches" type="button">Back to matches</button>
+      <button class="button button-secondary" id="back-to-matches" type="button">Back to invoice</button>
       <button class="button button-primary" id="confirm-invoice" type="button">Confirm updates</button>
     </div>
     <p class="form-message" id="confirmation-message" role="status" aria-live="polite"></p>
@@ -61,5 +78,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/costco.js?v=1" defer></script>
+<script src="/costco.js?v=2" defer></script>
 {% endblock %}

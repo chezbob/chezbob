@@ -1,4 +1,6 @@
 .invoice-upload-panel, .invoice-confirmation { padding: 20px; margin-bottom: 20px; }
+#invoice-matching, #invoice-item-details, #invoice-confirmation { scroll-margin-top: 16px; }
+#item-detail-heading:focus { outline: none; }
 .invoice-upload-panel h2, .invoice-section-heading h2 { margin: 0; font-size: 18px; }
 .invoice-upload-panel > p, .invoice-help { color: var(--muted); font-size: 13px; line-height: 1.6; }
 .invoice-upload-form { display: flex; align-items: end; gap: 12px; margin: 18px 0 10px; }
@@ -8,6 +10,16 @@
 .invoice-section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 24px 0 10px; }
 .invoice-section-heading > span { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
 .invoice-warnings { padding: 12px 16px; margin-bottom: 16px; border: 1px solid #fde68a; border-radius: 8px; color: var(--amber); background: var(--amber-soft); font-size: 13px; }
+.invoice-overview-table td { vertical-align: top; }
+.invoice-overview-table tbody tr { cursor: pointer; }
+.invoice-overview-table .invoice-row-selected { background: #f8fbff; }
+.invoice-overview-item { width: 42%; }
+.invoice-item-link { display: block; width: 100%; padding: 0; border: 0; color: var(--blue); background: none; font: inherit; font-weight: 650; line-height: 1.5; text-align: left; overflow-wrap: anywhere; cursor: pointer; }
+.invoice-item-link:hover { text-decoration: underline; }
+.invoice-table-checkbox { width: 18px; min-width: 18px; height: 18px; min-height: 18px; margin: 2px 0; padding: 0; accent-color: var(--blue); }
+.invoice-table-price { color: var(--blue); white-space: normal; }
+.invoice-table-matches { max-width: 230px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.invoice-mobile-summary { display: none; }
 .invoice-line { margin: 14px 0; padding: 18px; }
 .invoice-line-heading { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
 .invoice-line-heading > span { min-width: 0; }
@@ -18,6 +30,10 @@
 .invoice-line-pricing .filter-field { min-width: 0; }
 .invoice-line-pricing input { max-width: 180px; }
 .invoice-line-pricing p { margin: 9px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.invoice-calculated-price { display: grid; gap: 5px; margin-top: 18px; padding: 12px; border: 1px solid #bfdbfe; border-radius: 7px; background: var(--blue-soft); }
+.invoice-calculated-price > span { color: var(--muted); font-size: 12px; }
+.invoice-calculated-price > strong { color: var(--blue); font-size: 24px; }
+.invoice-item-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
 .invoice-match-area { min-width: 0; }
 .invoice-match-reason { margin: 0 0 9px; color: var(--muted); font-size: 12px; }
 .invoice-match-search { min-width: 0; }
@@ -36,11 +52,23 @@
 .invoice-confirm-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
 .invoice-confirmation #import-another { margin-top: 16px; }
 
+@media (max-width: 820px) {
+  #invoice-matching, #invoice-item-details, #invoice-confirmation { scroll-margin-top: 72px; }
+}
+
 @media (max-width: 680px) {
   .invoice-upload-form, .invoice-section-heading { align-items: stretch; flex-direction: column; }
   .invoice-line-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .invoice-line-pricing input { max-width: 100%; }
   .invoice-line { padding: 14px; }
+  .invoice-overview-table .invoice-pack-column, .invoice-overview-table .invoice-match-column { display: none; }
+  .invoice-overview-table th, .invoice-overview-table td { padding: 10px 8px; }
+  .invoice-overview-table th { white-space: normal; font-size: 10px; }
+  .invoice-overview-table th:nth-child(5) { width: 82px; }
+  .invoice-overview-item { width: auto; }
+  .invoice-mobile-summary { display: block; }
+  .invoice-item-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .invoice-item-actions .button-primary { grid-column: 1 / -1; }
   .invoice-review-bar { align-items: stretch; flex-direction: column; bottom: 8px; }
   .invoice-confirm-actions { flex-direction: column-reverse; }
   .invoice-confirmation table, .invoice-confirmation tbody { display: block; }

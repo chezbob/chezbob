@@ -120,6 +120,9 @@ def preview_invoice():
             if line["unit_count"] is None and line["selected_item_ids"]:
                 selected = next(item for item in catalog if item["id"] == line["selected_item_ids"][0])
                 line["unit_count"] = selected["unit_count"]
+            line["calculated_unit_price_cents"] = (
+                invoice_unit_cents(line, line["unit_count"], pricing) if line["unit_count"] else None
+            )
         data = {"invoice": invoice, "catalog": catalog, "pricing": pricing}
         with connection:
             connection.execute("DELETE FROM costco_invoice_previews WHERE created_at < datetime('now', '-1 day')")
@@ -186,6 +189,21 @@ def proposed_updates(connection, data: dict, payload: object) -> list[dict]:
                 "unit_count": count, "line": line, "before": dict(current),
             })
     return proposals
+
+
+@invoice_import_api.post("/api/inventory/costco/<preview_id>/calculate")
+def calculate_invoice_item(preview_id: str):
+    payload = json_payload()
+    if not isinstance(payload, dict) or type(payload.get("line_id")) is not int:
+        raise ValidationError("Choose a valid invoice item.")
+    count = parse_count(payload.get("unit_count"))
+    with connect_database(current_app.config["DATABASE_PATH"]) as connection:
+        _row, data = load_preview(connection, preview_id)
+    line = next((item for item in data["invoice"]["items"] if item["line_id"] == payload["line_id"]), None)
+    if line is None:
+        raise ValidationError("Choose a valid invoice item.")
+    return jsonify(line_id=line["line_id"], unit_count=count,
+                   unit_price_cents=invoice_unit_cents(line, count, data["pricing"]))
 
 
 @invoice_import_api.post("/api/inventory/costco/<preview_id>/review")

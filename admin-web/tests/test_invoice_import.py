@@ -148,6 +148,7 @@ class InvoiceImportTests(unittest.TestCase):
     def test_upload_review_and_confirm_are_separate_and_audited(self):
         preview = self.upload()
         self.assertEqual(len(preview["invoice"]["items"]), 2)
+        self.assertEqual([item["calculated_unit_price_cents"] for item in preview["invoice"]["items"]], [87, 99])
         self.assertNotIn(5, [item["id"] for item in preview["catalog"]])
         self.assertEqual(self.prices(), [200, 120, 125, 199, -150])
         path = f"/api/inventory/costco/{preview['preview_id']}"
@@ -173,6 +174,20 @@ class InvoiceImportTests(unittest.TestCase):
         next_preview = self.upload()
         self.assertEqual(next_preview["invoice"]["items"][0]["selected_item_ids"], [2, 3])
         self.assertEqual(next_preview["invoice"]["items"][1]["selected_item_ids"], [1])
+
+    def test_item_price_can_be_recalculated_without_matching_or_changing_inventory(self):
+        preview = self.upload()
+        path = f"/api/inventory/costco/{preview['preview_id']}/calculate"
+        response = self.client.post(path, json={"line_id": 1, "unit_count": 60, "package_price_cents": 1})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {"line_id": 1, "unit_count": 60, "unit_price_cents": 43})
+        self.assertEqual(self.prices(), [200, 120, 125, 199, -150])
+        for payload in ({"line_id": 999, "unit_count": 30}, {"line_id": True, "unit_count": 30},
+                        {"line_id": 1, "unit_count": 0}, {"line_id": 1, "unit_count": "1.5"}):
+            self.assertEqual(self.client.post(path, json=payload).status_code, 400)
+        with connect_database(self.database) as connection:
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM audit_logs").fetchone()[0], 0)
+            self.assertIsNone(connection.execute("SELECT applied_at FROM costco_invoice_previews").fetchone()[0])
 
     def test_stale_review_and_duplicate_targets_cannot_partially_update(self):
         preview = self.upload()

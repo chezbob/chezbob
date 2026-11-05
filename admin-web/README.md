@@ -94,9 +94,13 @@ application makes no CDN requests. License and checksum details are in
 ## Costco invoice imports
 
 Open **Inventory → Costco invoice** and upload a text-based Costco Business
-Delivery invoice PDF (up to 10 MB and 25 pages). Review the suggested inventory
-matches and **Units in package** for each line. A variety pack can update
-several existing inventory items. Leave unrelated lines unchecked.
+Delivery invoice PDF (up to 10 MB and 25 pages). The first view is a table of all
+invoice products, package costs, pack sizes, and calculated unit prices, even
+before inventory matches are chosen. Click a product to review its matches and
+**Units in package**. Pack-size edits recalculate its price and carry back to
+the table. Use **Previous item**, **Next item**, or **Done** to navigate. A
+variety pack can update several existing inventory items. Leave unrelated lines
+unchecked.
 
 The importer uses the invoice's **Unit Price** for one package, before
 **Instant Savings**. Discounted line totals and discounts are excluded. Shipped

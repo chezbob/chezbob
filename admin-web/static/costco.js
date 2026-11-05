@@ -4,6 +4,8 @@
   const root = document.querySelector("#costco-import");
   const uploadForm = document.querySelector("#invoice-upload");
   const matching = document.querySelector("#invoice-matching");
+  const overview = document.querySelector("#invoice-overview");
+  const itemDetails = document.querySelector("#invoice-item-details");
   const confirmation = document.querySelector("#invoice-confirmation");
   const matchForm = document.querySelector("#invoice-match-form");
   matchForm.noValidate = true;
@@ -13,6 +15,7 @@
   let selections = [];
   let reviewedUpdates = null;
   let applied = false;
+  let activeItem = null;
 
   const escapeHtml = (value) => String(value ?? "").replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -38,6 +41,78 @@
     const itemCount = selected.reduce((sum, row) => sum + row.itemIds.size, 0);
     document.querySelector("#invoice-selection-count").textContent =
       `${selected.length} invoice lines · ${itemCount} inventory items selected`;
+  }
+
+  function validCount(row) {
+    const count = Number(row.units.value);
+    return row.units.value !== "" && Number.isInteger(count) && count >= 1 && count <= Number(root.dataset.maxUnits);
+  }
+
+  function syncRow(row) {
+    row.tableCheckbox.checked = row.enabled.checked;
+    row.units.required = row.enabled.checked;
+    row.tableUnits.textContent = row.units.value || "—";
+    const priceText = row.priceCents !== null ? money(row.priceCents)
+      : row.calculating ? "Calculating…" : validCount(row) ? "Open item to calculate" : "Enter pack size";
+    row.tablePrice.textContent = priceText;
+    row.editorPrice.textContent = priceText;
+    const names = [...row.itemIds].map((id) => preview.catalog.find((item) => item.id === id).name);
+    row.tableMatches.textContent = names.length ? names.join(", ") : "Choose match";
+    row.mobileSummary.textContent = `${row.units.value || "?"} units · ${names.length} inventory matches`;
+    row.tr.classList.toggle("invoice-row-selected", row.enabled.checked);
+    selectionCount();
+  }
+
+  function calculateRow(row) {
+    clearTimeout(row.calculationTimer);
+    const version = ++row.calculationVersion;
+    row.priceCents = null;
+    row.priceError.textContent = "";
+    row.calculating = validCount(row);
+    syncRow(row);
+    if (!row.calculating) return;
+    const previewId = preview.preview_id;
+    const count = Number(row.units.value);
+    row.calculationTimer = window.setTimeout(async () => {
+      try {
+        const result = await post(`/api/inventory/costco/${previewId}/calculate`, { line_id: row.line.line_id, unit_count: count });
+        if (preview?.preview_id !== previewId || row.calculationVersion !== version) return;
+        row.priceCents = result.unit_price_cents;
+      } catch (error) {
+        if (preview?.preview_id !== previewId || row.calculationVersion !== version) return;
+        row.priceError.textContent = error.message;
+      }
+      row.calculating = false;
+      syncRow(row);
+    }, 200);
+  }
+
+  function openItem(row) {
+    activeItem = row;
+    overview.classList.add("hidden");
+    itemDetails.classList.remove("hidden");
+    document.querySelector("#invoice-lines").replaceChildren(row.card);
+    const index = selections.indexOf(row);
+    document.querySelector("#invoice-item-position").textContent = `Item ${index + 1} of ${selections.length}`;
+    document.querySelector("#previous-invoice-item").disabled = index === 0;
+    document.querySelector("#next-invoice-item").disabled = index === selections.length - 1;
+    message("item-message");
+    if (row.priceCents === null && !row.calculating && validCount(row)) calculateRow(row);
+    itemDetails.scrollIntoView({ behavior: "smooth", block: "start" });
+    const heading = document.querySelector("#item-detail-heading");
+    heading.tabIndex = -1;
+    heading.focus({ preventScroll: true });
+  }
+
+  function showOverview() {
+    const previous = activeItem;
+    activeItem = null;
+    itemDetails.classList.add("hidden");
+    overview.classList.remove("hidden");
+    if (previous) {
+      previous.tableButton.focus({ preventScroll: true });
+      previous.tr.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }
 
   function renderMatches(row) {
@@ -67,17 +142,24 @@
         else row.itemIds.delete(id);
         row.enabled.checked = row.itemIds.size > 0;
         row.units.required = row.enabled.checked;
-        if (!row.units.value && row.itemIds.size) row.units.value = item.unit_count || 1;
-        selectionCount();
+        if (!row.units.value && row.itemIds.size) {
+          row.units.value = item.unit_count || 1;
+          calculateRow(row);
+        }
+        syncRow(row);
       });
       row.options.append(label);
     }
   }
 
   function renderLines() {
-    const container = document.querySelector("#invoice-lines");
+    for (const row of selections) clearTimeout(row.calculationTimer);
+    const container = document.querySelector("#invoice-item-table");
     container.replaceChildren();
-    selections = preview.invoice.items.map((line) => {
+    selections = [];
+    activeItem = null;
+    document.querySelector("#invoice-lines").replaceChildren();
+    for (const line of preview.invoice.items) {
       const card = document.createElement("article");
       card.className = "panel invoice-line";
       const id = line.line_id;
@@ -86,22 +168,49 @@
       card.innerHTML = `
         <label class="invoice-line-heading"><input class="line-enabled" type="checkbox" ${line.selected_item_ids.length ? "checked" : ""}><span><strong>${escapeHtml(line.description)}</strong><small>Costco #${escapeHtml(line.sku)} · ${Number(line.shipped)} packages shipped · ${money(line.package_price_cents)} per package</small></span></label>
         <div class="invoice-line-layout">
-          <div class="invoice-line-pricing"><div class="filter-field"><label for="units-${id}">Units in package</label><input id="units-${id}" type="number" inputmode="numeric" min="1" max="${root.dataset.maxUnits}" step="1" value="${line.unit_count || ""}" ${line.selected_item_ids.length ? "required" : ""}></div><p>${escapeHtml(fee)}<br>${line.taxable ? `${percent(preview.pricing.sales_tax_rate)} package sales tax.` : "Package is not taxable on this invoice."}</p></div>
+          <div class="invoice-line-pricing"><div class="filter-field"><label for="units-${id}">Units in package</label><input id="units-${id}" type="number" inputmode="numeric" min="1" max="${root.dataset.maxUnits}" step="1" value="${line.unit_count || ""}" ${line.selected_item_ids.length ? "required" : ""}></div><p>${escapeHtml(fee)}<br>${line.taxable ? `${percent(preview.pricing.sales_tax_rate)} package sales tax.` : "Package is not taxable on this invoice."}</p><div class="invoice-calculated-price"><span>Calculated unit price</span><strong data-calculated-price></strong></div><p class="form-message error" data-price-error role="status" aria-live="polite"></p></div>
           <div class="invoice-match-area"><p class="invoice-match-reason">${escapeHtml(line.match_reason)}</p><div class="filter-field invoice-match-search"><label for="search-${id}">Match existing inventory</label><input id="search-${id}" type="search" placeholder="Search item names" autocomplete="off"></div><div class="invoice-match-options"></div></div>
         </div>`;
+      const tr = document.createElement("tr");
+      tr.dataset.lineId = id;
+      tr.innerHTML = `<td><input class="invoice-table-checkbox" type="checkbox" aria-label="Update Costco item ${escapeHtml(line.sku)}"></td>
+        <td class="invoice-overview-item"><button class="invoice-item-link" type="button">${escapeHtml(line.description)}</button><span class="cell-secondary">Costco #${escapeHtml(line.sku)} · ${Number(line.shipped)} packages</span><span class="invoice-mobile-summary cell-secondary"></span></td>
+        <td class="invoice-pack-column"><span class="money">${money(line.package_price_cents)}</span>${line.crv_package_cents ? `<span class="cell-secondary">+ ${money(line.crv_package_cents)} CRV</span>` : ""}</td>
+        <td class="invoice-pack-column invoice-table-units"></td><td class="invoice-table-price money"></td><td class="invoice-match-column invoice-table-matches"></td>`;
       const row = {
         line, card, itemIds: new Set(line.selected_item_ids),
         enabled: card.querySelector(".line-enabled"), units: card.querySelector("input[type=number]"),
         search: card.querySelector("input[type=search]"), options: card.querySelector(".invoice-match-options"),
+        tr, tableCheckbox: tr.querySelector("input"), tableButton: tr.querySelector("button"),
+        tableUnits: tr.querySelector(".invoice-table-units"), tablePrice: tr.querySelector(".invoice-table-price"),
+        tableMatches: tr.querySelector(".invoice-table-matches"), mobileSummary: tr.querySelector(".invoice-mobile-summary"),
+        editorPrice: card.querySelector("[data-calculated-price]"), priceError: card.querySelector("[data-price-error]"),
+        priceCents: line.calculated_unit_price_cents ?? null, calculating: false, calculationVersion: 0,
       };
-      row.enabled.addEventListener("change", () => { row.units.required = row.enabled.checked; selectionCount(); });
+      row.enabled.addEventListener("change", () => syncRow(row));
+      row.tableCheckbox.addEventListener("change", () => { row.enabled.checked = row.tableCheckbox.checked; syncRow(row); });
+      tr.addEventListener("click", (event) => { if (!event.target.closest("input")) openItem(row); });
+      row.units.addEventListener("input", () => calculateRow(row));
       row.search.addEventListener("input", () => renderMatches(row));
       renderMatches(row);
-      container.append(card);
-      return row;
-    });
+      selections.push(row);
+      syncRow(row);
+      container.append(tr);
+    }
+    showOverview();
     selectionCount();
   }
+
+  document.querySelector("#back-to-invoice").addEventListener("click", showOverview);
+  document.querySelector("#done-invoice-item").addEventListener("click", showOverview);
+  document.querySelector("#previous-invoice-item").addEventListener("click", () => {
+    const index = selections.indexOf(activeItem);
+    if (index > 0) openItem(selections[index - 1]);
+  });
+  document.querySelector("#next-invoice-item").addEventListener("click", () => {
+    const index = selections.indexOf(activeItem);
+    if (index < selections.length - 1) openItem(selections[index + 1]);
+  });
 
   uploadForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -141,12 +250,18 @@
     if (!selected.length) { message("matching-message", "Select at least one invoice line to update.", "error"); return; }
     const unmatched = selected.find((row) => !row.itemIds.size);
     if (unmatched) {
-      message("matching-message", `Choose an inventory match for Costco item ${unmatched.line.sku}, or uncheck its line.`, "error");
+      openItem(unmatched);
+      message("item-message", `Choose an inventory match for Costco item ${unmatched.line.sku}, or uncheck its line.`, "error");
       unmatched.search.focus();
       return;
     }
-    const invalidUnits = selected.find((row) => !row.units.checkValidity());
-    if (invalidUnits) { invalidUnits.units.reportValidity(); return; }
+    const invalidUnits = selected.find((row) => !validCount(row));
+    if (invalidUnits) {
+      openItem(invalidUnits);
+      message("item-message", "Enter a valid number of units in this package.", "error");
+      invalidUnits.units.reportValidity();
+      return;
+    }
     const updates = selected.map((row) => ({ line_id: row.line.line_id, item_ids: [...row.itemIds], unit_count: Number(row.units.value) }));
     const button = matchForm.querySelector('button[type="submit"]');
     button.disabled = true;
@@ -176,6 +291,7 @@
   backButton.addEventListener("click", () => {
     confirmation.classList.add("hidden");
     matching.classList.remove("hidden");
+    showOverview();
     message("matching-message");
   });
 
@@ -198,8 +314,10 @@
   });
 
   document.querySelector("#import-another").addEventListener("click", () => {
+    for (const row of selections) clearTimeout(row.calculationTimer);
     preview = null;
     selections = [];
+    activeItem = null;
     reviewedUpdates = null;
     applied = false;
     matching.classList.add("hidden");
