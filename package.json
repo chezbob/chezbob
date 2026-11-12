@@ -10,7 +10,8 @@
   "scripts": {
     "fmt": "prettier --write .",
     "setup": "npm install && npm run init --workspace=db",
-    "debug": "./scripts/debug.sh"
+    "debug": "./scripts/debug.sh",
+    "test:menu": "node --experimental-vm-modules --test tests/no-barcode-menu.test.js"
   },
   "author": "",
   "devDependencies": {

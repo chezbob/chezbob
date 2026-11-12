@@ -3,7 +3,7 @@
 {% block title %}Chez Bob Item Scanner · Administration{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="/styles.css?v=admin-scanner-1">
+<link rel="stylesheet" href="/styles.css?v=admin-scanner-2">
 {% endblock %}
 
 {% block content %}
@@ -115,6 +115,25 @@
           </label>
         </div>
 
+        <div class="no-barcode-options hidden">
+          <label class="field">
+            <span><input name="show_in_menu" type="checkbox" checked> Show in No Barcode menu</span>
+          </label>
+          <label class="field">
+            <span>Menu category</span>
+            <select name="menu_category">
+              <option>Coffee &amp; Drinks</option>
+              <option>Small Snacks</option>
+              <option>Freezer</option>
+              <option selected>Others</option>
+            </select>
+          </label>
+          <button class="button button-secondary find-existing" type="button">Find existing item by name</button>
+          <p class="existing-item-note">Choose an existing item to edit its details, or save to create a new item.</p>
+          <div class="existing-item-results" role="status" aria-live="polite"></div>
+          <button class="button button-secondary create-separate hidden" type="button">Create separate item with this name</button>
+        </div>
+
         <div class="option-card">
           <label class="option-toggle">
             <span>
@@ -160,5 +179,5 @@
 <script src="/vendor/zxing-library-0.23.0-chezbob.min.js"></script>
 <script src="/vendor/zxing-browser-0.2.1-chezbob.min.js"></script>
 <script src="/config.js"></script>
-<script src="/app.js?v=admin-scanner-1" defer></script>
+<script src="/app.js?v=admin-scanner-2" defer></script>
 {% endblock %}

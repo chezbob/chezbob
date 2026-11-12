@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sqlite3
 from pathlib import Path
 
@@ -12,11 +13,38 @@ def connect_database(path: Path | str) -> sqlite3.Connection:
     return connection
 
 
+def ensure_menu_schema(connection: sqlite3.Connection) -> None:
+    exists = connection.execute(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'no_barcode_menu'"
+    ).fetchone()
+    if not exists:
+        connection.execute("""
+            CREATE TABLE no_barcode_menu (
+                item_id INTEGER PRIMARY KEY REFERENCES inventory(id),
+                category TEXT NOT NULL
+            )
+        """)
+        legacy = json.loads(
+            (Path(__file__).resolve().parent.parent / "db" /
+             "legacy-no-barcode-menu.json").read_text()
+        )
+        for entry in legacy:
+            connection.execute("""
+                INSERT OR IGNORE INTO no_barcode_menu (item_id, category)
+                SELECT item_id, ? FROM barcodes
+                 WHERE barcode = ? AND item_id IS NOT NULL
+            """, (entry["category"], entry["barcode"]))
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS unbarcoded_product_requests (
+            request_id TEXT PRIMARY KEY,
+            item_id INTEGER NOT NULL REFERENCES inventory(id),
+            payload TEXT NOT NULL
+        )
+    """)
+
+
 def ensure_schema(connection: sqlite3.Connection) -> None:
     """Apply schema extensions required by inventory and admin tools."""
-    inventory_columns = {
-        row["name"] for row in connection.execute("PRAGMA table_info(inventory)")
-    }
     additions = (
         ("whole_price_cents", "INTEGER"),
         ("unit_count", "INTEGER NOT NULL DEFAULT 1 CHECK (unit_count > 0)"),
@@ -25,6 +53,12 @@ def ensure_schema(connection: sqlite3.Connection) -> None:
         ("price_is_whole", "INTEGER NOT NULL DEFAULT 1 CHECK (price_is_whole = 1)"),
     )
     with connection:
+        if not connection.in_transaction:
+            connection.execute("BEGIN IMMEDIATE")
+        inventory_columns = {
+            row["name"] for row in connection.execute("PRAGMA table_info(inventory)")
+        }
+        ensure_menu_schema(connection)
         # OAuth administration was removed; discard its obsolete allowlist.
         connection.execute("DROP TABLE IF EXISTS admin_access")
         for name, declaration in additions:

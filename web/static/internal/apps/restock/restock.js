@@ -1,5 +1,6 @@
 import { ReconnectingSocket } from "/js/reconnecting-socket.js";
 import { dollars } from "/js/money.js";
+import { loadMenu, escapeHtml } from "../pos/no-barcode-menu.js";
 
 // Rather than using Modes to control the socket, we put it directly on the window
 // and set up handlers that invoke mode methods like `on_scan`. This keeps us from having
@@ -60,8 +61,11 @@ function valid_upc(upc) {
   return (sum + check) % 10 == 0;
 }
 
-async function scan(upc) {
+let scanVersion = 0;
+async function scan(upc, item_id) {
+  const version = ++scanVersion;
   report("");
+  document.getElementById("form").replaceChildren();
 
   try {
     let info = await socket.request({
@@ -70,9 +74,10 @@ async function scan(upc) {
         type: "info_req",
       },
       body: {
-        barcode: upc,
+        ...(item_id === undefined ? { barcode: upc } : { item_id }),
       },
     });
+    if (version !== scanVersion) return;
     switch (info.header.type) {
       case "item_info":
         render(info.body);
@@ -83,7 +88,9 @@ async function scan(upc) {
         break;
     }
   } catch (e) {
-    render({ barcode: upc });
+    if (version !== scanVersion) return;
+    if (item_id === undefined) render({ barcode: upc });
+    else report("This menu item is unavailable. Refresh the menu and try again.");
   }
 }
 
@@ -101,7 +108,7 @@ function render(obj) {
             <br />
             <label for="name">Name: </label> 
             <input required minlength=1 title="Cannot be empty" type="text" name="name" value="${
-              obj?.name ?? ""
+              escapeHtml(obj?.name ?? "")
             }"/>
             <br />
             <label for="bulk_count">Bulk Count: </label> 
@@ -191,4 +198,19 @@ function report(msg) {
 document.getElementById("form").addEventListener("submit", submit);
 document
   .getElementById("no_barcode")
-  .addEventListener("input", (ev) => scan(ev.target.value));
+  .addEventListener("input", (ev) => scan(undefined, Number(ev.target.value)));
+
+async function refreshMenu() {
+  const select = document.getElementById("no_barcode");
+  try {
+    const items = await loadMenu(socket);
+    select.replaceChildren(new Option("-- No Barcode Item --", "", true, true));
+    select.firstChild.disabled = true;
+    for (const item of items) select.add(new Option(item.name, String(item.id)));
+    report("");
+  } catch (error) {
+    report("Unable to load the No Barcode menu. Click Refresh menu to retry.");
+  }
+}
+document.getElementById("reload-menu").addEventListener("click", refreshMenu);
+await refreshMenu();

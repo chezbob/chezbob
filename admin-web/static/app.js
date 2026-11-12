@@ -687,6 +687,7 @@
     const form = fragment.querySelector("form");
     form.dataset.barcode = capture.barcode;
     form.dataset.noBarcode = String(Boolean(capture.noBarcode));
+    form.dataset.requestId = capture.barcode;
     form.dataset.saved = "false";
     form.dataset.dirty = "false";
     form.querySelector(".form-number").textContent =
@@ -700,6 +701,22 @@
         : capture.source === "manual"
           ? "Manual entry"
           : "Type unavailable";
+    if (capture.noBarcode) {
+      form.querySelector(".no-barcode-options").classList.remove("hidden");
+      form.querySelector(".find-existing").addEventListener("click", () => findExisting(form));
+      form.querySelector(".create-separate").addEventListener("click", () => {
+        form.dataset.allowDuplicate = "true";
+        saveForm(form);
+      });
+      form.elements.name.addEventListener("input", () => {
+        delete form.dataset.allowDuplicate;
+        form.querySelector(".create-separate").classList.add("hidden");
+        form.querySelector(".existing-item-results").replaceChildren();
+      });
+    } else {
+      form.elements.show_in_menu.disabled = true;
+      form.elements.menu_category.disabled = true;
+    }
     // Save this product when its form is submitted.
     form.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -791,6 +808,17 @@
         form.elements.count.value = "1";
         form.elements.taxable.checked = false;
         form.elements.crv.checked = false;
+        if (form.dataset.noBarcode === "true") {
+          form.elements.whole_price.value = data.product.whole_price;
+          form.elements.count.value = data.product.count;
+          form.elements.taxable.checked = data.product.taxable;
+          form.elements.crv.checked = data.product.crv;
+          form.elements.show_in_menu.checked = data.product.show_in_menu;
+          if (!Array.from(form.elements.menu_category.options).some((option) => option.value === data.product.menu_category)) {
+            form.elements.menu_category.add(new Option(data.product.menu_category, data.product.menu_category));
+          }
+          form.elements.menu_category.value = data.product.menu_category;
+        }
       }
       originalPrice.classList.remove("hidden");
       originalPrice.querySelector('[data-role="original-price"]').textContent =
@@ -806,14 +834,14 @@
     if (form.dataset.initialized !== "true") {
       // Track text and numeric input while recalculating dependent pricing.
       fields.addEventListener("input", (event) => {
-        if (event.target.matches("input")) markFormDirty(form);
+        if (event.target.matches("input, select")) markFormDirty(form);
         if (event.target.matches('[name="whole_price"], [name="count"]')) {
           calculateUnitPrice(form);
         }
       });
       // Track toggle changes while recalculating tax and CRV pricing.
       fields.addEventListener("change", (event) => {
-        if (event.target.matches("input")) markFormDirty(form);
+        if (event.target.matches("input, select")) markFormDirty(form);
         if (event.target.matches('[name="taxable"], [name="crv"]')) {
           calculateUnitPrice(form);
         }
@@ -870,11 +898,14 @@
 
   // Validate and save one product form through the API.
   async function saveForm(form) {
+    if (form.dataset.saving === "true" || form.dataset.loadingExisting === "true") return false;
     if (!form.reportValidity()) {
       form.scrollIntoView({ behavior: "smooth", block: "center" });
       return false;
     }
     const button = form.querySelector(".button-save");
+    form.dataset.saving = "true";
+    form.querySelector(".form-fields").inert = true;
     button.disabled = true;
     button.textContent = "Saving…";
     setFormMessage(form, "");
@@ -896,9 +927,19 @@
           count: form.elements.count.value,
           taxable: form.elements.taxable.checked,
           crv: form.elements.crv.checked,
+          ...(isUnbarcoded ? {
+            request_id: form.dataset.requestId,
+            allow_duplicate: form.dataset.allowDuplicate === "true",
+            show_in_menu: form.elements.show_in_menu.checked,
+            menu_category: form.elements.menu_category.value,
+          } : {}),
         }),
       });
       const data = await response.json();
+      if (response.status === 409 && Array.isArray(data.matches)) {
+        showExistingMatches(form, data.matches);
+        form.querySelector(".create-separate").classList.remove("hidden");
+      }
       if (!response.ok) throw new Error(data.error || "The product could not be saved.");
       if (isUnbarcoded) form.dataset.itemId = data.product.id;
       form.dataset.saved = "true";
@@ -908,7 +949,9 @@
       status.textContent = "Saved";
       setFormMessage(
         form,
-        `Saved. Unit price is $${data.product.unit_price}.`,
+        `Saved. Unit price is $${data.product.unit_price}.${isUnbarcoded
+          ? data.product.show_in_menu ? " Shown in the No Barcode menu." : " Hidden from the No Barcode menu."
+          : ""}`,
         "success",
       );
       return true;
@@ -916,8 +959,66 @@
       setFormMessage(form, error.message, "error");
       return false;
     } finally {
+      form.dataset.saving = "false";
+      form.querySelector(".form-fields").inert = false;
       button.disabled = false;
       button.textContent = "Save product";
+    }
+  }
+
+  function showExistingMatches(form, items) {
+    const results = form.querySelector(".existing-item-results");
+    results.replaceChildren();
+    for (const item of items) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "button button-secondary";
+      button.textContent = `Edit ${item.name} (ID ${item.id})`;
+      button.addEventListener("click", () => openExistingProduct(form, item.id));
+      results.append(button);
+    }
+    if (!items.length) results.textContent = "No matching items found.";
+  }
+
+  async function findExisting(form) {
+    const name = form.elements.name.value.trim();
+    if (!name) {
+      setFormMessage(form, "Enter part of the product name first.");
+      return;
+    }
+    try {
+      const response = await fetch(`/api/unbarcoded-products?q=${encodeURIComponent(name)}`, { cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not search items.");
+      if (form.elements.name.value.trim() === name) showExistingMatches(form, data.items);
+    } catch (error) {
+      setFormMessage(form, error.message, "error");
+    }
+  }
+
+  async function openExistingProduct(form, itemId) {
+    if (form.dataset.saving === "true" || form.dataset.loadingExisting === "true") return;
+    form.dataset.loadingExisting = "true";
+    form.querySelector(".form-fields").inert = true;
+    try {
+      const response = await fetch(`/api/unbarcoded-products/${itemId}`, { cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not load the item.");
+      if (!form.isConnected) return;
+      form.dataset.itemId = String(data.product.id);
+      // Invalidate any pending initial lookup before populating the selected item.
+      form.dataset.lookupToken = String(Number(form.dataset.lookupToken || 0) + 1);
+      populateProductForm(form, data);
+      delete form.dataset.allowDuplicate;
+      form.querySelector(".create-separate").classList.add("hidden");
+      form.querySelector(".existing-item-results").replaceChildren();
+      markFormDirty(form);
+      setFormMessage(form, `Editing item ${data.product.id}. Review its details and menu visibility, then save.`);
+    } catch (error) {
+      setFormMessage(form, error.message, "error");
+    } finally {
+      form.dataset.loadingExisting = "false";
+      form.querySelector(".form-fields").inert = false;
     }
   }
 

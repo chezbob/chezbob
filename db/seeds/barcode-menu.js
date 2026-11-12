@@ -1,20 +1,16 @@
-import menu from "../../web/static/internal/apps/pos/barcode-menu.js";
+import { legacyMenu, ensureMenuSchema } from "../no-barcode-menu.js";
 
 export async function seed(knex) {
-  for (let [_, data] of Object.entries(menu)) {
-    for (let [name, details] of Object.entries(data)) {
-      await knex.transaction(async (trx) => {
-        let item_id = (
-          await trx("inventory").insert([{ name, cents: details.defaultCents }])
-        )[0];
-        console.log(item_id, name, details.barcode);
-        try {
-          await trx("barcodes").insert([{ barcode: details.barcode, item_id }]);
-        } catch (e) {
-          console.log("Already present");
-          await trx.rollback();
-        }
+  await ensureMenuSchema(knex);
+  for (const details of legacyMenu) {
+    await knex.transaction(async (trx) => {
+      // Re-running seeds must preserve edited prices and hidden menu choices.
+      if (await trx("barcodes").where({ barcode: details.barcode }).first()) return;
+      const [item_id] = await trx("inventory").insert({
+        name: details.name, cents: details.defaultCents,
       });
-    }
+      await trx("barcodes").insert({ barcode: details.barcode, item_id });
+      await trx("no_barcode_menu").insert({ item_id, category: details.category });
+    });
   }
 }

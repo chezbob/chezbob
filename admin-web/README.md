@@ -87,6 +87,56 @@ Active camera scanning requires HTTPS due to browser-level security and accepts 
 the same code in two frames. Users can also upload an image, enter a barcode
 manually, or add an item without a barcode.
 
+### No Barcode menu
+
+For an item without a barcode, **Show in No Barcode menu** defaults to enabled.
+Choose a category before saving. The POS price-check/purchase menus and the
+restock dropdown read the shared `no_barcode_menu` table through the inventory
+service. They select items by inventory ID; a barcode is not required. The POS
+loads the latest menu whenever it is opened. In the restock utility, use
+**Refresh menu** after changing menu membership.
+
+To edit an item, enter part of its name and select **Find existing item by name**,
+then select **Edit … (ID …)**. This includes existing products with barcodes, so
+legacy menu items can be edited while retaining their barcode links. Loading an
+item replaces the form with its saved details. A new item with a matching name
+cannot be saved until an existing item is selected or **Create separate item
+with this name** is explicitly chosen. Creation requests are idempotent: retrying
+the same request does not create another item or duplicate its audit entry.
+
+The admin and inventory service must use the same SQLite database. On first
+startup, either service can initialize the shared table and migrate existing
+menu entries by their barcode links. The old list is preserved only as a
+migration snapshot in `db/legacy-no-barcode-menu.json`; it is not a runtime menu.
+Existing prices, inventory IDs, and transaction history are preserved. Missing
+legacy barcode links are skipped. Later restarts do not restore items that an
+administrator has hidden.
+
+For deployment, back up the production database, deploy the branch, and run:
+
+```bash
+npm run knex --workspace=db -- migrate:latest --env production
+```
+
+Restart the inventory service and admin panel, then reload the POS and restock
+pages. Do not run the database seeds as part of this rollout.
+
+Existing unbarcoded records are not automatically published or merged. For the
+two Kahiki records (1367 and 1369), inspect their transaction history first:
+
+```sql
+SELECT i.id, i.name, i.cents, COUNT(t.id) AS transaction_count,
+       MIN(t.created_at) AS first_transaction, MAX(t.created_at) AS last_transaction
+FROM inventory i LEFT JOIN transactions t ON t.item_id = i.id
+WHERE i.id IN (1367, 1369)
+GROUP BY i.id;
+```
+
+Use the admin lookup to select the intended record, enable its menu visibility,
+choose **Freezer**, and save. Leave the other record hidden until any separate
+history-preserving cleanup is reviewed. This fix never deletes or merges existing
+records by name.
+
 Both ZXing JavaScript bundles are pinned and served from `static/vendor`; the
 application makes no CDN requests. License and checksum details are in
 `static/vendor/README.md`.
@@ -186,3 +236,7 @@ After installing the dependencies, run the regression suite with:
 ```bash
 python3 -m unittest discover -s tests
 ```
+
+From the repository root, run `npm run test:menu` (Node 18+ for the test runner)
+to exercise the shared migration, service price lookup, purchases, restocking,
+and actual POS menu modes against a temporary SQLite database.

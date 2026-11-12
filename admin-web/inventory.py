@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+import json
 
 from flask import Blueprint, current_app, jsonify, render_template, request
 
@@ -30,6 +31,31 @@ class Product:
     taxable: bool
     crv: bool
     unit_price_cents: int
+    show_in_menu: bool = False
+    menu_category: str = "Others"
+
+
+class DuplicateProductError(ValidationError):
+    def __init__(self, matches):
+        super().__init__("An item with this name already exists. Edit it or create a separate item.")
+        self.matches = matches
+
+
+def product_by_id(connection, item_id: int) -> Product:
+    row = connection.execute("""
+        SELECT i.*, m.category FROM inventory i
+        LEFT JOIN no_barcode_menu m ON m.item_id = i.id WHERE i.id = ?
+    """, (item_id,)).fetchone()
+    if row is None:
+        raise ValidationError("The product no longer exists.")
+    return Product(
+        id=row["id"], barcode="", name=row["name"],
+        whole_price_cents=row["whole_price_cents"] if row["whole_price_cents"] is not None else row["cents"],
+        count=row["unit_count"],
+        taxable=bool(row["taxable"]), crv=bool(row["crv"]),
+        unit_price_cents=row["cents"], show_in_menu=row["category"] is not None,
+        menu_category=row["category"] or "Others",
+    )
 
 
 def normalize_barcode(value: object) -> str:
@@ -316,8 +342,40 @@ def save_unbarcoded_product(
     unit_price_cents = rounded_unit_cents(
         whole_price_cents, count, taxable, crv
     )
+    show_in_menu = payload.get("show_in_menu", True)
+    allow_duplicate = payload.get("allow_duplicate", False)
+    category = payload.get("menu_category", "Others")
+    if not isinstance(show_in_menu, bool) or not isinstance(allow_duplicate, bool):
+        raise ValidationError("Menu visibility and duplicate choice must be boolean.")
+    if not isinstance(category, str) or not 1 <= len(category.strip()) <= 80:
+        raise ValidationError("Enter a menu category of 1–80 characters.")
+    category = category.strip()
+    request_id = payload.get("request_id")
+    if item_id is None and (
+        not isinstance(request_id, str) or not 1 <= len(request_id) <= 100
+    ):
+        raise ValidationError("A creation request ID is required. Reload the scanner and retry.")
+    fingerprint = json.dumps(
+        [name, whole_price_cents, count, taxable, crv, show_in_menu, category, allow_duplicate]
+    )
     with connection:
+        # Serialize duplicate checks and creates, including requests from other tabs.
+        connection.execute("BEGIN IMMEDIATE")
         if item_id is None:
+            previous = connection.execute(
+                "SELECT item_id, payload FROM unbarcoded_product_requests WHERE request_id = ?",
+                (request_id,),
+            ).fetchone()
+            if previous:
+                if previous["payload"] != fingerprint:
+                    raise ValidationError("This creation request already saved different details. Reload to edit the saved item.")
+                return product_by_id(connection, previous["item_id"])
+            matches = connection.execute(
+                "SELECT id, name FROM inventory WHERE lower(trim(name)) = lower(?) ORDER BY id",
+                (name,),
+            ).fetchall()
+            if matches and not allow_duplicate:
+                raise DuplicateProductError([dict(row) for row in matches])
             before = None
             cursor = connection.execute(
                 """
@@ -328,11 +386,17 @@ def save_unbarcoded_product(
                 (name, unit_price_cents, whole_price_cents, count, int(taxable), int(crv)),
             )
             item_id = cursor.lastrowid
+            connection.execute(
+                "INSERT INTO unbarcoded_product_requests (request_id, item_id, payload) VALUES (?, ?, ?)",
+                (request_id, item_id, fingerprint),
+            )
             action = "inventory.create"
         else:
             existing = connection.execute(
                 """
-                SELECT name, cents, whole_price_cents, unit_count, taxable, crv
+                SELECT name, cents, whole_price_cents, unit_count, taxable, crv,
+                       EXISTS (SELECT 1 FROM no_barcode_menu WHERE item_id = inventory.id) AS show_in_menu,
+                       (SELECT category FROM no_barcode_menu WHERE item_id = inventory.id) AS menu_category
                   FROM inventory WHERE id = ?
                 """,
                 (item_id,),
@@ -344,15 +408,19 @@ def save_unbarcoded_product(
                    SET name = ?, cents = ?, whole_price_cents = ?, unit_count = ?,
                        taxable = ?, crv = ?
                  WHERE id = ?
-                   AND NOT EXISTS (
-                       SELECT 1 FROM barcodes WHERE barcodes.item_id = inventory.id
-                   )
                 """,
                 (name, unit_price_cents, whole_price_cents, count, int(taxable), int(crv), item_id),
             )
             if cursor.rowcount != 1:
                 raise ValidationError("The unbarcoded product no longer exists.")
             action = "inventory.update"
+        if show_in_menu:
+            connection.execute("""
+                INSERT INTO no_barcode_menu (item_id, category) VALUES (?, ?)
+                ON CONFLICT(item_id) DO UPDATE SET category = excluded.category
+            """, (item_id, category))
+        else:
+            connection.execute("DELETE FROM no_barcode_menu WHERE item_id = ?", (item_id,))
         after = {
             "name": name,
             "whole_price_cents": whole_price_cents,
@@ -361,6 +429,8 @@ def save_unbarcoded_product(
             "crv": crv,
             "profit_rate": float(settings.PROFIT_RATE),
             "unit_price_cents": unit_price_cents,
+            "show_in_menu": show_in_menu,
+            "menu_category": category,
         }
         log_audit(
             connection,
@@ -369,11 +439,7 @@ def save_unbarcoded_product(
             item_id,
             details={"barcode": None, "before": before, "after": after},
         )
-    return Product(
-        id=item_id, barcode="", name=name, whole_price_cents=whole_price_cents,
-        count=count, taxable=taxable, crv=crv,
-        unit_price_cents=unit_price_cents,
-    )
+    return product_by_id(connection, item_id)
 
 
 def product_response(product: Product | None, barcode: str) -> dict[str, object]:
@@ -412,8 +478,29 @@ def product_save(barcode: str):
 @inventory_api.post("/api/unbarcoded-products")
 def unbarcoded_product_create():
     with connect_database(current_app.config["DATABASE_PATH"]) as connection:
-        product = save_unbarcoded_product(connection, json_payload())
+        try:
+            product = save_unbarcoded_product(connection, json_payload())
+        except DuplicateProductError as error:
+            return jsonify(error=str(error), matches=error.matches), 409
     return jsonify(product_response(product, "")), 201
+
+
+@inventory_api.get("/api/unbarcoded-products")
+def unbarcoded_product_search():
+    query = request.args.get("q", "").strip()
+    with connect_database(current_app.config["DATABASE_PATH"]) as connection:
+        rows = connection.execute("""
+            SELECT id, name FROM inventory WHERE instr(lower(name), lower(?)) > 0
+            ORDER BY name, id LIMIT 30
+        """, (query,)).fetchall()
+    return jsonify(items=[dict(row) for row in rows])
+
+
+@inventory_api.get("/api/unbarcoded-products/<int:item_id>")
+def unbarcoded_product_lookup(item_id: int):
+    with connect_database(current_app.config["DATABASE_PATH"]) as connection:
+        product = product_by_id(connection, item_id)
+    return jsonify(product_response(product, ""))
 
 
 @inventory_api.put("/api/unbarcoded-products/<int:item_id>")
