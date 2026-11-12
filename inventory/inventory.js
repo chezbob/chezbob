@@ -6,6 +6,9 @@ import { ReconnectingSocket } from "reconnecting-socket";
 import { db } from "db";
 import { pbkdf2, randomBytes } from "node:crypto";
 import { promisify } from "node:util";
+import { ensureMenuSchema, menuItems, menuItem } from "../db/no-barcode-menu.js";
+
+await ensureMenuSchema(db);
 
 const MIN_BALANCE = -Infinity; // Minimum balance a user can hold (currently disabled)
 
@@ -25,6 +28,12 @@ function user_info() {
 // object so callers should handle both cases. If it is neither,
 // expect an `item_not_found` error.
 inventory.handle("info_req", async (msg) => {
+  if (msg.body?.item_id !== undefined) {
+    return {
+      header: { type: "item_info" },
+      body: await menuItem(db, msg.body.item_id),
+    };
+  }
   console.log(msg);
   let src = msg.header.from;
   let response_to = msg.header.id;
@@ -73,6 +82,11 @@ inventory.handle("info_req", async (msg) => {
     error: "Unknown barcode",
   };
 });
+
+inventory.handle("no_barcode_menu", async () => ({
+  header: { type: "no_barcode_menu" },
+  body: { items: await menuItems(db) },
+}));
 
 inventory.handle("deposit_money", async (deposit_money) => {
   const user_id = deposit_money.body?.user_id;

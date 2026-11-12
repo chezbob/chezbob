@@ -148,6 +148,12 @@
 .retry-lookup { margin: 0 0 16px; }
 .form-fields { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); gap: 0 24px; align-items: end; }
 .product-name-field { grid-column: 1; }
+.no-barcode-options { grid-column: 1; grid-row: 3 / span 3; align-self: start; }
+.no-barcode-options input[type="checkbox"] { width: auto; min-height: 0; margin-right: 6px; }
+.existing-item-note { color: var(--muted); font-size: 13px; }
+.existing-item-results { display: grid; gap: 8px; margin: 12px 0; }
+.existing-item-results button { white-space: normal; text-align: left; }
+.no-barcode-options select { width: 100%; min-height: 40px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: white; font: inherit; }
 .field { display: block; margin-bottom: 16px; }
 .field-grid { grid-column: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .input-with-prefix { position: relative; display: block; }

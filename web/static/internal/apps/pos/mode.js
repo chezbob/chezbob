@@ -1,5 +1,5 @@
 import { price_row, dollars } from "../../../js/money.js";
-import menu from "./barcode-menu.js";
+import { loadMenu, menuContent } from "./no-barcode-menu.js";
 
 // Determines how long the user has after any interaction before the session gets reset
 const SESSION_TIME = 30000;
@@ -156,14 +156,14 @@ export class DefaultMode extends Mode {
     `;
   }
 
-  async on_scan(barcode) {
+  async on_scan(barcode, item_id) {
     let info = await socket.request({
       header: {
         to: "inventory",
         type: "info_req",
       },
       body: {
-        barcode,
+        ...(item_id === undefined ? { barcode } : { item_id }),
       },
     });
 
@@ -228,26 +228,28 @@ export class PriceCheck extends Session {
   }
 }
 
-const menu_content = Object.entries(menu)
-  .map(
-    ([category, items]) =>
-      `<h1>${category}</h1>
-     <section>
-      ${Object.entries(items)
-        .map(
-          ([item, details]) => `
-        <button data-barcode="${details.barcode}" onclick="window.mode.select_item(event)">${item}</button>
-      `
-        )
-        .join("")}
-     </section>
-    `
-  )
-  .join("");
+async function refreshMenu(mode) {
+  try {
+    mode.content = menuContent(await loadMenu(socket));
+  } catch (error) {
+    mode.content = '<p>Unable to load the menu.</p><button onclick="window.mode.reloadMenu()">Retry</button>';
+  }
+  mode.render();
+}
+
 export class NoBarcodePriceCheck extends Session {
   title = "Manual Price Check";
 
-  content = menu_content;
+  content = "<p>Loading menu…</p>";
+
+  constructor(...args) {
+    super(...args);
+    refreshMenu(this);
+  }
+
+  reloadMenu() {
+    refreshMenu(this);
+  }
 
   hint = `
       <button onclick="window.mode.back()" style="float: center">Back</button>
@@ -259,7 +261,7 @@ export class NoBarcodePriceCheck extends Session {
 
   async select_item(event) {
     try {
-      await this.on_scan(event.target.dataset.barcode);
+      await this.on_scan(undefined, Number(event.currentTarget.dataset.itemId));
     } catch (e) {
       this.set_error(e.error ?? e);
     }
@@ -308,7 +310,7 @@ export class LoggedIn extends Session {
         `;
   }
 
-  async on_scan(barcode) {
+  async on_scan(barcode, item_id) {
     this.error = null;
     let info = await socket.request({
       header: {
@@ -316,7 +318,7 @@ export class LoggedIn extends Session {
         type: "info_req",
       },
       body: {
-        barcode,
+        ...(item_id === undefined ? { barcode } : { item_id }),
       },
     });
 
@@ -433,7 +435,16 @@ export class Purchases extends LoggedIn {
 
 export class ManualPurchase extends Purchases {
   title = "Manual Purchase";
-  content = menu_content;
+  content = "<p>Loading menu…</p>";
+
+  constructor(...args) {
+    super(...args);
+    refreshMenu(this);
+  }
+
+  reloadMenu() {
+    refreshMenu(this);
+  }
   pinScrollToBottom = false;
 
   get hint() {
@@ -451,14 +462,14 @@ export class ManualPurchase extends Purchases {
   }
 
   async select_item(event) {
-    const barcode = event.target.dataset.barcode;
+    const itemId = Number(event.currentTarget.dataset.itemId);
     const mode = new Purchases(this.user, this.purchases);
     try {
-      await mode.on_scan(barcode);
+      await mode.on_scan(undefined, itemId);
+      set_mode(mode);
     } catch (e) {
       this.set_error(e.error ?? e);
     }
-    set_mode(mode);
   }
 }
 

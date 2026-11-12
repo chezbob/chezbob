@@ -1,0 +1,80 @@
+[
+  {
+    "category": "Coffee & Drinks",
+    "name": "Cold Brew Coffee",
+    "defaultCents": 100,
+    "barcode": "488348702402"
+  },
+  {
+    "category": "Coffee & Drinks",
+    "name": "Espresso",
+    "defaultCents": 150,
+    "barcode": "845183001266"
+  },
+  {
+    "category": "Coffee & Drinks",
+    "name": "Oat Milk (150ml)",
+    "defaultCents": 61,
+    "barcode": "813636022816"
+  },
+  {
+    "category": "Coffee & Drinks",
+    "name": "Tea Bag",
+    "defaultCents": 11,
+    "barcode": "077652685053"
+  },
+  {
+    "category": "Small Snacks",
+    "name": "Mott's Fruit Snacks",
+    "defaultCents": 17,
+    "barcode": "016000477278"
+  },
+  {
+    "category": "Small Snacks",
+    "name": "Gushers",
+    "defaultCents": 50,
+    "barcode": "1016094"
+  },
+  {
+    "category": "Small Snacks",
+    "name": "Fruit by the Foot",
+    "defaultCents": 38,
+    "barcode": "016000178847"
+  },
+  {
+    "category": "Small Snacks",
+    "name": "Instant Oatmeal Packet",
+    "defaultCents": 35,
+    "barcode": "030000569757"
+  },
+  {
+    "category": "Small Snacks",
+    "name": "Madeleine Cookie",
+    "defaultCents": 100,
+    "barcode": "697941861007"
+  },
+  {
+    "category": "Small Snacks",
+    "name": "York Peppermint Pattie",
+    "defaultCents": 10,
+    "barcode": "034000066421"
+  },
+  {
+    "category": "Freezer",
+    "name": "Drumstick",
+    "defaultCents": 100,
+    "barcode": "072554870262"
+  },
+  {
+    "category": "Freezer",
+    "name": "Klondike Bar",
+    "defaultCents": 80,
+    "barcode": "075856001105"
+  },
+  {
+    "category": "Others",
+    "name": "Cutlery",
+    "defaultCents": 25,
+    "barcode": "417645123481"
+  }
+]
